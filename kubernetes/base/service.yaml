@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # annotations:
+  #   cloud.google.com/backend-config: '{"default": "ms-graphql-backendcfg"}'
+  #   cloud.google.com/load-balancer-type: 'Internal'
+  labels:
+    app: svelte-frontend
+  name: svelte-frontend-service
+  namespace: default
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+    - port: 80
+      targetPort: 3000
+  selector:
+    app: svelte-frontend
+  sessionAffinity: None
+  type: NodePort

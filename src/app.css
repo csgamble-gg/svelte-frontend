@@ -1,0 +1,15 @@
+/* Write your global styles here, in PostCSS syntax */
+
+main::-webkit-scrollbar-thumb {
+	background-color: #54cca8;
+	border-radius: 15px;
+}
+
+main::-webkit-scrollbar {
+	width: 0.1875rem;
+	height: 0.1875rem;
+}
+
+
+:root {
+}

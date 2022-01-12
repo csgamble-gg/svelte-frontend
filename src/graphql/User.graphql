@@ -1,0 +1,8 @@
+query CurrentUser {
+    getCurrentUser {
+        _id
+        displayName
+        avatar
+        balance
+    }
+}

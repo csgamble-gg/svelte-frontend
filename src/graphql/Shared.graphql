@@ -1,0 +1,14 @@
+subscription Error {
+	userError {
+		message
+	}
+}
+
+subscription UserEvent {
+	userEvent {
+		user {
+			_id
+			balance
+		}
+	}
+}

@@ -1,0 +1,94 @@
+query getRecentGames($input: GetRecentGamesInput!) {
+	getRecentGames(input: $input) {
+		_id
+		createdAt
+		rollValue
+		status
+		gameId
+	}
+}
+
+query getLatestGame($input: GetLatestGameInput!) {
+	getLatestGame(input: $input) {
+		game {
+			_id
+			createdAt
+			status
+			gameId
+			rollValue
+			startsAt
+		}
+		currentBets {
+			_id
+			gameId
+			selections
+			amount
+			user {
+				displayName
+				avatar
+				_id
+			}
+		}
+	}
+}
+
+query GetBetsForGame($input: GetBetsForGameInput!) {
+	getBetsForGame(input: $input) {
+		_id
+		gameId
+		selections
+		amount
+		user {
+			displayName
+			avatar
+			_id
+		}
+	}
+}
+
+mutation createBet($input: CreateBetInput!) {
+	createBet(input: $input) {
+		success
+		error
+		user {
+			_id
+			balance
+		}
+	}
+}
+
+subscription RouletteGameCreated {
+	rouletteGameCreated {
+		_id
+		gameId
+		rollValue
+		status
+		createdAt
+		startsAt
+	}
+}
+
+subscription RouletteGameUpdated {
+	rouletteGameUpdated {
+		_id
+		gameId
+		rollValue
+		status
+		createdAt
+		startsAt
+	}
+}
+
+subscription BetCreated {
+	betCreated {
+		_id
+		gameId
+		selections
+		amount
+		user {
+			displayName
+			avatar
+			_id
+		}
+	}
+}

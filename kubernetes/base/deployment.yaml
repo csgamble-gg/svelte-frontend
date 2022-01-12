@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svelte-frontend
+  labels:
+    app: svelte-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: svelte-frontend
+  template:
+    metadata:
+      labels:
+        app: svelte-frontend
+    spec:
+      imagePullSecrets:
+        - name: gcr-json-key
+      containers:
+        - name: svelte-frontend
+          envFrom:
+            - configMapRef:
+                name: svelte-frontend
+          imagePullPolicy: Always
+          image: svelte-frontend
+          resources:
+            requests:
+              memory: 100Mi
+              cpu: 500m
+            limits:
+              memory: 500Mi
+              cpu: 500m
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: websocket-timeout
+spec:
+  timeoutSec: 99999
+  connectionDraining:
+    drainingTimeoutSec: 1800
