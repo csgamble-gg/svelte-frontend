@@ -4,5 +4,6 @@ metadata:
   name: svelte-frontend
 data:
   SERVICE_NAME: svelte-frontend
+  ENVIRONMENT: staging
   NODE_ENV: staging
   LOG_LEVEL: debug
