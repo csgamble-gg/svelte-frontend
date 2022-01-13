@@ -16,7 +16,7 @@
 	}
 </script>
 
-<div class="flex flex-col rounded-large bet-input">
+<div class="flex flex-col rounded-large bet-input relative">
 	<div class="flex w-full align-center flex-nowrap">
 		<div class="flex flex-col flex-nowrap">
 			<span class="text-lightblue text-sm">Bet Amount</span>
@@ -33,16 +33,16 @@
 		</div>
 		<div class="absolute overflow-hidden w-auto right-4">
 			<div class="mx-2">
-				<button type="button" class="bet-amount-button" value={1} on:click={handleClick}>+1</button>
+				<button type="button" class="bet-amount-button " value={1} on:click={handleClick}>+1</button>
 				<button type="button" class="bet-amount-button" value={10} on:click={handleClick}
 					>+10</button
 				>
-				<button type="button" class="bet-amount-button" value={100} on:click={handleClick}
+				<button type="button" class="bet-amount-button hidden md:inline" value={100} on:click={handleClick}
 					>+100</button
 				>
-				<button type="button" class="bet-amount-button" value="x2" on:click={handleClick}>x2</button
+				<button type="button" class="bet-amount-button hidden md:inline" value="x2" on:click={handleClick}>x2</button
 				>
-				<button type="button" class="bet-amount-button" value="MAX" on:click={handleClick}
+				<button type="button" class="bet-amount-button hidden md:inline" value="MAX" on:click={handleClick}
 					>MAX</button
 				>
 			</div>

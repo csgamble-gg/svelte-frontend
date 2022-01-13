@@ -132,6 +132,6 @@
 	}
 
 	.inner-wheel {
-		top: 755px;
+		top: 800px;
 	}
 </style>

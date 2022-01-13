@@ -58,7 +58,7 @@
 			</div>
 		</div>
 		<Divider />
-		<div class="h-auto pt-6 flex flex-col gap-2">
+		<div class="h-auto pt-6 flex-col gap-2 hidden sm:flex">
 			{#if bets.length === 0}
 				<div />
 			{:else}
