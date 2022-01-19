@@ -2,7 +2,7 @@
 	import WheelItem from './WheelItem.svelte';
 	import Timer from './Timer.svelte';
 	import { animate, Motion, useMotionValue } from 'svelte-motion';
-	import { rouletteContext } from './Roulette.context';
+	import { rouletteContext } from '../state/game';
 	import { writable } from 'svelte/store';
 
 	const ROULETTE_SPOTS = 38;
@@ -23,10 +23,11 @@
 	isSpinning.subscribe((value) => {
 		if ($rouletteContext.game === null) return;
 		if (value) {
-			const rotation = radToDeg(thetaPositions[$rouletteContext.game.rollValue] + 0.08);
+			const rotation = radToDeg(
+				thetaPositions[$rouletteContext.game.rollValue] + 0.08
+			);
 			animation = animate(rotate, rotation + 720, {
 				type: 'tween',
-				bounce: 0.05,
 				duration: 7.5,
 				onComplete: () => {
 					animation = {};

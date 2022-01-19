@@ -19,18 +19,22 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
-		"baseUrl": "./svelte-frontend",
+		"baseUrl": ".",
 		"allowJs": true,
 		"checkJs": true,
 		"paths": {
-			"$lib": ["src/lib"],
-			"$lib/*": ["src/lib/*"]
+			"$libs/*": ["src/libs/*"],
+			"$games/*": ["src/games/*"],
+			"$components/*": ["src/components/*"],
+			"$generated/*": ["src/generated/*"],
+			"$icons/*": ["src/icons/*"],
+			"pixi.js": ["node_modules/pixi.js/index.d.ts"]
 		}
 	},
 	"include": [
-      "src/**/*.d.ts",
-      "src/**/*.js",
-      "src/**/*.ts",
-      "src/**/*.svelte"
-    ]
+		"src/**/*.d.ts",
+		"src/**/*.js",
+		"src/**/*.ts",
+		"src/**/*.svelte"
+	]
 }

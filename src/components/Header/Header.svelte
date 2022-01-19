@@ -11,6 +11,10 @@
 
 	const rotation = spring(0);
 
+	isOpen.subscribe(open => {
+		rotation.update(() => open ? 0 : 180);
+	});
+
 	function handleClick() {
 		toggleSidebar();
 		if ($isOpen) {

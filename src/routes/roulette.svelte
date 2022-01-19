@@ -1,28 +1,29 @@
 <script lang="ts">
-	import Wheel from '../components/Roulette/Wheel.svelte';
+	import Wheel from '../games/Roulette/Wheel/Wheel.svelte';
 	import RecentRolls from '../components/Roulette/RecentRolls.svelte';
 	import { operationStore, query, subscription } from '@urql/svelte';
 	import {
 		GetLatestGameDocument,
+		GetLatestGameQuery,
 		RouletteGameCreatedDocument,
 		RouletteGameCreatedSubscription,
 		RouletteGameUpdatedDocument,
-		RouletteGameUpdatedSubscription,
-		GetLatestGameQuery
-	} from '../generated/graphql.ts';
+		RouletteGameUpdatedSubscription
+	} from '$generated/graphql';
 	import {
-		updateRouletteGame,
-		rouletteContext,
 		groupRouletteBets,
-		updateRouletteBets,
-		resetBets
-	} from '../components/Roulette/Roulette.context';
-	import BettingArea from '../components/Roulette/BettingArea.svelte';
-	import StarBackground from '../../static/assets/StarBackground.png';
-	import { onMount } from 'svelte';
+		resetBets,
+		rouletteContext,
+		updateRouletteGame
+	} from '../games/Roulette/state/game';
+	import BettingArea from '../games/Roulette/BetArea/BettingArea.svelte';
 
-	const gameCreation = operationStore<RouletteGameCreatedSubscription>(RouletteGameCreatedDocument);
-	const gameUpdated = operationStore<RouletteGameUpdatedSubscription>(RouletteGameUpdatedDocument);
+	const gameCreation = operationStore<RouletteGameCreatedSubscription>(
+		RouletteGameCreatedDocument
+	);
+	const gameUpdated = operationStore<RouletteGameUpdatedSubscription>(
+		RouletteGameUpdatedDocument
+	);
 	const recentGame = operationStore<GetLatestGameQuery>(
 		GetLatestGameDocument,
 		{
@@ -30,18 +31,21 @@
 				gameType: 'roulette'
 			}
 		},
-		{ pause: $rouletteContext.game !== null, requestPolicy: 'network-only' }
+		{
+			pause: $rouletteContext.game !== null,
+			requestPolicy: 'network-only'
+		}
 	);
 
 	const handleSubscription = (messages = [], data) => {
 		if (data.rouletteGameCreated) {
 			updateRouletteGame(data.rouletteGameCreated);
 			resetBets();
-			return data.rouletteGameCreated
+			return data.rouletteGameCreated;
 		}
 		if (data.rouletteGameUpdated) {
 			updateRouletteGame(data.rouletteGameUpdated);
-			return data.rouletteGameUpdated
+			return data.rouletteGameUpdated;
 		}
 	};
 
@@ -52,6 +56,8 @@
 		if (data && data.getLatestGame) {
 			if ($rouletteContext.game === null) {
 				updateRouletteGame(data.getLatestGame.game);
+				// TODO: FIX TYPES
+				// @ts-ignore
 				groupRouletteBets(data.getLatestGame.currentBets);
 			}
 		}
@@ -83,7 +89,9 @@
 		position: relative;
 		background: no-repeat center center;
 		z-index: 1;
+		overflow: hidden;
 	}
+
 	.roulette-wrapper::before {
 		content: '';
 		position: absolute;
@@ -94,6 +102,7 @@
 		z-index: -1;
 		background: url('/assets/StarBackground.png');
 	}
+
 	.content {
 		display: flex;
 		flex-direction: column;

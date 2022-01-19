@@ -1,7 +1,7 @@
 <script lang="ts">
-	import BluePlanet from '../../icons/BluePlanet.svg';
-	import OrangePlanet from '../../icons/OrangePlanet.svg';
-	import PurplePlanet from '../../icons/PurplePlanet.svg';
+	import BluePlanet from '$icons/BluePlanet.svg';
+	import OrangePlanet from '$icons/OrangePlanet.svg';
+	import PurplePlanet from '$icons/PurplePlanet.svg';
 
 	export let position: number;
 	export let index: number;

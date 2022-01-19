@@ -1,10 +1,8 @@
 import {
 	createClient,
-	debugExchange,
 	dedupExchange,
 	fetchExchange,
 	gql,
-	subscription,
 	subscriptionExchange
 } from '@urql/svelte';
 import { cacheExchange } from '@urql/exchange-graphcache';
@@ -12,10 +10,12 @@ import Cookies from 'js-cookie';
 import { createClient as createWSClient } from 'graphql-ws';
 import ws from 'websocket';
 import { v4 as uuid } from 'uuid';
-import type { RouletteGameUpdatedSubscription, UserEventSubscription } from '../generated/graphql';
+import type {
+	RouletteGameUpdatedSubscription,
+	UserEventSubscription
+} from '../generated/graphql';
 import { devtoolsExchange } from '@urql/devtools';
 import { GetRecentGamesDocument } from '../generated/graphql';
-import { mode } from '$app/env';
 
 let { w3cwebsocket } = ws;
 
@@ -52,7 +52,12 @@ const createUrqlClient = async (args?: any) =>
 				},
 				updates: {
 					Subscription: {
-						userEvent: (result: UserEventSubscription, args, cache, info) => {
+						userEvent: (
+							result: UserEventSubscription,
+							args,
+							cache,
+							info
+						) => {
 							const fragment = gql`
 								fragment balance on User {
 									_id
@@ -61,7 +66,11 @@ const createUrqlClient = async (args?: any) =>
 							`;
 							cache.writeFragment(fragment, result.userEvent.user);
 						},
-						rouletteGameUpdated: (result: RouletteGameUpdatedSubscription, _, cache) => {
+						rouletteGameUpdated: (
+							result: RouletteGameUpdatedSubscription,
+							_,
+							cache
+						) => {
 							if (result.rouletteGameUpdated.status !== 'finished') return;
 							cache.updateQuery(
 								{

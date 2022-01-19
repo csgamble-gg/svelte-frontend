@@ -1,6 +1,6 @@
 const config = {
 	// content: ['./src/**/*.{html,js,svelte,ts}', "./src/**/**/*.svelte"],
-	content: ['./src/**/*.{html,js,svelte,ts}', "./src/**/**/*.svelte"],
+	content: ['./src/**/*.{html,js,svelte,ts}', './src/**/**/*.svelte'],
 	purge: ['./src/**/*.svelte', './src/**/*.css', './src/**/**/*.svelte'],
 	mode: 'jit',
 	theme: {
@@ -8,7 +8,9 @@ const config = {
 			colors: {
 				primaryBg: '#141826',
 				foreground: '#242B43',
-				lightblue: '#9CBBFF'
+				lightblue: '#9CBBFF',
+				lightBlue10: 'rgba(156, 187, 255, 0.1)',
+				brown: '#574600'
 			},
 			fontFamily: {
 				sans: ['Poppins']
@@ -18,7 +20,7 @@ const config = {
 			}
 		},
 		backgroundImage: {
-			purplePlanet: "url('/assets/BluePlanet.svg')"
+			purplePlanet: 'url(\'/assets/BluePlanet.svg\')'
 		}
 	},
 

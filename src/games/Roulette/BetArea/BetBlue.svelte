@@ -1,29 +1,39 @@
 <script lang="ts">
-	import BackgroundButton from '../generics/BackgroundButton.svelte';
-	import People from '../../icons/svgs/People/People.svelte';
-	import Divider from '../generics/Divider.svelte';
-	import OpaqueGem from '../../icons/svgs/Gem/OpaqueGem.svelte';
+	import BackgroundButton from '../../../components/generics/BackgroundButton.svelte';
+	import People from '../../../icons/svgs/People/People.svelte';
+	import Divider from '../../../components/generics/Divider.svelte';
+	import OpaqueGem from '../../../icons/svgs/Gem/OpaqueGem.svelte';
 	import { slide } from 'svelte/transition';
 	import { quintInOut } from 'svelte/easing';
 
 	import { mutation } from '@urql/svelte';
-	import { CreateBetDocument, CreateBetMutation } from '../../generated/graphql';
-	import { betAmount, rouletteContext, sumBets } from './Roulette.context';
+	import {
+		CreateBetDocument,
+		CreateBetMutation
+	} from '$generated/graphql';
+	import { betAmount, rouletteContext, sumBets } from '../state/game';
 	import Big from 'big.js';
-	import { convertPenniesToDollars } from '../../libs/convertToPennies.ts';
+	import { convertPenniesToDollars } from '$libs/currencyConversion';
 
 	const createBet = mutation<CreateBetMutation>({
 		query: CreateBetDocument
 	});
 
+	let isLoading = false;
+
 	async function handleCreateBet() {
+		isLoading = true;
 		await createBet({
 			input: {
 				betAmount: $betAmount,
 				gameId: $rouletteContext.game.gameId,
-				selections: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37]
+				selections: [
+					1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33,
+					35, 37
+				]
 			}
 		}).then(({ data }) => {
+			isLoading = false;
 			if (!data) return;
 			if (!data.createBet.success) {
 			}
@@ -32,7 +42,9 @@
 
 	$: bets = $rouletteContext.currentBets['blue'];
 	$: sum = sumBets(bets);
-	$: isSpinning = $rouletteContext.game ? $rouletteContext.game.status === 'started' : false;
+	$: isSpinning = $rouletteContext.game
+		? $rouletteContext.game.status === 'started'
+		: false;
 </script>
 
 <div class="px-3 pb-4 relative flex flex-col rounded-large w-full card">
@@ -45,7 +57,7 @@
 			background="blue"
 			onClick={handleCreateBet}
 			title="Place Bet"
-			disabled={isSpinning}
+			disabled={isLoading || isSpinning}
 		/>
 		<div class="flex py-4 gap-6">
 			<div class="flex">
@@ -54,7 +66,9 @@
 			</div>
 			<div class="flex">
 				<OpaqueGem color="blue" />
-				<span class="text-white font-semibold pl-3">{convertPenniesToDollars(sum, 2)}</span>
+				<span class="text-white font-semibold pl-3"
+					>{convertPenniesToDollars(sum, 2)}</span
+				>
 			</div>
 		</div>
 		<Divider />
@@ -63,7 +77,10 @@
 				<div />
 			{:else}
 				{#each bets as bet}
-					<div class="flex items-center" transition:slide={{ easing: quintInOut }}>
+					<div
+						class="flex items-center"
+						transition:slide={{ easing: quintInOut }}
+					>
 						<img
 							class="rounded mr-3"
 							src={bet.user.avatar}
@@ -72,12 +89,14 @@
 							alt="user avatar"
 							loading="eager"
 						/>
-						<span class="text-white font-semibold text-ellipsis overflow-hidden"
+						<span
+							class="text-white font-semibold text-ellipsis overflow-hidden"
 							>{bet.user.displayName}</span
 						>
 						<div class="flex flex-grow justify-end gap-2">
 							<OpaqueGem color="blue" />
-							<span class="text-white font-semibold">{new Big(bet.amount).div(100).toFixed(2)}</span
+							<span class="text-white font-semibold"
+								>{new Big(bet.amount).div(100).toFixed(2)}</span
 							>
 						</div>
 					</div>
@@ -91,7 +110,11 @@
 	.card {
 		min-width: 140px;
 		max-width: 495px;
-		background: linear-gradient(180deg, #181d2d 0%, rgba(24, 29, 45, 0.4) 100%);
+		background: linear-gradient(
+			180deg,
+			#181d2d 0%,
+			rgba(24, 29, 45, 0.4) 100%
+		);
 		z-index: 1;
 		max-height: 600px;
 	}
@@ -119,6 +142,7 @@
 		font-weight: bold;
 		line-height: 1;
 		background: -webkit-linear-gradient(#32937b, #25464f);
+		background-clip: text;
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 	}
@@ -128,6 +152,7 @@
 		font-weight: bold;
 		line-height: 1.45;
 		background: -webkit-linear-gradient(#32937b, #25464f);
+		background-clip: text;
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 	}

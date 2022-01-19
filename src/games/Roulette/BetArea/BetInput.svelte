@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Gem from '../../icons/svgs/Gem/Gem.svelte';
-	import { betAmount } from './Roulette.context';
+	import Gem from '../../../icons/svgs/Gem/Gem.svelte';
+	import { betAmount } from '../state/game';
 
 	function handleClick(e) {
 		const value = parseInt(e.target.value);
@@ -8,7 +8,7 @@
 			$betAmount = $betAmount + value;
 		}
 		if (e.target.value === 'x2') {
-			betAmount.set(betAmount * 2);
+			betAmount.set($betAmount * 2);
 		}
 		if (e.target.value === 'MAX') {
 			$betAmount = $betAmount;
@@ -25,26 +25,54 @@
 				<Gem class="mr-2" color="green" />
 				<input
 					bind:value={$betAmount}
-					type="number"
-					placeholder="0.00"
 					class="border-none outline-none bg-transparent text-white placeholder:text-white font-semibold"
+					placeholder="0.00"
+					type="number"
 				/>
 			</span>
 		</div>
 		<div class="absolute overflow-hidden w-auto right-4">
 			<div class="mx-2">
-				<button type="button" class="bet-amount-button " value={1} on:click={handleClick}>+1</button>
-				<button type="button" class="bet-amount-button" value={10} on:click={handleClick}
-					>+10</button
+				<button
+					class="bet-amount-button "
+					on:click={handleClick}
+					type="button"
+					value={1}
 				>
-				<button type="button" class="bet-amount-button hidden md:inline" value={100} on:click={handleClick}
-					>+100</button
+					+1
+				</button>
+				<button
+					class="bet-amount-button"
+					on:click={handleClick}
+					type="button"
+					value={10}
 				>
-				<button type="button" class="bet-amount-button hidden md:inline" value="x2" on:click={handleClick}>x2</button
+					+10
+				</button>
+				<button
+					class="bet-amount-button hidden md:inline"
+					on:click={handleClick}
+					type="button"
+					value={100}
 				>
-				<button type="button" class="bet-amount-button hidden md:inline" value="MAX" on:click={handleClick}
-					>MAX</button
+					+100
+				</button>
+				<button
+					class="bet-amount-button hidden md:inline"
+					on:click={handleClick}
+					type="button"
+					value="x2"
 				>
+					x2
+				</button>
+				<button
+					class="bet-amount-button hidden md:inline"
+					on:click={handleClick}
+					type="button"
+					value="MAX"
+				>
+					MAX
+				</button>
 			</div>
 		</div>
 	</div>
@@ -57,13 +85,18 @@
 				rgba(94, 209, 225, 0.15) 0%,
 				rgba(16, 128, 233, 0) 100%
 			),
-			linear-gradient(rgba(34, 40, 64, 0.12) 0%, rgba(61, 73, 118, 0.15) 100%);
+			linear-gradient(
+				rgba(34, 40, 64, 0.12) 0%,
+				rgba(61, 73, 118, 0.15) 100%
+			);
 		padding: 20px 15px;
+		backdrop-filter: blur(80px);
 	}
 
 	.bet-amount-button {
 		background: rgba(58, 87, 132, 0.15);
-		box-shadow: rgba(0, 0, 0, 0.07) 0 14px 21px, rgba(58, 113, 194, 0.15) 1px 1px 0 inset;
+		box-shadow: rgba(0, 0, 0, 0.07) 0 14px 21px,
+			rgba(58, 113, 194, 0.15) 1px 1px 0 inset;
 		border-radius: 6px;
 		border: none;
 		height: 48px;

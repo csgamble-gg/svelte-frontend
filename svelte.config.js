@@ -1,5 +1,6 @@
 import adapter from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
+import { resolve } from 'path';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -16,7 +17,16 @@ const config = {
 			optimizeDeps: {
 				exclude: ['@urql/svelte']
 			},
-			mode: process.env.ENVIRONMENT || 'development'
+			mode: process.env.ENVIRONMENT || 'development',
+			resolve: {
+				alias: {
+					$games: resolve('src/games'),
+					$components: resolve('./src/components'),
+					$libs: resolve('./src/libs'),
+					$generated: resolve('./src/generated'),
+					$icons: resolve('./src/icons')
+				}
+			}
 		}
 	}
 };

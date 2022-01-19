@@ -1,9 +1,6 @@
 <script lang="ts">
-	import roulette from '../../routes/roulette.svelte';
-
-	export const ssr = false;
 	import { differenceInMilliseconds, parseISO } from 'date-fns';
-	import { rouletteContext } from './Roulette.context';
+	import { rouletteContext } from '../state/game';
 	import { readable, writable } from 'svelte/store';
 	import { fade } from 'svelte/transition';
 	import { browser } from '$app/env';
@@ -16,7 +13,12 @@
 		if (!$rouletteContext.game) return;
 		let animationFrame;
 		const next = () => {
-			set(calculateTimeLeft($rouletteContext.game.startsAt, new Date().toISOString()));
+			set(
+				calculateTimeLeft(
+					$rouletteContext.game.startsAt,
+					new Date().toISOString()
+				)
+			);
 			animationFrame = requestAnimationFrame(next);
 		};
 		if (browser) {
@@ -25,7 +27,6 @@
 		}
 	});
 </script>
-
 
 <div class="flex flex-col align-center items-center">
 	{#if $timer > 0}

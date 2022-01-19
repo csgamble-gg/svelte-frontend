@@ -1,15 +1,46 @@
 /* Write your global styles here, in PostCSS syntax */
 
-main::-webkit-scrollbar-thumb {
-	background-color: #54cca8;
-	border-radius: 15px;
+*::-webkit-scrollbar-thumb {
+    background-color: #54cca8;
+    border-radius: 15px;
 }
 
-main::-webkit-scrollbar {
-	width: 0.1875rem;
-	height: 0.1875rem;
+*::-webkit-scrollbar {
+    width: 0.1875rem;
+    height: 0.1875rem;
 }
-
 
 :root {
+}
+
+.game-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-radius: 24px;
+    height: 100%;
+    border: 1px solid #1a1f31;
+    position: relative;
+    background: no-repeat center center;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.game-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0.4;
+    z-index: -1;
+    background: url('/assets/StarBackground.png');
+}
+
+.game-content {
+    display: flex;
+    flex-direction: column;
+    max-width: 1700px;
+    align-self: center;
+    width: 100%;
 }

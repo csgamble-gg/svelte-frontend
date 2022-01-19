@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store';
-import type { Bet, RouletteGame } from '../../generated/graphql';
+import type { Bet, RouletteGame } from '$generated/graphql';
 import Big from 'big.js';
 
 interface CurrentBets {
@@ -83,21 +83,26 @@ const groupRouletteBets = (bets: Bet[]) => {
 			currentBets: {
 				...currentContext.currentBets,
 				[val]: Object.values(
-					groupedBetsByColor[val].reduce((acc: { [key: string]: any }, curr: any) => {
-						if (!acc) return curr;
-						if (acc[curr.user._id]) {
-							acc[curr.user._id] = {
-								...curr,
-								amount: new Big(acc[curr.user._id].amount).plus(curr.amount).toNumber()
-							};
-						} else {
-							acc[curr.user._id] = {
-								...curr
-							};
-						}
+					groupedBetsByColor[val].reduce(
+						(acc: { [key: string]: any }, curr: any) => {
+							if (!acc) return curr;
+							if (acc[curr.user._id]) {
+								acc[curr.user._id] = {
+									...curr,
+									amount: new Big(acc[curr.user._id].amount)
+										.plus(curr.amount)
+										.toNumber()
+								};
+							} else {
+								acc[curr.user._id] = {
+									...curr
+								};
+							}
 
-						return acc;
-					}, {})
+							return acc;
+						},
+						{}
+					)
 				)
 			}
 		}));

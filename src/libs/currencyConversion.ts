@@ -1,6 +1,9 @@
 import Big from 'big.js';
 
-const convertPenniesToDollars = (pennies: number, fixed?: number): number | string => {
+const convertPenniesToDollars = (
+	pennies: number,
+	fixed?: number
+): number | string => {
 	const num = new Big(pennies).div(100);
 	return fixed ? num.toFixed(fixed) : num.toNumber();
 };

@@ -1,15 +1,23 @@
 <script lang="ts">
 	import BetInput from './BetInput.svelte';
-	import Bet2xBlue from './Bet2xBlue.svelte';
-	import { BetCreatedDocument, BetCreatedSubscription } from '../../generated/graphql';
+	import BetBlue from './BetBlue.svelte';
+	import {
+		BetCreatedDocument,
+		BetCreatedSubscription
+	} from '$generated/graphql';
 	import { operationStore, subscription } from '@urql/svelte';
-	import { getRouletteColorFromSelections, rouletteContext } from './Roulette.context';
-	import Bet2xPurple from './Bet2xPurple.svelte';
+	import {
+		getRouletteColorFromSelections,
+		rouletteContext
+	} from '../state/game';
 	import BetOrange from './BetOrange.svelte';
 	import Big from 'big.js';
+	import BetPurple from './BetPurple.svelte';
 
 	const handleBetCreated = (messages = [], data) => {
-		const betColor = getRouletteColorFromSelections(data.betCreated.selections);
+		const betColor = getRouletteColorFromSelections(
+			data.betCreated.selections
+		);
 		let rawBet = data.betCreated;
 
 		let newData = [...$rouletteContext.currentBets[betColor], rawBet];
@@ -20,7 +28,9 @@
 				if (acc[curr.user._id]) {
 					acc[curr.user._id] = {
 						...curr,
-						amount: new Big(acc[curr.user._id].amount).plus(curr.amount).toNumber()
+						amount: new Big(acc[curr.user._id].amount)
+							.plus(curr.amount)
+							.toNumber()
 					};
 				} else {
 					acc[curr.user._id] = {
@@ -44,16 +54,19 @@
 		return data;
 	};
 
-	const betCreated = operationStore<BetCreatedSubscription>(BetCreatedDocument);
+	const betCreated =
+		operationStore<BetCreatedSubscription>(BetCreatedDocument);
 
 	subscription(betCreated, handleBetCreated);
 </script>
 
 <div class="px-4 my-14 z-10">
 	<BetInput />
-	<div class="pt-16 flex flex-row sm:flex-nowrap flex-wrap gap-x-7 gap-y-7 justify-center">
-		<Bet2xPurple />
-		<Bet2xBlue />
+	<div
+		class="pt-16 flex flex-row sm:flex-nowrap flex-wrap gap-x-7 gap-y-7 justify-center"
+	>
+		<BetPurple />
+		<BetBlue />
 		<BetOrange />
 	</div>
 </div>
