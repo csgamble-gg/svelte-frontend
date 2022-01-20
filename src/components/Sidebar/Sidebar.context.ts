@@ -1,7 +1,9 @@
 import { get, writable } from 'svelte/store';
 import { browser } from '$app/env';
 
-const storedSidebarState = browser ? localStorage.getItem('sidebarOpen') : 'true';
+const storedSidebarState = browser
+	? localStorage.getItem('sidebarOpen')
+	: 'true';
 
 const isOpen = writable(JSON.parse(storedSidebarState));
 

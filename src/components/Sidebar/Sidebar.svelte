@@ -10,15 +10,20 @@
 	import { browser } from '$app/env';
 
 	const secondRoutes = [
-		'Roulette',
-		'Jackpot',
-		'Battles',
-		'Crash',
-		'Upgrade'
+		{ name: 'Roulette', route: 'roulette' },
+		{ name: 'Jackpot', route: 'jackpot' },
+		{ name: 'Battles', route: 'battles' },
+		{ name: 'Crash', route: 'crash' },
+		{ name: 'Upgrade', route: 'upgrade' }
 	];
-	const firstRoutes = ['All Games', 'Bonuses', 'FAQ'];
+	const firstRoutes = [
+		{ name: 'All Games', route: 'games' },
+		{ name: 'Bonuses', route: 'bonus' },
+		{ name: 'FAQ', route: 'faq' },
+		{ name: 'Provably Fair', route: 'fairness' }
+	];
 
-	const tweenWidth = tweened(208, { duration: 400, easing: cubicOut });
+	const tweenWidth = tweened(0, { duration: 400, easing: cubicOut });
 	const tweenOpacity = tweened(1, { duration: 400, easing: cubicOut });
 	const tweenPadding = tweened(15, { duration: 400, easing: cubicOut });
 
@@ -34,6 +39,8 @@
 			tweenPadding.update(() => 0);
 		}
 	});
+
+	const handlePressRoute = () => {};
 </script>
 
 <MediaQuery query="(min-width: 768px)" let:matches>
@@ -52,36 +59,32 @@
 			<div class="mb-1">
 				<Divider />
 			</div>
-			<Flex class="flex-col">
-				{#each firstRoutes as route, index}
-					<Flex class="mt-5 mb-2">
+			<div class="flex flex-col items-start justify-start">
+				{#each firstRoutes as route}
+					<div class="flex mt-5 mb-2">
 						<span>
 							<Box width="20px" height="20px" />
 						</span>
-						<a href={route.toLowerCase()} class="ml-4 text-white"
-							>{route}</a
-						>
-					</Flex>
+						<a href={route.route} class="ml-4 text-white">{route.name}</a>
+					</div>
 				{/each}
 				<div class="mt-3 mb-1">
 					<Divider />
 				</div>
 				{#each secondRoutes as route}
-					<Flex class="mt-5 mb-2">
+					<div class="flex mt-5 mb-2">
 						<span>
 							<Box width="20px" height="20px" />
 						</span>
-						<a href={route.toLowerCase()} class="ml-4 text-white"
-							>{route}</a
-						>
-					</Flex>
+						<a href={route.route} class="ml-4 text-white">{route.name}</a>
+					</div>
 				{/each}
-			</Flex>
+			</div>
 		</div>
 	{/if}
 </MediaQuery>
 
-<MediaQuery query="(min-width: 425px) and (max-width: 767px)" let:matches>
+<MediaQuery query="(max-width: 767px)" let:matches>
 	{#if matches}
 		<div
 			class="flex flex-col pl-2 fixed z-10 h-screen bg-primaryBg"
@@ -99,31 +102,27 @@
 			<div class="mb-1">
 				<Divider />
 			</div>
-			<Flex class="flex-col items-center">
+			<div class="flex-col items-center justify-center">
 				{#each firstRoutes as route, index}
-					<Flex class="mt-5 mb-2">
+					<div class="flex items-start mt-5 mb-2 justify-center">
 						<span>
 							<Box width="20px" height="20px" />
 						</span>
-						<a href={route.toLowerCase()} class="ml-4 text-white"
-							>{route}</a
-						>
-					</Flex>
+						<a href={route.route} class="ml-4 text-white">{route.name}</a>
+					</div>
 				{/each}
 				<div class="mt-3 mb-1">
 					<Divider />
 				</div>
 				{#each secondRoutes as route}
-					<Flex class="mt-5 mb-2">
+					<div class="flex mt-5 mb-2 justify-center">
 						<span>
 							<Box width="20px" height="20px" />
 						</span>
-						<a href={route.toLowerCase()} class="ml-4 text-white"
-							>{route}</a
-						>
-					</Flex>
+						<a href={route.route} class="ml-4 text-white">{route.name}</a>
+					</div>
 				{/each}
-			</Flex>
+			</div>
 		</div>
 	{/if}
 </MediaQuery>
