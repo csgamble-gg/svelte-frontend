@@ -13,24 +13,25 @@ import { v4 as uuid } from 'uuid';
 import type {
 	RouletteGameUpdatedSubscription,
 	UserEventSubscription
-} from '../generated/graphql';
+} from '$generated/graphql';
 import { devtoolsExchange } from '@urql/devtools';
-import { GetRecentGamesDocument } from '../generated/graphql';
+import { GetRecentGamesDocument } from '$generated/graphql';
+import { createSubscriptionClient } from './createWsClient';
 
 let { w3cwebsocket } = ws;
 
-const sessionId = uuid();
+export const sessionId = uuid();
 
-const subscriptionClient = createWSClient({
-	url: import.meta.env.VITE_SUBSCRIPTIONS_URL as string,
-	webSocketImpl: w3cwebsocket,
-	lazy: false,
-	keepAlive: 10000,
-	connectionParams: () => ({
-		sessionId: sessionId
-	})
-});
+// const subscriptionClient = createWSClient({
+// 	url: import.meta.env.VITE_SUBSCRIPTIONS_URL as string,
+// 	webSocketImpl: w3cwebsocket,
+// 	keepAlive: 10_000,
+// 	connectionParams: () => ({
+// 		sessionId: sessionId
+// 	})
+// })
 
+const subscriptionClient = createSubscriptionClient();
 const createUrqlClient = async (args?: any) =>
 	await createClient({
 		...args,

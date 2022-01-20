@@ -4,7 +4,7 @@
 	import Header from '../components/Header/Header.svelte';
 	import { operationStore } from '@urql/svelte';
 	import { browser, dev } from '$app/env';
-	import urqlClient from '../libs/urqlClient';
+	import urqlClient from '$libs/urql/urqlClient';
 	import { get } from 'svelte/store';
 
 	/**
@@ -51,6 +51,7 @@
 </script>
 
 <script lang="ts">
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { setClient } from '@urql/svelte';
 
 	/**
@@ -66,6 +67,7 @@
 
 <div class="bg-primaryBg h-screen w-screen flex flex-row">
 	<Sidebar />
+	<SvelteToast />
 	<div class="flex flex-col w-full min-w-0 overflow-x-hidden">
 		<nav>
 			<Header />
