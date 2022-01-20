@@ -1,7 +1,9 @@
 import { createClient } from 'graphql-ws';
 import type { Client, ClientOptions } from 'graphql-ws';
 import { sessionId } from './urqlClient';
-import { w3cwebsocket } from 'websocket';
+import ws from 'websocket';
+
+const { w3cwebsocket } = ws;
 
 let activeSocket,
 	pingSentAt = 0,
