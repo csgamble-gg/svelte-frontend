@@ -1,19 +1,18 @@
 <script lang="ts">
-	import BackgroundButton from '../../../components/generics/BackgroundButton.svelte';
-	import People from '../../../icons/svgs/People/People.svelte';
-	import Divider from '../../../components/generics/Divider.svelte';
-	import OpaqueGem from '../../../icons/svgs/Gem/OpaqueGem.svelte';
-
-	import { mutation } from '@urql/svelte';
-	import { slide } from 'svelte/transition';
-	import { quintInOut } from 'svelte/easing';
 	import {
 		CreateBetDocument,
 		CreateBetMutation
 	} from '$generated/graphql';
-	import { betAmount, rouletteContext, sumBets } from '../state/game';
-	import Big from 'big.js';
 	import { convertPenniesToDollars } from '$libs/currencyConversion';
+	import { mutation } from '@urql/svelte';
+	import Big from 'big.js';
+	import { quintInOut } from 'svelte/easing';
+	import { slide } from 'svelte/transition';
+	import BackgroundButton from '../../../components/generics/BackgroundButton.svelte';
+	import Divider from '../../../components/generics/Divider.svelte';
+	import OpaqueGem from '../../../icons/svgs/Gem/OpaqueGem.svelte';
+	import People from '../../../icons/svgs/People/People.svelte';
+	import { betAmount, currentBets, state, sumBets } from '../state/game';
 
 	const createBet = mutation<CreateBetMutation>({
 		query: CreateBetDocument
@@ -26,7 +25,7 @@
 		await createBet({
 			input: {
 				betAmount: $betAmount,
-				gameId: $rouletteContext.game.gameId,
+				gameId: $state.gameId,
 				selections: [
 					0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 30, 32, 34,
 					36, 38
@@ -40,11 +39,9 @@
 		});
 	}
 
-	$: bets = $rouletteContext.currentBets['purple'];
+	$: bets = $currentBets['purple'];
 	$: sum = sumBets(bets);
-	$: isSpinning = $rouletteContext.game
-		? $rouletteContext.game.status === 'started'
-		: false;
+	$: isSpinning = $state ? $state.status === 'started' : false;
 </script>
 
 <div class="px-3 pb-4 relative flex flex-col rounded-large w-full card">

@@ -165,7 +165,7 @@ export type Bet = {
   amount: Scalars['Float'];
   gameId: Scalars['ID'];
   selections: Array<Scalars['Int']>;
-  user: User;
+  user: UserInfo;
 };
 
 export type BuyJackpotTicketInput = {
@@ -177,6 +177,16 @@ export type BuyJackpotTicketMutationResult = {
   __typename?: 'BuyJackpotTicketMutationResult';
   message: Scalars['String'];
   success: Scalars['Boolean'];
+};
+
+export type CrashGame = {
+  __typename?: 'CrashGame';
+  _id: Scalars['ID'];
+  createdAt: Scalars['Date'];
+  elapsed: Scalars['Int'];
+  multiplier: Scalars['Float'];
+  startsAt: Scalars['DateTime'];
+  status: Scalars['String'];
 };
 
 export type CreateBetInput = {
@@ -309,6 +319,7 @@ export type Query = {
   getRecentGames: Array<RouletteGame>;
   getSkinQualities: Array<Scalars['String']>;
   getSkins: Array<Maybe<Skin>>;
+  rouletteInitial: RouletteIntitial;
   testError: Scalars['Boolean'];
 };
 
@@ -332,6 +343,13 @@ export type QueryGetSkinsArgs = {
   input?: InputMaybe<GetSkinsInput>;
 };
 
+export type RouletteBets = {
+  __typename?: 'RouletteBets';
+  blue: Array<Maybe<Bet>>;
+  orange: Array<Maybe<Bet>>;
+  purple: Array<Maybe<Bet>>;
+};
+
 export type RouletteGame = {
   __typename?: 'RouletteGame';
   _id: Scalars['ID'];
@@ -340,6 +358,19 @@ export type RouletteGame = {
   rollValue?: Maybe<Scalars['Float']>;
   startsAt: Scalars['DateTime'];
   status: Scalars['String'];
+};
+
+export type RouletteIntitial = {
+  __typename?: 'RouletteIntitial';
+  currentBets: RouletteBets;
+  pastGames: Array<RouletteGame>;
+  rouletteGame: RouletteGame;
+};
+
+export type RouletteSubscriptionResult = {
+  __typename?: 'RouletteSubscriptionResult';
+  currentBets: RouletteBets;
+  rouletteGame: RouletteGame;
 };
 
 export type Skin = {
@@ -362,11 +393,11 @@ export type Skin = {
 export type Subscription = {
   __typename?: 'Subscription';
   betCreated: Bet;
+  crashGame: CrashGame;
   gameCreated: CreatedGameResult;
   gameUpdated: UpdatedGameResult;
   jackpotGameUpdated: JackpotGameUpdatedResult;
-  rouletteGameCreated: RouletteGame;
-  rouletteGameUpdated: RouletteGame;
+  rouletteGame: RouletteSubscriptionResult;
   updateGame: UpdatedGameResult;
   userError: UserErrorSubscription;
   userEvent: UserEventResult;
@@ -399,32 +430,30 @@ export type UserEventResult = {
   user: User;
 };
 
+export type UserInfo = {
+  __typename?: 'UserInfo';
+  _id: Scalars['ID'];
+  avatar?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
+};
+
 export type UserWallet = {
   __typename?: 'UserWallet';
   balance: Scalars['Int'];
   type: Scalars['String'];
 };
 
-export type GetRecentGamesQueryVariables = Exact<{
-  input: GetRecentGamesInput;
-}>;
+export type CrashSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRecentGamesQuery = { __typename?: 'Query', getRecentGames: Array<{ __typename?: 'RouletteGame', _id: string, createdAt: any, rollValue?: number | null | undefined, status: string, gameId: string }> };
+export type CrashSubscriptionSubscription = { __typename?: 'Subscription', crashGame: { __typename?: 'CrashGame', _id: string, status: string, elapsed: number, multiplier: number } };
 
-export type GetLatestGameQueryVariables = Exact<{
-  input: GetLatestGameInput;
-}>;
+export type UserInfoFragment = { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined };
 
-
-export type GetLatestGameQuery = { __typename?: 'Query', getLatestGame: { __typename?: 'LatestGame', game: { __typename?: 'RouletteGame', _id: string, createdAt: any, status: string, gameId: string, rollValue?: number | null | undefined, startsAt: any }, currentBets: Array<{ __typename?: 'Bet', _id: string, gameId: string, selections: Array<number>, amount: number, user: { __typename?: 'User', displayName: string, avatar?: string | null | undefined, _id: string } } | null | undefined> } };
-
-export type GetBetsForGameQueryVariables = Exact<{
-  input: GetBetsForGameInput;
-}>;
+export type RouletteInitialQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBetsForGameQuery = { __typename?: 'Query', getBetsForGame: Array<{ __typename?: 'Bet', _id: string, gameId: string, selections: Array<number>, amount: number, user: { __typename?: 'User', displayName: string, avatar?: string | null | undefined, _id: string } }> };
+export type RouletteInitialQuery = { __typename?: 'Query', rouletteInitial: { __typename?: 'RouletteIntitial', rouletteGame: { __typename?: 'RouletteGame', _id: string, createdAt: any, gameId: string, rollValue?: number | null | undefined, startsAt: any, status: string }, currentBets: { __typename?: 'RouletteBets', orange: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, purple: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, blue: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined> }, pastGames: Array<{ __typename?: 'RouletteGame', _id: string, createdAt: any, gameId: string, rollValue?: number | null | undefined }> } };
 
 export type CreateBetMutationVariables = Exact<{
   input: CreateBetInput;
@@ -433,20 +462,10 @@ export type CreateBetMutationVariables = Exact<{
 
 export type CreateBetMutation = { __typename?: 'Mutation', createBet: { __typename?: 'CreateBetMutationResult', success: boolean, error?: string | null | undefined, user?: { __typename?: 'User', _id: string, balance: number } | null | undefined } };
 
-export type RouletteGameCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
+export type RouletteGameSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RouletteGameCreatedSubscription = { __typename?: 'Subscription', rouletteGameCreated: { __typename?: 'RouletteGame', _id: string, gameId: string, rollValue?: number | null | undefined, status: string, createdAt: any, startsAt: any } };
-
-export type RouletteGameUpdatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
-
-
-export type RouletteGameUpdatedSubscription = { __typename?: 'Subscription', rouletteGameUpdated: { __typename?: 'RouletteGame', _id: string, gameId: string, rollValue?: number | null | undefined, status: string, createdAt: any, startsAt: any } };
-
-export type BetCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
-
-
-export type BetCreatedSubscription = { __typename?: 'Subscription', betCreated: { __typename?: 'Bet', _id: string, gameId: string, selections: Array<number>, amount: number, user: { __typename?: 'User', displayName: string, avatar?: string | null | undefined, _id: string } } };
+export type RouletteGameSubscription = { __typename?: 'Subscription', rouletteGame: { __typename?: 'RouletteSubscriptionResult', rouletteGame: { __typename?: 'RouletteGame', _id: string, gameId: string, rollValue?: number | null | undefined, status: string, createdAt: any, startsAt: any }, currentBets: { __typename?: 'RouletteBets', orange: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, purple: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, blue: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined> } } };
 
 export type ErrorSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -463,58 +482,72 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type CurrentUserQuery = { __typename?: 'Query', getCurrentUser?: { __typename?: 'User', _id: string, displayName: string, avatar?: string | null | undefined, balance: number } | null | undefined };
 
-
-export const GetRecentGamesDocument = gql`
-    query getRecentGames($input: GetRecentGamesInput!) {
-  getRecentGames(input: $input) {
+export const UserInfoFragmentDoc = gql`
+    fragment UserInfo on UserInfo {
+  _id
+  displayName
+  avatar
+}
+    `;
+export const CrashSubscriptionDocument = gql`
+    subscription CrashSubscription {
+  crashGame {
     _id
-    createdAt
-    rollValue
     status
-    gameId
+    elapsed
+    multiplier
   }
 }
     `;
-export const GetLatestGameDocument = gql`
-    query getLatestGame($input: GetLatestGameInput!) {
-  getLatestGame(input: $input) {
-    game {
+export const RouletteInitialDocument = gql`
+    query RouletteInitial {
+  rouletteInitial {
+    rouletteGame {
       _id
       createdAt
-      status
       gameId
       rollValue
       startsAt
+      status
     }
     currentBets {
-      _id
-      gameId
-      selections
-      amount
-      user {
-        displayName
-        avatar
+      orange {
         _id
+        amount
+        gameId
+        selections
+        user {
+          ...UserInfo
+        }
+      }
+      purple {
+        _id
+        amount
+        gameId
+        selections
+        user {
+          ...UserInfo
+        }
+      }
+      blue {
+        _id
+        amount
+        gameId
+        selections
+        user {
+          ...UserInfo
+        }
       }
     }
-  }
-}
-    `;
-export const GetBetsForGameDocument = gql`
-    query GetBetsForGame($input: GetBetsForGameInput!) {
-  getBetsForGame(input: $input) {
-    _id
-    gameId
-    selections
-    amount
-    user {
-      displayName
-      avatar
+    pastGames {
       _id
+      createdAt
+      gameId
+      rollValue
     }
   }
 }
-    `;
+    ${UserInfoFragmentDoc}`;
 export const CreateBetDocument = gql`
     mutation createBet($input: CreateBetInput!) {
   createBet(input: $input) {
@@ -527,45 +560,49 @@ export const CreateBetDocument = gql`
   }
 }
     `;
-export const RouletteGameCreatedDocument = gql`
-    subscription RouletteGameCreated {
-  rouletteGameCreated {
-    _id
-    gameId
-    rollValue
-    status
-    createdAt
-    startsAt
-  }
-}
-    `;
-export const RouletteGameUpdatedDocument = gql`
-    subscription RouletteGameUpdated {
-  rouletteGameUpdated {
-    _id
-    gameId
-    rollValue
-    status
-    createdAt
-    startsAt
-  }
-}
-    `;
-export const BetCreatedDocument = gql`
-    subscription BetCreated {
-  betCreated {
-    _id
-    gameId
-    selections
-    amount
-    user {
-      displayName
-      avatar
+export const RouletteGameDocument = gql`
+    subscription RouletteGame {
+  rouletteGame {
+    rouletteGame {
       _id
+      gameId
+      rollValue
+      status
+      createdAt
+      startsAt
+    }
+    currentBets {
+      orange {
+        _id
+        amount
+        gameId
+        selections
+        user {
+          ...UserInfo
+        }
+      }
+      purple {
+        _id
+        amount
+        gameId
+        selections
+        user {
+          ...UserInfo
+        }
+      }
+      blue {
+        _id
+        amount
+        gameId
+        selections
+        user {
+          ...UserInfo
+        }
+      }
     }
   }
 }
-    `;
+    ${UserInfoFragmentDoc}`;
 export const ErrorDocument = gql`
     subscription Error {
   userError {
@@ -593,13 +630,10 @@ export const CurrentUserDocument = gql`
   }
 }
     `;
-export type GetRecentGamesQueryStore = OperationStore<GetRecentGamesQuery, GetRecentGamesQueryVariables>;
-export type GetLatestGameQueryStore = OperationStore<GetLatestGameQuery, GetLatestGameQueryVariables>;
-export type GetBetsForGameQueryStore = OperationStore<GetBetsForGameQuery, GetBetsForGameQueryVariables>;
+export type CrashSubscriptionSubscriptionStore = OperationStore<CrashSubscriptionSubscription, CrashSubscriptionSubscriptionVariables>;
+export type RouletteInitialQueryStore = OperationStore<RouletteInitialQuery, RouletteInitialQueryVariables>;
 export type CreateBetMutationStore = OperationStore<CreateBetMutation, CreateBetMutationVariables>;
-export type RouletteGameCreatedSubscriptionStore = OperationStore<RouletteGameCreatedSubscription, RouletteGameCreatedSubscriptionVariables>;
-export type RouletteGameUpdatedSubscriptionStore = OperationStore<RouletteGameUpdatedSubscription, RouletteGameUpdatedSubscriptionVariables>;
-export type BetCreatedSubscriptionStore = OperationStore<BetCreatedSubscription, BetCreatedSubscriptionVariables>;
+export type RouletteGameSubscriptionStore = OperationStore<RouletteGameSubscription, RouletteGameSubscriptionVariables>;
 export type ErrorSubscriptionStore = OperationStore<ErrorSubscription, ErrorSubscriptionVariables>;
 export type UserEventSubscriptionStore = OperationStore<UserEventSubscription, UserEventSubscriptionVariables>;
 export type CurrentUserQueryStore = OperationStore<CurrentUserQuery, CurrentUserQueryVariables>;

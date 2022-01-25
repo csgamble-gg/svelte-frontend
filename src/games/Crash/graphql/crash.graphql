@@ -1,0 +1,8 @@
+subscription CrashSubscription {
+	crashGame {
+		_id
+		status
+		elapsed
+		multiplier
+	}
+}

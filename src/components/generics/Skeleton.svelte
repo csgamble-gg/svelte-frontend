@@ -1,5 +1,5 @@
 <script lang='ts'>
-	export let loading: boolean = false;
+	export const loading: boolean = false;
 	export let circle: boolean = false;
 </script>
 

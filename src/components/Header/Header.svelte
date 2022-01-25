@@ -1,32 +1,30 @@
 <script lang="ts">
-	import Divider from '../generics/Divider.svelte';
-	import UserInfo from './UserInfo.svelte';
+	import { sidebarStore } from '$stores/app';
+	import { cubicOut } from 'svelte/easing';
 	import { spring } from 'svelte/motion';
-	import { isOpen, toggleSidebar } from '../Sidebar/Sidebar.context.ts';
+	import { fly } from 'svelte/transition';
+	import Caret from '../../icons/svgs/Caret/Caret.svelte';
 	import SiteLogo from '../../svgs/MainLogo.svg';
 	import SiteLogoSmall from '../../svgs/MainLogoSmall.svg';
-	import Caret from '../../icons/svgs/Caret/Caret.svelte';
-	import { fly } from 'svelte/transition';
-	import { cubicOut } from 'svelte/easing';
+	import Divider from '../generics/Divider.svelte';
+	import UserInfo from './UserInfo.svelte';
 
-	const rotation = spring(0);
+	const defaultRotation = $sidebarStore === 'visible' ? 0 : 180;
+	const rotation = spring(defaultRotation);
 
-	isOpen.subscribe(open => {
-		rotation.update(() => open ? 0 : 180);
+	sidebarStore.subscribe((val) => {
+		rotation.update(() => (val === 'visible' ? 0 : 180));
 	});
 
 	function handleClick() {
-		toggleSidebar();
-		if ($isOpen) {
-			$rotation = 0;
-		} else {
-			$rotation = 180;
-		}
+		sidebarStore.toggle();
 	}
 </script>
 
 <div>
-	<div class="header flex flex-row items-center justify-between px-3 sm:px-6 relative">
+	<div
+		class="header flex flex-row items-center justify-between px-3 sm:px-6 relative"
+	>
 		<button
 			class="rounded-full w-8 h-8 bg-foreground flex items-center justify-center z-10"
 			on:click={handleClick}
@@ -34,7 +32,7 @@
 		>
 			<Caret width="8px" height="10px" />
 		</button>
-		{#if !$isOpen}
+		{#if $sidebarStore === 'hidden'}
 			<a
 				class="absolute w-full bg-cover bg-no-repeat bg-center logo hidden sm:block"
 				style="background-image: url({SiteLogo});"

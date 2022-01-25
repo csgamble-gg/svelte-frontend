@@ -1,24 +1,19 @@
 <script lang="ts">
-	import { differenceInMilliseconds, parseISO } from 'date-fns';
-	import { rouletteContext } from '../state/game';
-	import { readable, writable } from 'svelte/store';
-	import { fade } from 'svelte/transition';
 	import { browser } from '$app/env';
+	import { differenceInMilliseconds, parseISO } from 'date-fns';
+	import { readable } from 'svelte/store';
+	import { fade } from 'svelte/transition';
+	import { state } from '../state/game';
 
 	function calculateTimeLeft(date: string, now: string): number {
 		return differenceInMilliseconds(parseISO(date), parseISO(now));
 	}
 
 	$: timer = readable(0, (set) => {
-		if (!$rouletteContext.game) return;
+		if (!$state) return;
 		let animationFrame;
 		const next = () => {
-			set(
-				calculateTimeLeft(
-					$rouletteContext.game.startsAt,
-					new Date().toISOString()
-				)
-			);
+			set(calculateTimeLeft($state.startsAt, new Date().toISOString()));
 			animationFrame = requestAnimationFrame(next);
 		};
 		if (browser) {

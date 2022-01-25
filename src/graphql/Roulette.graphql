@@ -1,47 +1,53 @@
-query getRecentGames($input: GetRecentGamesInput!) {
-	getRecentGames(input: $input) {
-		_id
-		createdAt
-		rollValue
-		status
-		gameId
-	}
+fragment UserInfo on UserInfo {
+	_id
+	displayName
+	avatar
 }
 
-query getLatestGame($input: GetLatestGameInput!) {
-	getLatestGame(input: $input) {
-		game {
+query RouletteInitial {
+	rouletteInitial {
+		rouletteGame {
 			_id
 			createdAt
-			status
 			gameId
 			rollValue
 			startsAt
+			status
 		}
 		currentBets {
-			_id
-			gameId
-			selections
-			amount
-			user {
-				displayName
-				avatar
+			orange {
 				_id
+				amount
+				gameId
+				selections
+				user {
+					...UserInfo
+				}
+			}
+			purple {
+				_id
+				amount
+				gameId
+				selections
+				user {
+					...UserInfo
+				}
+			}
+			blue {
+				_id
+				amount
+				gameId
+				selections
+				user {
+					...UserInfo
+				}
 			}
 		}
-	}
-}
-
-query GetBetsForGame($input: GetBetsForGameInput!) {
-	getBetsForGame(input: $input) {
-		_id
-		gameId
-		selections
-		amount
-		user {
-			displayName
-			avatar
+		pastGames {
 			_id
+			createdAt
+			gameId
+			rollValue
 		}
 	}
 }
@@ -57,38 +63,44 @@ mutation createBet($input: CreateBetInput!) {
 	}
 }
 
-subscription RouletteGameCreated {
-	rouletteGameCreated {
-		_id
-		gameId
-		rollValue
-		status
-		createdAt
-		startsAt
-	}
-}
-
-subscription RouletteGameUpdated {
-	rouletteGameUpdated {
-		_id
-		gameId
-		rollValue
-		status
-		createdAt
-		startsAt
-	}
-}
-
-subscription BetCreated {
-	betCreated {
-		_id
-		gameId
-		selections
-		amount
-		user {
-			displayName
-			avatar
+subscription RouletteGame {
+	rouletteGame {
+		rouletteGame {
 			_id
+			gameId
+			rollValue
+			status
+			createdAt
+			startsAt
+		}
+		currentBets {
+			orange {
+				_id
+				amount
+				gameId
+				selections
+				user {
+					...UserInfo
+				}
+			}
+			purple {
+				_id
+				amount
+				gameId
+				selections
+				user {
+					...UserInfo
+				}
+			}
+			blue {
+				_id
+				amount
+				gameId
+				selections
+				user {
+					...UserInfo
+				}
+			}
 		}
 	}
 }

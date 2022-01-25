@@ -22,6 +22,8 @@
 		multiplier: 1
 	});
 
+	let active = false;
+
 	// send event every second with new data
 	// const mockApi = setInterval(() => {
 	// 	crash.update((state) => {
@@ -76,13 +78,18 @@
 			.add('rocket', '/assets/crash_rockets.json', {
 				metadata: Pixi.BaseTexture.from('/assets/crash_rockets.png')
 			})
+			.add('explosions', '/assets/explosions.json', {
+				metadata: Pixi.BaseTexture.from('/assets/crash_explosions.png')
+			})
 			.load(() => {
 				crashCanvasView.onCreate();
 				app.start();
 			});
 
 		app.ticker.add(() => {
-			crashEngine.tick();
+			if (active) {
+				crashEngine.tick();
+			}
 			crashCanvasView.tick();
 		});
 
@@ -102,14 +109,17 @@
 
 	onDestroy(() => {});
 
+	function toggleGame() {
+		active = !active;
+	}
+
 	function crashGame() {
 		crashCanvasView.crash();
-		crashEngine.startTime = Date.now() + 800;
-		crashEngine.lastGameTick = crashEngine.startTime;
 	}
 </script>
 
 <div bind:this={containerRef} style="width: 100%; height: 525px;">
+	<button on:click={toggleGame}>start / stop</button>
 	<button on:click={crashGame}>crash</button>
 	<canvas
 		style="width: 100%; height: 100%;"

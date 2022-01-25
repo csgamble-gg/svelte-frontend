@@ -261,21 +261,21 @@ export class CrashCanvasView {
 		//   })
 		// }
 
-		// const explosions = (this.explosions = new Spine(
-		// 	this.app.loader.resources.explosions.spineData
-		// ));
-		// explosions.visible = this.crashEngine.getElapsedTime() <= 2000;
-		// explosions.scale.set(0.5);
+		const explosions = (this.explosions = new Spine(
+			this.app.loader.resources.explosions.spineData
+		));
+		explosions.visible = this.crashEngine.getElapsedTime() <= 2000;
+		explosions.scale.set(0.5);
 
-		// explosions.state.addListener({
-		// 	start: () => {
-		// 		explosions.visible = true;
-		// 	},
+		explosions.state.addListener({
+			start: () => {
+				explosions.visible = true;
+			},
 
-		// 	complete: () => {
-		// 		explosions.visible = false;
-		// 	}
-		// });
+			complete: () => {
+				explosions.visible = false;
+			}
+		});
 
 		// this.cashoutsContainer = new PIXI.Container();
 
@@ -287,9 +287,9 @@ export class CrashCanvasView {
 			this.yGraphics,
 			this.labelsContainer,
 			this.mainLine,
-			this.rocket
+			this.rocket,
 			// this.lagText
-			// explosions
+			explosions
 		);
 
 		this.app.stage.addChild(
@@ -304,11 +304,11 @@ export class CrashCanvasView {
 			// this.profitText
 		);
 
-		// if (explosions.visible) {
-		// 	explosions.x = -15;
-		// 	explosions.y = this.crashEngine.plotHeight;
-		// 	explosions.state.setAnimation(0, 'Fx04');
-		// }
+		if (explosions.visible) {
+			explosions.x = -15;
+			explosions.y = this.crashEngine.plotHeight;
+			explosions.state.setAnimation(0, 'Fx04');
+		}
 	}
 
 	crash(finalElapsed) {
@@ -529,8 +529,8 @@ export class CrashCanvasView {
 			this.rocket.y = lerp(this.rocket.y, this.targetRocketY, 0.25);
 		}
 
-		// this.explosions.x = this.rocket.x
-		// this.explosions.y = this.rocket.y
+		this.explosions.x = this.rocket.x;
+		this.explosions.y = this.rocket.y;
 	}
 
 	onResize(width: number, height: number) {

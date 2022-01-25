@@ -28,6 +28,9 @@
 			"$components/*": ["src/components/*"],
 			"$generated/*": ["src/generated/*"],
 			"$icons/*": ["src/icons/*"],
+			"$stores/*": ["src/stores/*"],
+			"$types/*": ["src/types/*"],
+			"$utils/*": ["src/utils/*"],
 			"pixi.js": ["node_modules/pixi.js/index.d.ts"]
 		}
 	},

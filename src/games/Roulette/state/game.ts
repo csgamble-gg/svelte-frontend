@@ -1,50 +1,44 @@
-import { get, writable } from 'svelte/store';
-import type { Bet, RouletteGame } from '$generated/graphql';
-import Big from 'big.js';
+import type { Bet, RouletteBets, RouletteGame } from '$generated/graphql';
+import type { RouletteStatusEnum } from '$types/index';
+import { writable } from 'svelte/store';
 
-interface CurrentBets {
-	[key: string]: any[];
-}
+export type Status = keyof typeof RouletteStatusEnum | null;
 
-const defaultCurrentBets: CurrentBets = {
+export const status = (() => {
+	const store = writable<Status>(null);
+
+	return {
+		...store,
+		changeStatus: (status: Status) => {
+			store.set(status);
+		}
+	};
+})();
+
+export const gameHistory = (() => {
+	const store = writable<RouletteGame[]>([]);
+
+	return {
+		...store,
+		addGame: (game: RouletteGame) => {
+			store.update((current) => [game, ...current].slice(0, 6));
+		}
+	};
+})();
+
+export const state = writable<RouletteGame | null>(null);
+
+export const defaultCurrentBets: RouletteBets = {
 	purple: [],
 	blue: [],
 	orange: []
 };
 
-interface RouletteContext {
-	game: RouletteGame;
-	currentBets: CurrentBets;
-}
+export const currentBets = writable<RouletteBets>(defaultCurrentBets);
 
-const defaultContext: RouletteContext = {
-	game: null,
-	currentBets: defaultCurrentBets
-};
+export const filterBets = (bets: Bet[]) => {};
 
-const rouletteContext = writable<RouletteContext>(defaultContext);
 const betAmount = writable<number>(0);
-
-function updateRouletteGame(gameData: RouletteGame) {
-	rouletteContext.update(() => ({
-		currentBets: get(rouletteContext).currentBets,
-		game: gameData
-	}));
-}
-
-function updateRouletteBets(newBets: CurrentBets) {
-	rouletteContext.update(() => ({
-		currentBets: newBets,
-		game: get(rouletteContext).game
-	}));
-}
-
-function resetBets() {
-	rouletteContext.update((currentContext) => ({
-		...currentContext,
-		currentBets: defaultCurrentBets
-	}));
-}
 
 const getRouletteColorFromSelections = (selections: Array<Number>) => {
 	if (selections[0] === 28) {
@@ -64,59 +58,4 @@ const sumBets = (currentBets: Array<Bet>) => {
 	}, 0);
 };
 
-const groupRouletteBets = (bets: Bet[]) => {
-	const groupedBetsByColor = {
-		...defaultCurrentBets,
-		...bets.reduce((acc, curr) => {
-			const color = getRouletteColorFromSelections(curr.selections);
-			if (!acc[color]) {
-				acc[color] = [];
-			}
-			acc[color].push(curr);
-			return acc;
-		}, {})
-	};
-
-	['blue', 'purple', 'orange'].forEach((val) => {
-		rouletteContext.update((currentContext) => ({
-			game: currentContext.game,
-			currentBets: {
-				...currentContext.currentBets,
-				[val]: Object.values(
-					groupedBetsByColor[val].reduce(
-						(acc: { [key: string]: any }, curr: any) => {
-							if (!acc) return curr;
-							if (acc[curr.user._id]) {
-								acc[curr.user._id] = {
-									...curr,
-									amount: new Big(acc[curr.user._id].amount)
-										.plus(curr.amount)
-										.toNumber()
-								};
-							} else {
-								acc[curr.user._id] = {
-									...curr
-								};
-							}
-
-							return acc;
-						},
-						{}
-					)
-				)
-			}
-		}));
-	});
-};
-
-export {
-	groupRouletteBets,
-	rouletteContext,
-	updateRouletteGame,
-	updateRouletteBets,
-	betAmount,
-	defaultCurrentBets,
-	getRouletteColorFromSelections,
-	sumBets,
-	resetBets
-};
+export { betAmount, getRouletteColorFromSelections, sumBets };

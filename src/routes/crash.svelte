@@ -1,4 +1,4 @@
-<script lang="typescript">
+<script lang="ts">
 	import CrashGame from '../games/Crash/CrashGame.svelte';
 	import BetInput from '../games/Crash/BetInput.svelte';
 </script>

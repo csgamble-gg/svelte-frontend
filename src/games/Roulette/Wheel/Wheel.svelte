@@ -1,9 +1,9 @@
 <script lang="ts">
-	import WheelItem from './WheelItem.svelte';
-	import Timer from './Timer.svelte';
+	import type { RouletteGame } from '$generated/graphql';
 	import { animate, Motion, useMotionValue } from 'svelte-motion';
-	import { rouletteContext } from '../state/game';
-	import { writable } from 'svelte/store';
+	import { state } from '../state/game';
+	import Timer from './Timer.svelte';
+	import WheelItem from './WheelItem.svelte';
 
 	const ROULETTE_SPOTS = 38;
 	const fragments = 360 / ROULETTE_SPOTS;
@@ -14,36 +14,26 @@
 		.fill(0)
 		.map((_, i) => (fragments / 180) * i * Math.PI);
 
-	const rotate = useMotionValue(14);
+	let rotate = useMotionValue(14);
 
 	let animation = {};
 
-	let isSpinning = writable(false);
+	const anim = (state: RouletteGame) => {
+		const rotation = radToDeg(thetaPositions[state.rollValue] + 0.08);
+		animation = animate(rotate, rotation + 720, {
+			type: 'tween',
+			duration: 7.5,
+			onComplete: () => {
+				animation = {};
+				rotate.set(rotation);
+			}
+		});
+	};
 
-	isSpinning.subscribe((value) => {
-		if ($rouletteContext.game === null) return;
-		if (value) {
-			const rotation = radToDeg(
-				thetaPositions[$rouletteContext.game.rollValue] + 0.08
-			);
-			animation = animate(rotate, rotation + 720, {
-				type: 'tween',
-				duration: 7.5,
-				onComplete: () => {
-					animation = {};
-					rotate.set(rotation);
-				}
-			});
-		}
-	});
-
-	rouletteContext.subscribe((rouletteContext) => {
-		if (rouletteContext.game === null) return;
-		if (rouletteContext.game.status === 'started') {
-			isSpinning.set(true);
-		}
-		if (rouletteContext.game.status === 'created') {
-			isSpinning.set(false);
+	state.subscribe((currentState) => {
+		if (!currentState) return;
+		if (currentState.status === 'started') {
+			anim(currentState);
 		}
 	});
 </script>

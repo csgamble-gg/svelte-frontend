@@ -1,41 +1,108 @@
+import { browser } from '$app/env';
+import type { Exchange } from '@urql/core';
 import {
-	createClient,
+	Client,
+	CombinedError,
+	createClient as createUrqlClient,
 	dedupExchange,
 	fetchExchange,
-	gql,
+	ssrExchange,
 	subscriptionExchange
-} from '@urql/svelte';
-import { cacheExchange } from '@urql/exchange-graphcache';
-import Cookies from 'js-cookie';
-import { createClient as createWSClient } from 'graphql-ws';
-import ws from 'websocket';
-import { v4 as uuid } from 'uuid';
-import type {
-	RouletteGameUpdatedSubscription,
-	UserEventSubscription
-} from '$generated/graphql';
+} from '@urql/core';
 import { devtoolsExchange } from '@urql/devtools';
-import { GetRecentGamesDocument } from '$generated/graphql';
+import { cacheExchange } from '@urql/exchange-graphcache';
+import type { OperationStore } from '@urql/svelte';
+import { operationStore } from '@urql/svelte';
+import type { DocumentNode } from 'graphql';
+import { print } from 'graphql';
+import type { ExecutionResult } from 'graphql-ws';
+import Cookies from 'js-cookie';
+import { isEqual } from 'lodash';
+import { get, writable } from 'svelte/store';
+import type { OperationContext } from 'urql';
+import { v4 as uuid } from 'uuid';
+import { pipe, subscribe } from 'wonka';
 import { createSubscriptionClient } from './createWsClient';
 
-let { w3cwebsocket } = ws;
+type SubscriptionClient = ReturnType<typeof createSubscriptionClient>;
 
 export const sessionId = uuid();
 
-// const subscriptionClient = createWSClient({
-// 	url: import.meta.env.VITE_SUBSCRIPTIONS_URL as string,
-// 	webSocketImpl: w3cwebsocket,
-// 	keepAlive: 10_000,
-// 	connectionParams: () => ({
-// 		sessionId: sessionId
-// 	})
-// })
+export let subscriptionClient: SubscriptionClient;
 
-const subscriptionClient = createSubscriptionClient();
-const createUrqlClient = async (args?: any) =>
-	await createClient({
+type SubscriptionHandler<Data> = (data: ExecutionResult<Data>) => void;
+
+export function subscription<
+	Data,
+	Variables extends Record<string, unknown>
+>(
+	{ doc, variables }: { doc: any; variables: Variables },
+	next: SubscriptionHandler<Data>
+) {
+	const sub = subscriptionClient.subscribe(
+		{
+			query: typeof doc === 'string' ? doc : print(doc),
+			variables
+		},
+		{
+			next,
+			error: (error) => {
+				// TODO: handle errors
+			},
+			complete: () => {}
+		}
+	);
+	return sub;
+}
+
+const createClient = (args?: any) => {
+	// create our subscription exchange
+
+	const createSubscriptionsExchange = (): Exchange[] => {
+		if (!browser) return [];
+
+		return [
+			subscriptionExchange({
+				forwardSubscription(operation) {
+					return {
+						subscribe: (sink) => {
+							const dispose = subscriptionClient.subscribe(
+								{
+									...operation,
+									query:
+										typeof operation.query === 'string'
+											? operation.query
+											: print(operation.query)
+								},
+								{
+									error: (error) => {
+										sink.error(error);
+									},
+									...sink
+								}
+							);
+
+							return {
+								unsubscribe: dispose
+							};
+						}
+					};
+				}
+			})
+		];
+	};
+
+	const subscription = createSubscriptionsExchange();
+
+	const ssr = ssrExchange({
+		isClient: browser,
+		initialState: undefined
+	});
+
+	const urqlClient = createUrqlClient({
 		...args,
-		url: import.meta.env.VITE_GRAPHQL_URL,
+		fetch: browser ? window.fetch : undefined,
+		url: import.meta.env.VITE_GRAPHQL_URL as string,
 		fetchOptions: () => {
 			const token = Cookies.get('session');
 			return {
@@ -52,57 +119,161 @@ const createUrqlClient = async (args?: any) =>
 					LatestGame: (data) => null
 				},
 				updates: {
-					Subscription: {
-						userEvent: (
-							result: UserEventSubscription,
-							args,
-							cache,
-							info
-						) => {
-							const fragment = gql`
-								fragment balance on User {
-									_id
-									balance
-								}
-							`;
-							cache.writeFragment(fragment, result.userEvent.user);
-						},
-						rouletteGameUpdated: (
-							result: RouletteGameUpdatedSubscription,
-							_,
-							cache
-						) => {
-							if (result.rouletteGameUpdated.status !== 'finished') return;
-							cache.updateQuery(
-								{
-									query: GetRecentGamesDocument,
-									variables: { input: { gameType: 'roulette', limit: 6 } }
-								},
-								(data) => {
-									if (data === null) return;
-									data.getRecentGames = [
-										result.rouletteGameUpdated,
-										// @ts-ignore
-										...data.getRecentGames.slice(0, 5)
-									];
-									return data;
-								}
-							);
-						},
-						rouletteGameCreated: (result, _, cache) => {}
-					}
+					Subscription: {}
 				}
 			}),
 			dedupExchange,
 			fetchExchange,
-			subscriptionExchange({
-				forwardSubscription: (operation) => ({
-					subscribe: (sink) => ({
-						unsubscribe: subscriptionClient.subscribe(operation, sink)
-					})
-				})
-			})
+			ssr,
+			...subscription
 		]
 	});
 
-export default createUrqlClient;
+	// create the sub client on the browser
+	if (browser) {
+		subscriptionClient = createSubscriptionClient();
+	}
+
+	return urqlClient;
+};
+
+const client = browser ? createClient() : null;
+
+export const getClient = (): Client => {
+	if (!browser) {
+		return null;
+	}
+	return client;
+};
+
+type Unsubscriber = { unsubscribe: () => void };
+
+export function createQuery<T, K extends object>(query: DocumentNode) {
+	let unsub: Unsubscriber;
+	let loading = writable(false);
+	let error = writable<CombinedError | null>(null);
+	let data = (() => {
+		let store = writable<T | null>(null);
+		return store;
+	})();
+
+	const request = (variables: K, context: any): Unsubscriber => {
+		const client = getClient();
+		loading.set(true);
+		return pipe(
+			client.query<T, K>(query, variables, context || {}),
+
+			subscribe((value) => {
+				if (unsub && context?.pollInterval === undefined) {
+					unsub.unsubscribe();
+				}
+
+				loading.set(false);
+				data.set(value.data);
+				error.set(value.error);
+			})
+		);
+	};
+	let requestCount = 0;
+	return {
+		query: (variables: K, context?: any) => {
+			let initialData = (() => {
+				if (browser) {
+					const client = getClient();
+					const cacheData = client.readQuery<T, K>(
+						query,
+						variables,
+						context || {}
+					)?.data;
+					if (cacheData) data.set(cacheData);
+					return cacheData;
+				}
+			})();
+
+			const refetch = (refetchVariables: K, refetchContext?: any) => {
+				if (browser) {
+					loading.set(false);
+					// loading.set(false);
+					let skip =
+						refetchContext?.skip ||
+						(requestCount === 0 &&
+							initialData &&
+							isEqual(variables, refetchVariables) &&
+							refetchContext?.pollInterval === undefined);
+
+					if (!skip) {
+						if (unsub) unsub.unsubscribe();
+						unsub = request(
+							refetchVariables,
+							refetchContext || context || {}
+						);
+						variables = refetchVariables;
+					}
+
+					requestCount += 1;
+				}
+			};
+
+			//   if (context?.refetchOnAuthentication && browser) {
+			//     onMount(() => {
+			//       const unsubscribe = subscribeToGlobalEventEmitter({
+			//         authenticate: () => {
+			//           refetch(
+			//             {
+			//               ...variables,
+			//               randomVariableToTriggerRefetch: true,
+			//             },
+			//             context,
+			//           );
+			//         },
+			//       });
+
+			//       return () => unsubscribe();
+			//     });
+			//   }
+
+			if (!initialData) refetch(variables, context);
+
+			return {
+				refetch,
+				data,
+				loading,
+				error
+			};
+		}
+	};
+}
+
+export function createRawQuery() {
+	const client = getClient();
+	return async function query<TData, TVariables extends object = {}>(
+		documentNode: DocumentNode,
+		variables: TVariables,
+		context?: Partial<OperationContext>
+	): Promise<OperationStore<TData, TVariables>> {
+		try {
+			const store = operationStore<TData, TVariables>(
+				documentNode,
+				variables,
+				context
+			);
+			const result = await client
+				.query(store.query, store.variables, store.context)
+				.toPromise();
+
+			Object.assign(get(store), {
+				...result,
+				context: {
+					...store.context,
+					requestPolicy: 'cache-only'
+				}
+			});
+
+			return store;
+		} catch (error) {
+			return error;
+		}
+	};
+}
+
+export default createClient;
