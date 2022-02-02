@@ -27,6 +27,4 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD ["ls"]
-
 CMD ["node", "build/"]

@@ -1,17 +1,25 @@
-import type { CurrentUserQuery, User } from '$generated/graphql';
+import type {
+	CurrentUserQuery,
+	CurrentUserQueryVariables,
+	User
+} from '$generated/graphql';
 import { CurrentUserDocument } from '$generated/graphql';
+import { requestClient } from '$libs/urql/requestClient';
 import type { LoadInput } from '$types/index';
 import { globalEventEmitter } from '../emitters/global';
 
 export async function load(load: LoadInput) {
 	if (load.session.sessionId) {
-		const { data } = await load.stuff.query<CurrentUserQuery>(
-			CurrentUserDocument,
-			{}
-		);
+		const [initUserResponse] = await Promise.all([
+			requestClient<CurrentUserQuery, CurrentUserQueryVariables>({
+				doc: CurrentUserDocument,
+				variables: {},
+				load: load
+			})
+		]);
 
-		if (data.getCurrentUser) {
-			return data.getCurrentUser;
+		if (initUserResponse.data.getCurrentUser) {
+			return initUserResponse.data.getCurrentUser;
 		}
 		return null;
 	}

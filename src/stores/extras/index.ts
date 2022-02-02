@@ -38,7 +38,7 @@ export function cookieStore<T>(name: string, value: T) {
 
 		if (restoredValue) {
 			try {
-				const parsed = JSON.parse(restoredValue) as T;
+				const parsed = restoredValue;
 				store.set(parsed);
 			} catch (e) {
 				store.set(restoredValue);

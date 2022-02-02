@@ -1,6 +1,5 @@
 const config = {
 	content: ['./src/**/*.{html,js,svelte,ts}', './src/**/**/*.svelte'],
-	purge: ['./src/**/*.svelte'],
 	mode: 'jit',
 	theme: {
 		extend: {
