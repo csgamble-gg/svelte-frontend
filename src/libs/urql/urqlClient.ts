@@ -2,7 +2,6 @@ import { browser } from '$app/env';
 import type { Exchange, OperationResult } from '@urql/core';
 import {
 	Client,
-	CombinedError,
 	createClient as createUrqlClient,
 	dedupExchange,
 	fetchExchange,
@@ -19,7 +18,7 @@ import type { ExecutionResult } from 'graphql-ws';
 import Cookies from 'js-cookie';
 import { isEqual } from 'lodash-es';
 import { get, writable } from 'svelte/store';
-import type { OperationContext } from 'urql';
+import type { CombinedError, OperationContext } from 'urql';
 import { v4 as uuid } from 'uuid';
 import { pipe, subscribe } from 'wonka';
 import { createSubscriptionClient } from './createWsClient';
