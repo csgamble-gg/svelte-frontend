@@ -1,7 +1,8 @@
-import { createClient } from 'graphql-ws';
 import type { Client, ClientOptions } from 'graphql-ws';
-import { sessionId } from './urqlClient';
+import { createClient } from 'graphql-ws';
+import Cookies from 'js-cookie';
 import ws from 'websocket';
+import { sessionId } from './urqlClient';
 
 const { w3cwebsocket } = ws;
 
@@ -35,7 +36,8 @@ export const createSubscriptionClient = (
 		url: import.meta.env.VITE_SUBSCRIPTIONS_URL as string,
 		retryAttempts: 50,
 		connectionParams: () => ({
-			sessionId: sessionId
+			sessionId: sessionId,
+			token: Cookies.get('session')
 		}),
 		webSocketImpl: w3cwebsocket,
 		keepAlive: 10_000,

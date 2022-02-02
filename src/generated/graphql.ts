@@ -159,10 +159,23 @@ export type Scalars = {
   Void: any;
 };
 
+export type AvailableBalances = {
+  __typename?: 'AvailableBalances';
+  amount: Scalars['Float'];
+  balance: Balance;
+};
+
+export type Balance = {
+  __typename?: 'Balance';
+  amount: Scalars['Float'];
+  currency: CurrencyEnum;
+};
+
 export type Bet = {
   __typename?: 'Bet';
   _id: Scalars['ID'];
   amount: Scalars['Float'];
+  currency: CurrencyEnum;
   gameId: Scalars['ID'];
   selections: Array<Scalars['Int']>;
   user: UserInfo;
@@ -191,6 +204,7 @@ export type CrashGame = {
 
 export type CreateBetInput = {
   betAmount: Scalars['Float'];
+  currency: CurrencyEnum;
   gameId: Scalars['String'];
   selections: Array<Scalars['Int']>;
 };
@@ -212,6 +226,11 @@ export type CreatedGameResult = {
   __typename?: 'CreatedGameResult';
   game: Game;
 };
+
+export enum CurrencyEnum {
+  Btc = 'btc',
+  Eth = 'eth'
+}
 
 export type Game = {
   __typename?: 'Game';
@@ -321,6 +340,7 @@ export type Query = {
   getSkins: Array<Maybe<Skin>>;
   rouletteInitial: RouletteIntitial;
   testError: Scalars['Boolean'];
+  userWallets: Array<UserWallet>;
 };
 
 
@@ -392,6 +412,7 @@ export type Skin = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  availableBalances: AvailableBalances;
   betCreated: Bet;
   crashGame: CrashGame;
   gameCreated: CreatedGameResult;
@@ -440,7 +461,7 @@ export type UserInfo = {
 export type UserWallet = {
   __typename?: 'UserWallet';
   balance: Scalars['Int'];
-  type: Scalars['String'];
+  type: CurrencyEnum;
 };
 
 export type CrashSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
@@ -453,7 +474,7 @@ export type UserInfoFragment = { __typename?: 'UserInfo', _id: string, displayNa
 export type RouletteInitialQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RouletteInitialQuery = { __typename?: 'Query', rouletteInitial: { __typename?: 'RouletteIntitial', rouletteGame: { __typename?: 'RouletteGame', _id: string, createdAt: any, gameId: string, rollValue?: number | null | undefined, startsAt: any, status: string }, currentBets: { __typename?: 'RouletteBets', orange: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, purple: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, blue: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined> }, pastGames: Array<{ __typename?: 'RouletteGame', _id: string, createdAt: any, gameId: string, rollValue?: number | null | undefined }> } };
+export type RouletteInitialQuery = { __typename?: 'Query', rouletteInitial: { __typename?: 'RouletteIntitial', rouletteGame: { __typename?: 'RouletteGame', _id: string, createdAt: any, gameId: string, rollValue?: number | null | undefined, startsAt: any, status: string }, currentBets: { __typename?: 'RouletteBets', orange: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, purple: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, blue: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined> }, pastGames: Array<{ __typename?: 'RouletteGame', _id: string, createdAt: any, gameId: string, rollValue?: number | null | undefined }> } };
 
 export type CreateBetMutationVariables = Exact<{
   input: CreateBetInput;
@@ -465,7 +486,7 @@ export type CreateBetMutation = { __typename?: 'Mutation', createBet: { __typena
 export type RouletteGameSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RouletteGameSubscription = { __typename?: 'Subscription', rouletteGame: { __typename?: 'RouletteSubscriptionResult', rouletteGame: { __typename?: 'RouletteGame', _id: string, gameId: string, rollValue?: number | null | undefined, status: string, createdAt: any, startsAt: any }, currentBets: { __typename?: 'RouletteBets', orange: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, purple: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, blue: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined> } } };
+export type RouletteGameSubscription = { __typename?: 'Subscription', rouletteGame: { __typename?: 'RouletteSubscriptionResult', rouletteGame: { __typename?: 'RouletteGame', _id: string, gameId: string, rollValue?: number | null | undefined, status: string, createdAt: any, startsAt: any }, currentBets: { __typename?: 'RouletteBets', orange: Array<{ __typename?: 'Bet', _id: string, amount: number, currency: CurrencyEnum, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, purple: Array<{ __typename?: 'Bet', _id: string, amount: number, currency: CurrencyEnum, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, blue: Array<{ __typename?: 'Bet', _id: string, amount: number, currency: CurrencyEnum, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined> } } };
 
 export type ErrorSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -480,7 +501,17 @@ export type UserEventSubscription = { __typename?: 'Subscription', userEvent: { 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentUserQuery = { __typename?: 'Query', getCurrentUser?: { __typename?: 'User', _id: string, displayName: string, avatar?: string | null | undefined, balance: number } | null | undefined };
+export type CurrentUserQuery = { __typename?: 'Query', getCurrentUser?: { __typename?: 'User', _id: string, displayName: string, avatar?: string | null | undefined } | null | undefined };
+
+export type UserWalletsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserWalletsQuery = { __typename?: 'Query', userWallets: Array<{ __typename?: 'UserWallet', type: CurrencyEnum, balance: number }> };
+
+export type AvailableBalancesSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AvailableBalancesSubscription = { __typename?: 'Subscription', availableBalances: { __typename?: 'AvailableBalances', amount: number, balance: { __typename?: 'Balance', amount: number, currency: CurrencyEnum } } };
 
 export const UserInfoFragmentDoc = gql`
     fragment UserInfo on UserInfo {
@@ -516,6 +547,7 @@ export const RouletteInitialDocument = gql`
         amount
         gameId
         selections
+        currency
         user {
           ...UserInfo
         }
@@ -525,6 +557,7 @@ export const RouletteInitialDocument = gql`
         amount
         gameId
         selections
+        currency
         user {
           ...UserInfo
         }
@@ -534,6 +567,7 @@ export const RouletteInitialDocument = gql`
         amount
         gameId
         selections
+        currency
         user {
           ...UserInfo
         }
@@ -575,6 +609,7 @@ export const RouletteGameDocument = gql`
       orange {
         _id
         amount
+        currency
         gameId
         selections
         user {
@@ -584,6 +619,7 @@ export const RouletteGameDocument = gql`
       purple {
         _id
         amount
+        currency
         gameId
         selections
         user {
@@ -593,6 +629,7 @@ export const RouletteGameDocument = gql`
       blue {
         _id
         amount
+        currency
         gameId
         selections
         user {
@@ -626,7 +663,25 @@ export const CurrentUserDocument = gql`
     _id
     displayName
     avatar
+  }
+}
+    `;
+export const UserWalletsDocument = gql`
+    query UserWallets {
+  userWallets {
+    type
     balance
+  }
+}
+    `;
+export const AvailableBalancesDocument = gql`
+    subscription AvailableBalances {
+  availableBalances {
+    amount
+    balance {
+      amount
+      currency
+    }
   }
 }
     `;
@@ -637,3 +692,5 @@ export type RouletteGameSubscriptionStore = OperationStore<RouletteGameSubscript
 export type ErrorSubscriptionStore = OperationStore<ErrorSubscription, ErrorSubscriptionVariables>;
 export type UserEventSubscriptionStore = OperationStore<UserEventSubscription, UserEventSubscriptionVariables>;
 export type CurrentUserQueryStore = OperationStore<CurrentUserQuery, CurrentUserQueryVariables>;
+export type UserWalletsQueryStore = OperationStore<UserWalletsQuery, UserWalletsQueryVariables>;
+export type AvailableBalancesSubscriptionStore = OperationStore<AvailableBalancesSubscription, AvailableBalancesSubscriptionVariables>;

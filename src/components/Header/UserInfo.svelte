@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import Gem from '$icons/svgs/Gem/Gem.svelte';
+	import CurrencyBalances from '$components/CurrencyBalances/CurrencyBalances.svelte';
+	import { modals } from '$components/Modals/utils';
 	import Inventory from '$icons/svgs/Inventory/Inventory.svelte';
-	import { convertPenniesToDollars } from '$libs/currencyConversion';
 	import { getStores } from '$stores/user/index';
 
 	const handleSignIn = () => {
@@ -20,7 +20,7 @@
 	{#if !$userStore.isAuthenticated}
 		<div class="w-100 justify-self-end">
 			<button
-				class="h-10 px-2 button font-sans text-sm text-white font-semibold"
+				class="h-10 px-2 button font-sans text-sm text-white font-semibold rounded"
 				on:click={handleSignIn}
 			>
 				Login with Steam
@@ -38,17 +38,12 @@
 				class="h-10 w-10 rounded mr-2"
 				alt="profile"
 			/>
-			<div class="flex flex-col">
-				<span class="text-lightblue">{$userStore.displayName}</span>
-				<div class="flex items-center">
-					<span class="text-white font-semibold pr-2"
-						>{convertPenniesToDollars($userStore.balance, 2)}</span
-					>
-					<Gem width="20px" height="20px" color="green" />
-				</div>
-			</div>
+
+			<span class="text-lightblue pr-2">{$userStore.displayName}</span>
+			<CurrencyBalances />
 			<button
-				class="h-10 ml-2 px-2 button font-sans text-sm text-white font-semibold hidden sm:inline"
+				class="h-10 px-2 button font-sans text-sm text-white font-semibold hidden sm:inline deposit-button"
+				on:click={() => modals.deposit.open()}
 			>
 				Deposit
 			</button>
@@ -65,9 +60,12 @@
 			rgba(73, 202, 179, 0.69) 102.42%
 		);
 		box-shadow: inset 0 1px 0 rgba(64, 255, 140, 0.25);
-		border-radius: 6px;
 		height: 48px;
 		min-width: 94px;
+	}
+
+	.deposit-button {
+		border-radius: 0 0.25rem 0.25rem 0;
 	}
 
 	.inventory-button {

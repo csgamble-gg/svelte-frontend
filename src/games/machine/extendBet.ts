@@ -1,4 +1,6 @@
-import type { EventObject, StateNode, StateSchema } from 'xstate';
+import { merge } from 'lodash-es';
+import type { EventObject, StateNodeConfig, StateSchema } from 'xstate';
+import { send } from 'xstate';
 
 type BaseBet = {
 	amount: number;
@@ -15,33 +17,60 @@ export interface Schema extends StateSchema {
 	};
 }
 
-export type BaseBetEvents = { type: 'BET' };
+export type BaseBetEvents =
+	| { type: 'BET' }
+	| { type: 'ERROR'; errorMessage: string };
 
-export type BettingEvents<T extends BaseBetEvents> =
+export type BettingEvents<T extends BaseBet> =
 	| BaseBet
-	| { type: 'SUCCESS'; bet: T }
-	| { type: 'ERROR' };
+	| { type: 'SUCCESS'; bet: T };
 
 function extendBet<
 	T extends BaseBet,
 	Context extends BaseContext,
 	FullSchema extends Schema,
 	AllEvents extends EventObject
->() {
-	const betting: StateNode = {
+>(betting: any) {
+	type Events = EventObject & BettingEvents<T>;
+	type StateNode = StateNodeConfig<Context, Schema, Events>;
+	const baseBetting: StateNode = {
 		initial: 'idle',
 		id: 'betting',
 		states: {
-			id: 'betting.idle',
 			idle: {
+				id: 'betting.idle',
 				on: {
 					BET: {
 						target: 'fetching'
 					}
 				}
+			},
+			fetching: {
+				invoke: {
+					id: 'mutationBet',
+					src: 'mutationBet',
+					onDone: {
+						actions: send('SUCCESS')
+					},
+					onError: {
+						actions: send('ERROR')
+					}
+				},
+				on: {
+					SUCCESS: { target: 'play' },
+					ERROR: {
+						target: 'idle'
+					}
+				}
 			}
 		}
 	};
+
+	return merge(baseBetting, betting) as StateNodeConfig<
+		Context,
+		FullSchema,
+		AllEvents
+	>;
 }
 
 export default extendBet;

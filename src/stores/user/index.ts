@@ -1,5 +1,4 @@
 import type { User } from '$generated/graphql';
-import { hasSession } from '$utils/hasSession';
 import { getContext, setContext } from 'svelte';
 import { writable } from 'svelte/store';
 
@@ -21,8 +20,7 @@ export const createUserStore = () => {
 	};
 
 	const userStore = writable<UserState>({
-		...defaultUserStore,
-		isAuthenticated: hasSession()
+		...defaultUserStore
 	});
 
 	return {

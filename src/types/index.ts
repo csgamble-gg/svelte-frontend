@@ -2,6 +2,7 @@
 // * declarations that are not exported are for internal use
 
 import type { User } from '$generated/graphql';
+import type { createSSRQuery } from '$libs/urql/createSSRClient';
 import type { Either, InferValue } from '@sveltejs/kit/types/helper';
 import type { Client } from '@urql/core';
 
@@ -14,7 +15,7 @@ export interface LoadInput<
 	params: PageParams;
 	fetch(info: RequestInfo, init?: RequestInit): Promise<Response>;
 	session: Session;
-	stuff: Stuff;
+	stuff: Stuff & ExtendedStuff;
 }
 
 export interface LoadOutput<
@@ -28,6 +29,11 @@ export interface LoadOutput<
 	stuff?: Stuff;
 	maxage?: number;
 }
+
+type ExtendedStuff = {
+	query: ReturnType<typeof createSSRQuery>;
+	urqlClient: Client;
+};
 
 interface LoadInputExtends {
 	stuff?: Record<string, any>;
@@ -73,4 +79,14 @@ export enum RouletteStatusEnum {
 	created = 'created',
 	started = 'started',
 	finished = 'finished'
+}
+
+export enum CurrencyEnum {
+	btc = 'btc',
+	eth = 'eth'
+}
+
+export enum HouseGameEnum {
+	roulette = 'roulette',
+	crash = 'crash'
 }

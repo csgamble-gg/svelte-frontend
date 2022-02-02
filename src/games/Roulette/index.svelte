@@ -1,15 +1,27 @@
 <script lang="ts">
+	import { setConfigContext, setup } from '$games/state/setup';
 	import { onMount } from 'svelte';
 	import BettingArea from './BetArea/BettingArea.svelte';
+	import { config } from './config';
+	import { service } from './machine/index';
 	import RecentRolls from './RecentRolls.svelte';
+	import * as general from './state/general';
 	import { initialize } from './subscriptionHandler';
 	import Wheel from './Wheel/Wheel.svelte';
 
 	onMount(() => {
-		// init our game stores and state
 		let { unsubscribe } = initialize();
 
 		return () => unsubscribe();
+	});
+
+	setConfigContext(config);
+
+	setup({
+		generalContext: {
+			...general,
+			send: service.send
+		}
 	});
 </script>
 

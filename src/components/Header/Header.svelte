@@ -30,7 +30,7 @@
 			on:click={handleClick}
 			style="transform: rotate({$rotation}deg);"
 		>
-			<Caret width="8px" height="10px" />
+			<Caret />
 		</button>
 		{#if $sidebarStore === 'hidden'}
 			<a
@@ -38,15 +38,15 @@
 				style="background-image: url({SiteLogo});"
 				href="/"
 				in:fly={{ x: -400, duration: 400, easing: cubicOut }}
-				out:fly={{ x: -400, duration: 400, easing: cubicOut }}
-			/>
+				out:fly={{ x: -400, duration: 400, easing: cubicOut }}><span /></a
+			>
 			<a
 				class="absolute w-full bg-cover bg-no-repeat bg-center visible sm:hidden small-logo"
 				style="background-image: url({SiteLogoSmall});"
 				href="/"
 				in:fly={{ x: -400, duration: 400, easing: cubicOut }}
-				out:fly={{ x: -400, duration: 400, easing: cubicOut }}
-			/>
+				out:fly={{ x: -400, duration: 400, easing: cubicOut }}><span /></a
+			>
 		{/if}
 		<UserInfo />
 	</div>

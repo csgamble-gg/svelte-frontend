@@ -8,10 +8,9 @@ import {
 	RouletteInitialDocument
 } from '$generated/graphql';
 import { createRawQuery, subscriptionClient } from '$libs/urql/urqlClient';
-import { RouletteStatusEnum } from '$types/index';
 import { print } from 'graphql';
 import { get } from 'svelte/store';
-import { currentBets, gameHistory, state, status } from './state/game';
+import { currentBets, gameHistory, state } from './state/game';
 
 let subscriptionStream: ReturnType<typeof subscribeToStream>;
 
@@ -27,11 +26,10 @@ let subscribeToStream = (client: typeof subscriptionClient) => {
 
 				const sameGame = $state._id === rouletteGame._id;
 
-				status.update(() => RouletteStatusEnum[rouletteGame.status]);
 				state.update(() => rouletteGame);
 				currentBets.set(gameBets);
 
-				if (!sameGame) {
+				if (rouletteGame.status === 'finished') {
 					gameHistory.addGame(rouletteGame);
 				}
 			},
@@ -56,16 +54,12 @@ export const initialize = (): { unsubscribe: () => void } => {
 				currentBets: gameBets
 			} = data.rouletteInitial;
 
-			status.update(() => RouletteStatusEnum[rouletteGame.status]);
 			state.update(() => rouletteGame);
 			gameHistory.set(pastGames as RouletteGame[]);
 
 			currentBets.set(gameBets);
 		}
 	);
-	// const { query } = createQuery(RouletteInitialDocument);
-
-	// const { data } = query({});
 
 	return {
 		unsubscribe: () => {

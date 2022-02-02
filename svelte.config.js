@@ -1,12 +1,18 @@
 import adapter from '@sveltejs/adapter-node';
+import autoprefixer from 'autoprefixer';
 import { resolve } from 'path';
 import preprocess from 'svelte-preprocess';
+import tailwindcss from 'tailwindcss';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// Consult https://github.com/sveltejs/svelte-preprocess
 	// for more information about preprocessors
-	preprocess: preprocess(),
+	preprocess: preprocess({
+		postcss: {
+			plugins: [tailwindcss, autoprefixer]
+		}
+	}),
 	kit: {
 		adapter: adapter({ out: 'build' }),
 
@@ -26,7 +32,9 @@ const config = {
 					$icons: resolve('./src/icons'),
 					$types: resolve('./src/types'),
 					$stores: resolve('./src/stores'),
-					$utils: resolve('./src/utils')
+					$utils: resolve('./src/utils'),
+					$emitters: resolve('./src/emitters'),
+					$notifications: resolve('./src/notifications')
 				}
 			}
 		}

@@ -1,21 +1,28 @@
+import type { RequestEvent } from '@sveltejs/kit';
 import { parse } from 'cookie';
 
 /** @type {import('@sveltejs/kit').Handle} */
-export async function handle({ request, resolve }) {
-	if (request.headers.cookie) {
-		const cookies = parse(request.headers.cookie);
+export async function handle({
+	event,
+	resolve
+}: {
+	event: RequestEvent;
+	resolve: any;
+}) {
+	if (event.request.headers.get('cookie')) {
+		const cookies = parse(event.request.headers.get('cookie'));
 
 		if (cookies.session) {
-			request.locals.sessionId = cookies.session;
+			event.locals.sessionId = cookies.session;
 		}
 
 		if (cookies.sidebarVisibility) {
-			request.locals.sidebarVisibility = cookies.sidebarVisibility;
+			event.locals.sidebarVisibility = cookies.sidebarVisibility;
 		}
 
-		return resolve(request);
+		return resolve(event);
 	} else {
-		return resolve(request);
+		return resolve(event);
 	}
 }
 

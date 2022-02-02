@@ -1,19 +1,23 @@
 <script lang="ts">
-	import Gem from '../../../icons/svgs/Gem/Gem.svelte';
-	import { betAmount } from '../state/game';
+	import Currency from '$components/Currency/Currency.svelte';
+	import { getGeneralContext } from '$games/state/setup';
 
-	function handleClick(e) {
-		const value = parseInt(e.target.value);
-		if (value > 0) {
-			$betAmount = $betAmount + value;
-		}
-		if (e.target.value === 'x2') {
-			betAmount.set($betAmount * 2);
-		}
-		if (e.target.value === 'MAX') {
-			$betAmount = $betAmount;
-		}
-	}
+	const { amount } = getGeneralContext();
+
+	// function handleClick(e) {
+	// 	const value = parseInt(e.target.value);
+	// 	if (value > 0) {
+	// 		$betAmount = $betAmount + value;
+	// 	}
+	// 	if (e.target.value === 'x2') {
+	// 		betAmount.set($betAmount * 2);
+	// 	}
+	// 	if (e.target.value === 'MAX') {
+	// 		$betAmount = $betAmount;
+	// 	}
+	// }
+
+	const handleClick = () => {};
 </script>
 
 <div class="flex flex-col rounded-large bet-input relative">
@@ -22,9 +26,11 @@
 			<span class="text-lightblue text-sm">Bet Amount</span>
 
 			<span class="flex flex-row align-center items-center">
-				<Gem class="mr-2" color="green" />
+				<div class="w-5 h-5 mr-2">
+					<Currency />
+				</div>
 				<input
-					bind:value={$betAmount}
+					bind:value={$amount}
 					class="border-none outline-none bg-transparent text-white placeholder:text-white font-semibold"
 					placeholder="0.00"
 					type="number"
@@ -35,31 +41,28 @@
 			<div class="mx-2">
 				<button
 					class="bet-amount-button "
-					on:click={handleClick}
+					on:click={() => amount.add(1)}
 					type="button"
-					value={1}
 				>
 					+1
 				</button>
 				<button
 					class="bet-amount-button"
-					on:click={handleClick}
+					on:click={() => amount.add(10)}
 					type="button"
-					value={10}
 				>
 					+10
 				</button>
 				<button
 					class="bet-amount-button hidden md:inline"
-					on:click={handleClick}
+					on:click={() => amount.add(100)}
 					type="button"
-					value={100}
 				>
 					+100
 				</button>
 				<button
 					class="bet-amount-button hidden md:inline"
-					on:click={handleClick}
+					on:click={() => amount.double()}
 					type="button"
 					value="x2"
 				>
@@ -67,7 +70,7 @@
 				</button>
 				<button
 					class="bet-amount-button hidden md:inline"
-					on:click={handleClick}
+					on:click={() => amount.max()}
 					type="button"
 					value="MAX"
 				>

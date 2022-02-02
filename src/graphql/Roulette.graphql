@@ -20,6 +20,7 @@ query RouletteInitial {
 				amount
 				gameId
 				selections
+				currency
 				user {
 					...UserInfo
 				}
@@ -29,6 +30,7 @@ query RouletteInitial {
 				amount
 				gameId
 				selections
+				currency
 				user {
 					...UserInfo
 				}
@@ -38,6 +40,7 @@ query RouletteInitial {
 				amount
 				gameId
 				selections
+				currency
 				user {
 					...UserInfo
 				}
@@ -77,6 +80,7 @@ subscription RouletteGame {
 			orange {
 				_id
 				amount
+				currency
 				gameId
 				selections
 				user {
@@ -86,6 +90,7 @@ subscription RouletteGame {
 			purple {
 				_id
 				amount
+				currency
 				gameId
 				selections
 				user {
@@ -95,6 +100,7 @@ subscription RouletteGame {
 			blue {
 				_id
 				amount
+				currency
 				gameId
 				selections
 				user {

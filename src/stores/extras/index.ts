@@ -5,8 +5,7 @@ import { writable } from 'svelte/store';
 export function cookieStore<T>(name: string, value: T) {
 	const storedValue: T | null = (() => {
 		if (browser) {
-			const a = Cookies.get('sidebarVisibility');
-			return a;
+			return Cookies.get(name);
 		}
 		return null;
 	})();

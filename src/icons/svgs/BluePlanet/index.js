@@ -1,3 +1,3 @@
-import BluePlanet from "./BluePlanet.svelte";
+import BluePlanet from './BluePlanet.svelte';
 export { BluePlanet };
 export default BluePlanet;

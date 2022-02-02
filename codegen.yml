@@ -8,6 +8,4 @@ generates:
       - 'typescript-operations'
       - 'typescript-urql'
       - 'urql-svelte-operations-store'
-    config: {
-      withHooks: false
-    }
+    config: { withHooks: false }

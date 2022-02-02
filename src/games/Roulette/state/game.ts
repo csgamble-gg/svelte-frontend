@@ -1,19 +1,5 @@
 import type { Bet, RouletteBets, RouletteGame } from '$generated/graphql';
-import type { RouletteStatusEnum } from '$types/index';
 import { writable } from 'svelte/store';
-
-export type Status = keyof typeof RouletteStatusEnum | null;
-
-export const status = (() => {
-	const store = writable<Status>(null);
-
-	return {
-		...store,
-		changeStatus: (status: Status) => {
-			store.set(status);
-		}
-	};
-})();
 
 export const gameHistory = (() => {
 	const store = writable<RouletteGame[]>([]);

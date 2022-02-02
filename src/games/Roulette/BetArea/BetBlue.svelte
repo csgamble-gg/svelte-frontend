@@ -1,47 +1,20 @@
 <script lang="ts">
-	import {
-		CreateBetDocument,
-		CreateBetMutation
-	} from '$generated/graphql';
+	import Currency from '$components/Currency/Currency.svelte';
+	import { getGeneralContext } from '$games/state/setup';
 	import { convertPenniesToDollars } from '$libs/currencyConversion';
-	import { mutation } from '@urql/svelte';
 	import Big from 'big.js';
 	import { quintInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
 	import BackgroundButton from '../../../components/generics/BackgroundButton.svelte';
 	import Divider from '../../../components/generics/Divider.svelte';
-	import OpaqueGem from '../../../icons/svgs/Gem/OpaqueGem.svelte';
 	import People from '../../../icons/svgs/People/People.svelte';
-	import { betAmount, currentBets, state, sumBets } from '../state/game';
-
-	const createBet = mutation<CreateBetMutation>({
-		query: CreateBetDocument
-	});
-
-	let isLoading = false;
-
-	async function handleCreateBet() {
-		isLoading = true;
-		await createBet({
-			input: {
-				betAmount: $betAmount,
-				gameId: $state.gameId,
-				selections: [
-					1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33,
-					35, 37
-				]
-			}
-		}).then(({ data }) => {
-			isLoading = false;
-			if (!data) return;
-			if (!data.createBet.success) {
-			}
-		});
-	}
+	import { currentBets, state, sumBets } from '../state/game';
 
 	$: bets = $currentBets['blue'];
 	$: sum = sumBets(bets);
 	$: isSpinning = $state ? $state.status === 'started' : false;
+
+	const { send, fetching } = getGeneralContext();
 </script>
 
 <div class="px-3 pb-4 relative flex flex-col rounded-large w-full card">
@@ -52,17 +25,26 @@
 	<div class="mt-8">
 		<BackgroundButton
 			background="blue"
-			onClick={handleCreateBet}
+			onClick={() =>
+				send({
+					type: 'BET',
+					selections: [
+						1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33,
+						35, 37
+					]
+				})}
 			title="Place Bet"
-			disabled={isLoading || isSpinning}
+			disabled={isSpinning || $fetching}
 		/>
 		<div class="flex py-4 gap-6">
 			<div class="flex">
 				<People color="blue" />
 				<span class="text-white font-semibold pl-3">{bets.length}</span>
 			</div>
-			<div class="flex">
-				<OpaqueGem color="blue" />
+			<div class="flex items-center">
+				<div class="w-5 h-5">
+					<Currency />
+				</div>
 				<span class="text-white font-semibold pl-3"
 					>{convertPenniesToDollars(sum, 2)}</span
 				>
@@ -91,7 +73,9 @@
 							>{bet.user.displayName}</span
 						>
 						<div class="flex flex-grow justify-end gap-2">
-							<OpaqueGem color="blue" />
+							<div class="w-6 h-6">
+								<Currency type={bet.currency} />
+							</div>
 							<span class="text-white font-semibold"
 								>{new Big(bet.amount).div(100).toFixed(2)}</span
 							>

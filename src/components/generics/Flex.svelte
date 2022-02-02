@@ -1,14 +1,13 @@
 <script lang="ts">
-    interface FlexProps {
-        class?: string;
-    }
+	interface FlexProps {
+		class?: string;
+	}
 
-    $: className = [
-        "flex",
-        $$restProps.class ? $$restProps.class : "",
-    ].join(" ");
+	$: className = ['flex', $$restProps.class ? $$restProps.class : ''].join(
+		' '
+	);
 </script>
 
 <div {...$$restProps} class={className}>
-    <slot/>
+	<slot />
 </div>

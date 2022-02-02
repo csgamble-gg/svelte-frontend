@@ -1,8 +1,24 @@
 query CurrentUser {
-    getCurrentUser {
-        _id
-        displayName
-        avatar
-        balance
-    }
+	getCurrentUser {
+		_id
+		displayName
+		avatar
+	}
+}
+
+query UserWallets {
+	userWallets {
+		type
+		balance
+	}
+}
+
+subscription AvailableBalances {
+	availableBalances {
+		amount
+		balance {
+			amount
+			currency
+		}
+	}
 }

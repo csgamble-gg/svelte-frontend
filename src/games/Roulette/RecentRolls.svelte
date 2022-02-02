@@ -20,7 +20,7 @@
 			</Skeleton>
 		{/each}
 	{:else}
-		{#each $gameHistory as recentRoll}
+		{#each $gameHistory as recentRoll (recentRoll._id)}
 			<div
 				transition:slide
 				class="cursor-pointer"

@@ -1,46 +1,87 @@
 /* Write your global styles here, in PostCSS syntax */
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
 *::-webkit-scrollbar-thumb {
-    background-color: #54cca8;
-    border-radius: 15px;
+	background-color: #54cca8;
+	border-radius: 15px;
 }
 
 *::-webkit-scrollbar {
-    width: 0.1875rem;
-    height: 0.1875rem;
-}
-
-:root {
+	width: 0.1875rem;
+	height: 0.1875rem;
 }
 
 .game-wrapper {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    border-radius: 24px;
-    height: 100%;
-    border: 1px solid #1a1f31;
-    position: relative;
-    background: no-repeat center center;
-    z-index: 1;
-    overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	border-radius: 24px;
+	height: 100%;
+	border: 1px solid #1a1f31;
+	position: relative;
+	background: no-repeat center center;
+	z-index: 1;
+	overflow: hidden;
 }
 
 .game-wrapper::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    height: 100%;
-    width: 100%;
-    opacity: 0.4;
-    z-index: -1;
-    background: url('/assets/StarBackground.png');
+	content: '';
+	position: absolute;
+	inset: 0;
+	height: 100%;
+	width: 100%;
+	opacity: 0.4;
+	z-index: -1;
+	background: url('/assets/StarBackground.png');
 }
 
 .game-content {
-    display: flex;
-    flex-direction: column;
-    max-width: 1700px;
-    align-self: center;
-    width: 100%;
+	display: flex;
+	flex-direction: column;
+	max-width: 1700px;
+	align-self: center;
+	width: 100%;
+}
+
+.center {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+input[type='radio'] {
+	appearance: none;
+	/* For iOS < 15 to remove gradient background */
+	background-color: #fff;
+	/* Not removed via appearance */
+	margin: 0;
+
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 0.15rem solid #ffeb71;
+	background-color: transparent;
+	display: grid;
+	place-content: center;
+	cursor: pointer;
+}
+
+input[type='radio']:disabled {
+	cursor: not-allowed;
+}
+
+input[type='radio']::before {
+	content: '';
+	width: 0.65em;
+	height: 0.65em;
+	border-radius: 50%;
+	transform: scale(0);
+	transition: 120ms transform ease-in-out;
+	box-shadow: inset 1em 1em #ffeb71;
+}
+
+input[type='radio']:checked::before {
+	transform: scale(1);
 }

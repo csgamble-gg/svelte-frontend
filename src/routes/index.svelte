@@ -1,7 +1,10 @@
 <script>
-	import { toast } from '@zerodevx/svelte-toast';
+	import { notifications } from '../notifications/index';
 </script>
 
 <div>
-	<button on:click={() => toast.push('this is a message')}>Success</button>
+	<button
+		on:click={() => notifications.error.open({ message: 'Error Message' })}
+		>Add toast</button
+	>
 </div>

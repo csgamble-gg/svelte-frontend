@@ -26,8 +26,11 @@
 
 <button
 	{...$$restProps}
-	class="w-auto h-12 wrapper relative {disabled === true ? 'disabled' : ''}"
+	class="w-auto h-12 wrapper relative {disabled === true
+		? 'disabled'
+		: ''}"
 	on:click={onClick}
+	{disabled}
 	style="background: {backgroundImage[background]}; background-size: 165%;"
 >
 	<span class="text-white font-semibold text-sm">{title}</span>

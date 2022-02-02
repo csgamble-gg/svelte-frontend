@@ -1,5 +1,5 @@
 import { browser } from '$app/env';
-import type { Exchange } from '@urql/core';
+import type { Exchange, OperationResult } from '@urql/core';
 import {
 	Client,
 	CombinedError,
@@ -17,7 +17,7 @@ import type { DocumentNode } from 'graphql';
 import { print } from 'graphql';
 import type { ExecutionResult } from 'graphql-ws';
 import Cookies from 'js-cookie';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import { get, writable } from 'svelte/store';
 import type { OperationContext } from 'urql';
 import { v4 as uuid } from 'uuid';
@@ -273,6 +273,67 @@ export function createRawQuery() {
 		} catch (error) {
 			return error;
 		}
+	};
+}
+
+export function createMutation<TData, TVariables extends Object>(
+	document: DocumentNode
+) {
+	type Store = {
+		loading: boolean;
+		data: TData | null;
+		error: undefined | null | string;
+	};
+
+	const store = writable<Store>({
+		loading: false,
+		data: null,
+		error: null
+	});
+
+	const mutate = (
+		variables: TVariables | undefined,
+		context?: Partial<OperationContext>
+	) => {
+		new Promise<OperationResult<TData>>(async (resolve) => {
+			try {
+				const client = getClient();
+
+				store.update((prev) => ({
+					...prev,
+					loading: true
+				}));
+
+				const response = await client
+					.mutation<TData, TVariables>(document, variables, context)
+					.toPromise();
+
+				if (response?.error) {
+					store.update((prev) => ({
+						...prev,
+						error: response.error.message,
+						loadding: false
+					}));
+					throw new Error(response.error.message);
+				} else {
+					store.update((prev) => ({
+						...prev,
+						data: response.data || null,
+						error: null,
+						loading: false
+					}));
+				}
+
+				resolve(response);
+			} catch (e) {
+				// do something important, idk
+			}
+		});
+	};
+
+	return {
+		...store,
+		mutate
 	};
 }
 
