@@ -22,7 +22,7 @@
 		"@graphql-codegen/urql-introspection": "2.1.1",
 		"@graphql-codegen/urql-svelte-operations-store": "^1.1.9",
 		"@sveltejs/adapter-auto": "next",
-		"@sveltejs/adapter-node": "^1.0.0-next.61",
+		"@sveltejs/adapter-node": "1.0.0-next.67",
 		"@sveltejs/adapter-static": "^1.0.0-next.0",
 		"@sveltejs/kit": "next",
 		"@types/big.js": "^6.1.2",
