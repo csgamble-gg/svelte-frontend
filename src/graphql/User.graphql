@@ -3,6 +3,10 @@ query CurrentUser {
 		_id
 		displayName
 		avatar
+		wallets {
+			type
+			balance
+		}
 	}
 }
 

@@ -501,7 +501,7 @@ export type UserEventSubscription = { __typename?: 'Subscription', userEvent: { 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentUserQuery = { __typename?: 'Query', getCurrentUser?: { __typename?: 'User', _id: string, displayName: string, avatar?: string | null | undefined } | null | undefined };
+export type CurrentUserQuery = { __typename?: 'Query', getCurrentUser?: { __typename?: 'User', _id: string, displayName: string, avatar?: string | null | undefined, wallets: Array<{ __typename?: 'UserWallet', type: CurrencyEnum, balance: number }> } | null | undefined };
 
 export type UserWalletsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -663,6 +663,10 @@ export const CurrentUserDocument = gql`
     _id
     displayName
     avatar
+    wallets {
+      type
+      balance
+    }
   }
 }
     `;

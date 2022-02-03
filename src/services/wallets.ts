@@ -15,7 +15,7 @@ export const userBalanceEmitter = () => {
 
 	const globalUnsubscribe = subscribeToGlobalEventEmitter({
 		initUserResponse: ({ user }) => {
-			// rawWallets.set(keyBy(user.wallets, 'type'));
+			rawWallets.rawSet(user.wallets);
 
 			if (browser) {
 				rawWallets.fetch();

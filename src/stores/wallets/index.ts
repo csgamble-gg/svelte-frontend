@@ -79,6 +79,9 @@ export const rawWallets = (() => {
 	return {
 		...walletStore,
 		updateWalletBalance,
-		fetch
+		fetch,
+		rawSet: (raw: [UserWallet]) => {
+			walletStore.set(transformToWallets(raw));
+		}
 	};
 })();

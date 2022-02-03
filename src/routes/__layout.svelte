@@ -1,9 +1,11 @@
 <script context="module" lang="ts">
+	import { browser } from '$app/env';
 	import { page } from '$app/stores';
 	import Header from '$components/Header/Header.svelte';
 	import Modal from '$components/Modals/Modal.svelte';
 	import Sidebar from '$components/Sidebar/Sidebar.svelte';
 	import ToastList from '$components/ToastList/index.svelte';
+	import MainLogo from '$icons/svgs/MainLogo/MainLogo.svelte';
 	import {
 		createSSRClient,
 		createSSRQuery
@@ -13,6 +15,8 @@
 	import type { LoadOutput, LoadProps } from '$types/index';
 	import type { LoadInput } from '@sveltejs/kit';
 	import { setClient } from '@urql/svelte';
+	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 	import '../app.css';
 	import { createEmitterStores } from '../emitters/global';
 	import '../sentry/index';
@@ -62,8 +66,8 @@
 </script>
 
 <script lang="ts">
-	createEmitterStores();
 	createStores();
+	createEmitterStores();
 	initEmitters();
 	export let urqlClient: LoadProps['urqlClient'];
 	export let user: LoadProps['user'];
@@ -82,6 +86,24 @@
 	hydrate();
 
 	$: modal = $page.url.searchParams.get('modal');
+
+	let ready = false;
+
+	onMount(() => {
+		ready = true;
+	});
+
+	// TODO: add development check
+	if (browser && false) {
+		console.log(
+			'%cSTOP!',
+			'color: red; font-weight: bold; font-size: 72px;'
+		);
+		console.log(
+			"%cThis is a browser feature intended for developers. If someone told you to copy and paste something here to enable a CSGamble feature or 'hack' someone's account, it is a scam and will give them access to your CSGamble account.",
+			'font-size: 24px; color: white; font-weight: bold;'
+		);
+	}
 </script>
 
 {#if modal}
@@ -90,9 +112,26 @@
 
 <svelte:head>
 	<meta content="width=device-width" name="viewport" />
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+		rel="stylesheet"
+	/>
 </svelte:head>
 
 <ToastList />
+
+{#if ready === false}
+	<div
+		class="w-screen h-screen bg-primaryBg fixed z-50 flex items-center justify-center"
+		transition:fade={{ duration: 150 }}
+	>
+		<div class="loading">
+			<MainLogo />
+		</div>
+	</div>
+{/if}
 
 <div class="bg-primaryBg h-screen w-screen flex flex-row">
 	<Sidebar />
@@ -111,4 +150,26 @@
 	@tailwind base;
 	@tailwind components;
 	@tailwind utilities;
+
+	@keyframes breathing {
+		0% {
+			transform: scale(0.9);
+		}
+
+		25% {
+			transform: scale(1);
+		}
+
+		60% {
+			transform: scale(0.9);
+		}
+
+		100% {
+			transform: scale(0.9);
+		}
+	}
+
+	.loading {
+		animation: breathing 2s ease-out infinite;
+	}
 </style>

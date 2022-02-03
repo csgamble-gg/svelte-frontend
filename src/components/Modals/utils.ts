@@ -16,7 +16,6 @@ export const closeModal = (modal: Modals) => {
 	const query = queryString.parse(window.location.search);
 
 	const newUrl = queryString.stringify(omit(query, 'modal'));
-	console.log(newUrl);
 
 	const nextUrl = `${window.location.pathname}${newUrl}`;
 
