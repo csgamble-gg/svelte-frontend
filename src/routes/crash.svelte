@@ -1,9 +1,14 @@
 <script lang="ts">
-	import CrashGame from '../games/Crash/CrashGame.svelte';
-	import BetInput from '../games/Crash/BetInput.svelte';
+	import Crash from '../games/Crash/index.svelte';
 </script>
 
-<div class="game-wrapper">
+<svelte:head>
+	<title>CSGamble | Crash</title>
+</svelte:head>
+
+<Crash />
+
+<!-- <div class="game-wrapper">
 	<div class='game-content px-11 flex flex-row gap-9'>
 		<div class='absolute left-0 pt-9 pl-11 z-10'>
 			<div class='mb-4 flex flex-row items-center'>
@@ -130,4 +135,4 @@
 		font-weight: 600;
 		font-size: 13px;
 	}
-</style>
+</style> -->

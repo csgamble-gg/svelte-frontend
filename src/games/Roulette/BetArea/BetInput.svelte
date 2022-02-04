@@ -3,21 +3,6 @@
 	import { getGeneralContext } from '$games/state/setup';
 
 	const { amount } = getGeneralContext();
-
-	// function handleClick(e) {
-	// 	const value = parseInt(e.target.value);
-	// 	if (value > 0) {
-	// 		$betAmount = $betAmount + value;
-	// 	}
-	// 	if (e.target.value === 'x2') {
-	// 		betAmount.set($betAmount * 2);
-	// 	}
-	// 	if (e.target.value === 'MAX') {
-	// 		$betAmount = $betAmount;
-	// 	}
-	// }
-
-	const handleClick = () => {};
 </script>
 
 <div class="flex flex-col rounded-large bet-input relative">
@@ -31,9 +16,10 @@
 				</div>
 				<input
 					bind:value={$amount}
-					class="border-none outline-none bg-transparent text-white placeholder:text-white font-semibold"
+					class="outline-none bg-transparent text-white placeholder:text-white font-semibold"
 					placeholder="0.00"
 					type="number"
+					max={5.0}
 				/>
 			</span>
 		</div>

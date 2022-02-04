@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
-	import { CrashEngine } from './CrashEngine';
-	import { writable } from 'svelte/store';
 	import '@mszu/pixi-ssr-shim';
 	import * as Pixi from 'pixi.js';
-	import { CrashCanvasView } from './CrashCanvasView';
 	import ResizeObservable from 'resize-observer-polyfill';
+	import { onDestroy, onMount } from 'svelte';
+	import { writable } from 'svelte/store';
+	import { CrashCanvasView } from './CrashCanvasView';
+	import { CrashEngine } from './CrashEngine';
 
 	let width: number = 0;
 	let height: number = 0;
@@ -118,9 +118,7 @@
 	}
 </script>
 
-<div bind:this={containerRef} style="width: 100%; height: 525px;">
-	<button on:click={toggleGame}>start / stop</button>
-	<button on:click={crashGame}>crash</button>
+<div bind:this={containerRef} style="width: 100%; height: 590px;">
 	<canvas
 		style="width: 100%; height: 100%;"
 		bind:this={canvas}

@@ -1,5 +1,10 @@
 const config = {
-	content: ['./src/**/*.{html,js,svelte,ts}', './src/**/**/*.svelte'],
+	content: [
+		'./src/**/*.{html,js,svelte,ts}',
+		'./src/**/**/*.svelte',
+		'./src/**/**/**/*.svelte',
+		'./src/**/**/**/**/*.svelte'
+	],
 	mode: 'jit',
 	theme: {
 		extend: {
@@ -8,9 +13,11 @@ const config = {
 				foreground: '#242B43',
 				lightblue: '#9CBBFF',
 				lightBlue10: 'rgba(156, 187, 255, 0.1)',
+				lightBlue70: 'rgba(156, 187, 255, 0.7)',
 				brown: '#574600',
 				darkBlue: '#0C0F1A',
 				dazzledBlue: '#3A5784',
+				yellowGold: '#FFEB71',
 				cryptos: {
 					btc: '#f7931a',
 					eth: '#627eea'
