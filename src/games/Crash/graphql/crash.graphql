@@ -4,5 +4,21 @@ subscription CrashSubscription {
 		status
 		elapsed
 		multiplier
+		startsAt
 	}
+}
+
+query CrashInitial {
+	crashInitial {
+		crashGame {
+			_id
+			status
+			startsAt
+			elapsed
+		}
+	}
+}
+
+mutation CreateCrashBet {
+	
 }
