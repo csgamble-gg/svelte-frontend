@@ -1,15 +1,15 @@
 import '@mszu/pixi-ssr-shim';
-import * as PIXI from 'pixi.js';
-import { Spine } from 'pixi-spine';
 import lerp from 'lerp';
 import { DropShadowFilter } from 'pixi-filters';
+import { Spine } from 'pixi-spine';
+import * as PIXI from 'pixi.js';
 // import { gsap, Power4 } from 'gsap'
 // import rand from 'random-seed'
-
 // import { LeonSans } from 'src/vendors/leon'
-
 // import { View } from './View'
 import type { CrashEngine } from './CrashEngine';
+import { View } from './GameViews/BaseView';
+import type { ViewManager } from './GameViews/ViewManager';
 // import { lerp, getDistance } from '../util'
 // import { AxisMarker, CashoutPoint } from '../objects'
 // import { MobileWidth } from '../constants'
@@ -32,46 +32,30 @@ const settings = {
 	yAxisTickWidth: 50
 };
 
-export class CrashCanvasView {
-	sizes: {
-		paddingX: 20;
-		paddingY: 20;
-	};
-	settings: {};
+export class CrashCanvasView extends View {
 	xLabelIndex: number;
 	yTickWidth: number;
 	yLabelIndex: number;
 	demoMode: boolean;
 	betAmount: number;
-	autoCashoutMultiplier: number | null;
+	autoCashoutMultiplier: null;
 	flipCashout: boolean;
+	rocket: Spine;
 	targetRocketX: number;
 	targetRocketY: number;
 	targetRocketAngle: number;
 	cashoutsAngle: number;
 	cashouts: Array<any>;
 	crashEngine: CrashEngine;
-	lastCashoutTick: number;
+	lastCashoutTick: null;
 	isMobile: boolean;
+	multiplierText: PIXI.Text;
+	app: PIXI.Application;
+	ready: boolean;
 	interactive: boolean;
 	cursor: string;
-	mousemove: any;
-	app: PIXI.Application;
-	multiplierText: PIXI.Text;
-	gameContainer: PIXI.Container;
-	labelsContainer: PIXI.Container;
-	textGraphics: PIXI.Graphics;
-	mainLine: PIXI.Graphics;
-	multiplierHeader: PIXI.Text;
-	width: number;
-	height: number;
-	xGraphics: PIXI.Graphics;
-	yGraphics: PIXI.Graphics;
-	rocket: Spine;
-	yLabels: Array<any>;
-	ready: boolean;
-
-	constructor(crashEngine: CrashEngine, app: any) {
+	constructor(viewManager: ViewManager, app: PIXI.Application, args: any) {
+		super(viewManager, app);
 		this.xLabelIndex = 0;
 		this.yTickWidth = 50;
 		this.yLabelIndex = 1;
@@ -87,7 +71,7 @@ export class CrashCanvasView {
 
 		this.cashoutsAngle = 0;
 		this.cashouts = [];
-		this.crashEngine = crashEngine;
+		this.crashEngine = this.viewManager.attachments.crashEngine;
 		this.lastCashoutTick = null;
 
 		this.isMobile = false;
@@ -184,10 +168,6 @@ export class CrashCanvasView {
 			fill: 0xffffff,
 			fontFamily: 'Poppins'
 		});
-		// text: 'Current Payout',
-		// color: [0x7a7a9a],
-		// size: this.getSize(45),
-		// weight: 800
 
 		this.multiplierText = new PIXI.Text('0.00x', {
 			fontFamily: 'Poppins',
@@ -197,14 +177,10 @@ export class CrashCanvasView {
 			dropShadowAngle: Math.PI / 2,
 			dropShadowAlpha: 0.15,
 			dropShadowDistance: 6
-			// padding: 400
 		});
 
-		this.multiplierText.anchor.set(0);
-		this.multiplierText.position.set(
-			this.crashEngine.graphWidth / 2,
-			this.crashEngine.graphHeight / 2
-		);
+		this.multiplierText.anchor.set(0.25);
+		this.multiplierText.position.set(this.width / 2, this.height / 2);
 
 		this.yLabels = Array.from(
 			{
@@ -233,38 +209,10 @@ export class CrashCanvasView {
 		this.rocket = this.createRocket();
 		this.updateRocketSize();
 
-		// this.profitText = new PIXI.Text(
-		// 	this.demoMode ? 'Demo Mode' : '+ $0.00',
-		// 	{
-		// 		fontFamily: 'Poppins',
-		// 		fontWeight: '600',
-		// 		fontSize: 14,
-		// 		fill: 0x8bc34a,
-		// 		dropShadow: true,
-		// 		dropShadowAngle: Math.PI / 2,
-		// 		dropShadowAlpha: 0.15,
-		// 		dropShadowDistance: 6,
-		// 		letterSpacing: 2
-		// 		// padding: 400
-		// 	}
-		// );
-
-		// this.profitText.visible = false; // this.betAmount > 0
-		// this.profitText.anchor.set(0.5);
-		// this.profitText.scale.set(0);
-		//
-		// if (this.profitText.visible) {
-		//   gsap.to(this.profitText.scale, 0.5, {
-		//     x: 1,
-		//     y: 1,
-		//     ease: Power4.out
-		//   })
-		// }
-
 		const explosions = (this.explosions = new Spine(
 			this.app.loader.resources.explosions.spineData
 		));
-		explosions.visible = this.crashEngine.getElapsedTime() <= 2000;
+		// explosions.visible = this.crashEngine.getElapsedTime() <= 2000;
 		explosions.scale.set(0.5);
 
 		explosions.state.addListener({
@@ -456,7 +404,7 @@ export class CrashCanvasView {
 		// 	this.lagText.visible = false;
 		// }
 
-		this.updateCashouts();
+		// this.updateCashouts();
 
 		const calcDec = Math.pow(10, 2);
 		this.multiplierText.text = `${
@@ -555,8 +503,8 @@ export class CrashCanvasView {
 		this.yLabels[0].y = 0;
 		this.yLabels[0].visible = true;
 
-		this.multiplierText.x = (this.isMobile ? graphWidth : plotWidth) / 2;
-		this.multiplierText.y = (this.isMobile ? graphHeight : plotHeight) / 3;
+		// this.multiplierText.x = (this.isMobile ? graphWidth : plotWidth) / 2;
+		// this.multiplierText.y = (this.isMobile ? graphHeight : plotHeight) / 2;
 		this.multiplierText.style.fontSize = 44;
 
 		this.drawText();

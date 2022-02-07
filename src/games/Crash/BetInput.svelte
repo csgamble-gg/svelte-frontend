@@ -1,17 +1,31 @@
 <script lang="ts">
 	import Currency from '$components/Currency/Currency.svelte';
 	import BackgroundButton from '$components/generics/BackgroundButton.svelte';
+	import { amount } from './state/general';
 </script>
 
 <div class="flex flex-col rounded-large bet-input relative">
 	<div class="flex w-full items-center flex-nowrap gap-x-2">
 		<div class="flex gap-3">
-			<button class="bet-amount-button" type="button"> +1 </button>
-			<button class="bet-amount-button" type="button"> +10 </button>
+			<button
+				class="bet-amount-button"
+				type="button"
+				on:click={() => amount.add(1)}
+			>
+				+1
+			</button>
+			<button
+				class="bet-amount-button"
+				type="button"
+				on:click={() => amount.add(10)}
+			>
+				+10
+			</button>
 			<button
 				class="bet-amount-button hidden md:inline"
 				type="button"
 				value="x2"
+				on:click={() => amount.double()}
 			>
 				x2
 			</button>
@@ -19,17 +33,20 @@
 				class="bet-amount-button hidden md:inline"
 				type="button"
 				value="MAX"
+				on:click={() => amount.max()}
 			>
 				MAX
 			</button>
 		</div>
 
 		<div class="bet-amount-input flex gap-x-2 items-center h-full px-4">
-			<div class="w-5 h-5">
+			<div class="w-6 h-6">
 				<Currency />
 			</div>
 			<input
-				class="bg-transparent text-white placeholder:text-white font-semibold"
+				class="bg-transparent text-white placeholder:text-white font-semibold w-full"
+				type="number"
+				bind:value={$amount}
 				placeholder="0.00"
 			/>
 		</div>

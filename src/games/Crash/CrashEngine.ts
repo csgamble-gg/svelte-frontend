@@ -23,9 +23,7 @@ export class CrashEngine {
 	yIncrement: number;
 	xAxisMinimum: number;
 	yAxisMinimum: number;
-	elapsedOffset: number;
 	yAxisMultiplier: number;
-	lastGameTick: number | null;
 	tickTimeout: number | null;
 	lag: boolean;
 	lagTimeout: null;
@@ -45,7 +43,7 @@ export class CrashEngine {
 		);
 	}
 
-	static getElapsedPayout(elapsed: number) {
+	getElapsedPayout(elapsed: number) {
 		const payout =
 			~~(100 * Math.E ** (CrashEngine.CrashSpeed * elapsed)) / 100;
 
@@ -56,17 +54,17 @@ export class CrashEngine {
 		return Math.max(payout, 1);
 	}
 
-	constructor(baseProps: BaseProps) {
+	constructor() {
 		this.gameId = null;
 		this.startTime = 0;
-		this.elapsedTime = 0;
+		// this.elapsedTime = 0;
 		this.finalElapsed = 0;
 		this.finalMultiplier = 0;
 		this.crashPoint = null;
 		this.betAmount = 0;
 
-		this.graphWidth = baseProps.width;
-		this.graphHeight = baseProps.height;
+		this.graphWidth = 0;
+		this.graphHeight = 0;
 
 		this.plotWidth = 0;
 		this.plotHeight = 0;
@@ -86,28 +84,26 @@ export class CrashEngine {
 
 		this.yAxisMultiplier = 1;
 
-		this.lastGameTick = null;
+		// this.lastGameTick = null;
 		this.tickTimeout = null;
 
 		this.lag = false;
-		this.lastGameTick = null;
+		// this.lastGameTick = null;
 		this.lagTimeout = null;
 		this.multiplier = 1;
 	}
 
 	onGameTick = (elapsed: number) => {
-		this.lastGameTick = Date.now();
-
-		const latency = this.lastGameTick - elapsed;
-
-		if (this.startTime > latency) {
-			this.startTime = latency;
-		}
+		// this.lastGameTick = Date.now();
+		// const latency = this.lastGameTick - elapsed;
+		// if (this.startTime > latency) {
+		// 	this.startTime = latency;
+		// }
 	};
 
 	tick = () => {
-		this.elapsedTime = this.getElapsedTime();
-		this.multiplier = CrashEngine.getElapsedPayout(this.elapsedTime);
+		// this.elapsedTime = this.getElapsedTime();
+		this.multiplier = this.getElapsedPayout(this.elapsedTime);
 
 		this.yAxisMinimum = this.yAxisMultiplier;
 		this.yAxis = this.yAxisMinimum;
@@ -133,28 +129,16 @@ export class CrashEngine {
 	};
 
 	getElapsedTime = () => {
-		return Date.now() - this.startTime;
+		return this.elapsedTime;
 	};
 
 	getElapsedPosition = (elapsedTime: number) => {
-		const payout = CrashEngine.getElapsedPayout(elapsedTime) - 1;
+		const payout = this.getElapsedPayout(elapsedTime) - 1;
 		const x = elapsedTime * this.xIncrement;
 		const y = this.plotHeight - payout * this.yIncrement;
 
-		return { x, y };
+		return { x: x + 50, y };
 	};
-
-	getYMultiplier = (y: number) => {
-		return (
-			Math.ceil(
-				(1 + (this.yAxis - (y / this.plotHeight) * this.yAxis)) * 1000
-			) / 1000
-		);
-	};
-
-	getMultiplierY(multiplier: number) {
-		return this.plotHeight - (multiplier - 1) * this.yIncrement;
-	}
 
 	onResize(width: number, height: number) {
 		this.graphWidth = width;

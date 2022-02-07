@@ -202,6 +202,11 @@ export type CrashGame = {
   status: Scalars['String'];
 };
 
+export type CrashInitial = {
+  __typename?: 'CrashInitial';
+  crashGame: CrashGame;
+};
+
 export type CreateBetInput = {
   betAmount: Scalars['Float'];
   currency: CurrencyEnum;
@@ -330,6 +335,7 @@ export type Prize = {
 
 export type Query = {
   __typename?: 'Query';
+  crashInitial: CrashInitial;
   getBetsForGame: Array<Bet>;
   getCurrentUser?: Maybe<User>;
   getJackpots: Array<Maybe<JackpotGame>>;
@@ -467,7 +473,12 @@ export type UserWallet = {
 export type CrashSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CrashSubscriptionSubscription = { __typename?: 'Subscription', crashGame: { __typename?: 'CrashGame', _id: string, status: string, elapsed: number, multiplier: number } };
+export type CrashSubscriptionSubscription = { __typename?: 'Subscription', crashGame: { __typename?: 'CrashGame', _id: string, status: string, elapsed: number, multiplier: number, startsAt: any } };
+
+export type CrashInitialQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CrashInitialQuery = { __typename?: 'Query', crashInitial: { __typename?: 'CrashInitial', crashGame: { __typename?: 'CrashGame', _id: string, status: string, startsAt: any, elapsed: number } } };
 
 export type UserInfoFragment = { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined };
 
@@ -527,6 +538,19 @@ export const CrashSubscriptionDocument = gql`
     status
     elapsed
     multiplier
+    startsAt
+  }
+}
+    `;
+export const CrashInitialDocument = gql`
+    query CrashInitial {
+  crashInitial {
+    crashGame {
+      _id
+      status
+      startsAt
+      elapsed
+    }
   }
 }
     `;
@@ -690,6 +714,7 @@ export const AvailableBalancesDocument = gql`
 }
     `;
 export type CrashSubscriptionSubscriptionStore = OperationStore<CrashSubscriptionSubscription, CrashSubscriptionSubscriptionVariables>;
+export type CrashInitialQueryStore = OperationStore<CrashInitialQuery, CrashInitialQueryVariables>;
 export type RouletteInitialQueryStore = OperationStore<RouletteInitialQuery, RouletteInitialQueryVariables>;
 export type CreateBetMutationStore = OperationStore<CreateBetMutation, CreateBetMutationVariables>;
 export type RouletteGameSubscriptionStore = OperationStore<RouletteGameSubscription, RouletteGameSubscriptionVariables>;

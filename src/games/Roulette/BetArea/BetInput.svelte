@@ -19,7 +19,6 @@
 					class="outline-none bg-transparent text-white placeholder:text-white font-semibold"
 					placeholder="0.00"
 					type="number"
-					max={5.0}
 				/>
 			</span>
 		</div>
