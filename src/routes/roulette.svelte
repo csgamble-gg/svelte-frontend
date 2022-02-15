@@ -5,4 +5,5 @@
 <svelte:head>
 	<title>CSGamble | Roulette</title>
 </svelte:head>
+
 <RouletteGame />

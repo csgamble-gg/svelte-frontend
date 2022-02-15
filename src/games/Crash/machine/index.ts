@@ -2,13 +2,19 @@ import { createMachine, interpret } from 'xstate';
 import * as general from '../state/general';
 import type { BettingEvents } from './betting';
 import betting from './betting';
+import type { GetStateEvents } from './getState';
+import getState from './getState';
 import * as services from './services';
 
 export type CrashContext = {};
 
-type CrashSchema = { value: 'betting'; context: {} };
+type CrashSchema = {
+	states: {
+		// getState: GetStateSchema;
+	};
+};
 
-export type CrashMachineEvents = BettingEvents;
+export type CrashMachineEvents = BettingEvents | GetStateEvents;
 
 const machine = createMachine<
 	CrashContext,
@@ -17,11 +23,11 @@ const machine = createMachine<
 >(
 	{
 		id: 'crash',
-		initial: 'betting',
+		initial: 'getState',
+		context: {},
 		states: {
-			betting: {
-				...betting
-			}
+			getState,
+			betting
 		}
 	},
 	{ services: { ...services } }

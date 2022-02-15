@@ -92,7 +92,7 @@
 					app.resize();
 					crashEngine.onResize(width, height);
 					viewManager.currentView.onResize(width, height);
-				}, 250);
+				}, 10);
 			}
 		});
 

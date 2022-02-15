@@ -24,7 +24,7 @@ export class StartingView extends View {
 		this.header = new LeonSans({
 			text: `Starting soon`,
 			color: ['0xffffff'],
-			size: 70,
+			size: this.getSize(85),
 			weight: 800
 		});
 

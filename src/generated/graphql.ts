@@ -192,11 +192,28 @@ export type BuyJackpotTicketMutationResult = {
   success: Scalars['Boolean'];
 };
 
+export type CashoutCrashBetMutationResult = {
+  __typename?: 'CashoutCrashBetMutationResult';
+  success: Scalars['Boolean'];
+};
+
+export type CrashBet = {
+  __typename?: 'CrashBet';
+  _id: Scalars['ID'];
+  amount: Scalars['Float'];
+  currency: CurrencyEnum;
+  gameId: Scalars['ID'];
+  payoutMultiplier?: Maybe<Scalars['Float']>;
+  totalWin?: Maybe<Scalars['Float']>;
+  user: UserInfo;
+};
+
 export type CrashGame = {
   __typename?: 'CrashGame';
   _id: Scalars['ID'];
   createdAt: Scalars['Date'];
   elapsed: Scalars['Int'];
+  gameId: Scalars['String'];
   multiplier: Scalars['Float'];
   startsAt: Scalars['DateTime'];
   status: Scalars['String'];
@@ -204,6 +221,17 @@ export type CrashGame = {
 
 export type CrashInitial = {
   __typename?: 'CrashInitial';
+  cashedIn: Array<Maybe<CrashBet>>;
+  cashedOut: Array<Maybe<CrashBet>>;
+  crashGame: CrashGame;
+  currentBet?: Maybe<CrashBet>;
+  pastGames: Array<CrashGame>;
+};
+
+export type CrashSubscriptionResult = {
+  __typename?: 'CrashSubscriptionResult';
+  cashedIn?: Maybe<Array<CrashBet>>;
+  cashedOut?: Maybe<Array<Maybe<CrashBet>>>;
   crashGame: CrashGame;
 };
 
@@ -217,6 +245,18 @@ export type CreateBetInput = {
 export type CreateBetMutationResult = {
   __typename?: 'CreateBetMutationResult';
   error?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+  user?: Maybe<User>;
+};
+
+export type CreateCrashBetInput = {
+  betAmount: Scalars['Float'];
+  currency: CurrencyEnum;
+  gameId: Scalars['String'];
+};
+
+export type CreateCrashBetMutationResult = {
+  __typename?: 'CreateCrashBetMutationResult';
   success: Scalars['Boolean'];
   user?: Maybe<User>;
 };
@@ -308,7 +348,9 @@ export type LatestGame = {
 export type Mutation = {
   __typename?: 'Mutation';
   buyJackpotTicket: BuyJackpotTicketMutationResult;
+  cashoutCrashBet: CashoutCrashBetMutationResult;
   createBet: CreateBetMutationResult;
+  createCrashBet: CreateCrashBetMutationResult;
   createJackpotGame: JackpotGameMutationResult;
   minusBalance: Scalars['Boolean'];
 };
@@ -321,6 +363,11 @@ export type MutationBuyJackpotTicketArgs = {
 
 export type MutationCreateBetArgs = {
   input: CreateBetInput;
+};
+
+
+export type MutationCreateCrashBetArgs = {
+  input: CreateCrashBetInput;
 };
 
 
@@ -420,12 +467,8 @@ export type Subscription = {
   __typename?: 'Subscription';
   availableBalances: AvailableBalances;
   betCreated: Bet;
-  crashGame: CrashGame;
-  gameCreated: CreatedGameResult;
-  gameUpdated: UpdatedGameResult;
-  jackpotGameUpdated: JackpotGameUpdatedResult;
+  crashGame?: Maybe<CrashSubscriptionResult>;
   rouletteGame: RouletteSubscriptionResult;
-  updateGame: UpdatedGameResult;
   userError: UserErrorSubscription;
   userEvent: UserEventResult;
 };
@@ -466,19 +509,31 @@ export type UserInfo = {
 
 export type UserWallet = {
   __typename?: 'UserWallet';
-  balance: Scalars['Int'];
+  balance: Scalars['Float'];
   type: CurrencyEnum;
 };
 
 export type CrashSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CrashSubscriptionSubscription = { __typename?: 'Subscription', crashGame: { __typename?: 'CrashGame', _id: string, status: string, elapsed: number, multiplier: number, startsAt: any } };
+export type CrashSubscriptionSubscription = { __typename?: 'Subscription', crashGame?: { __typename?: 'CrashSubscriptionResult', crashGame: { __typename?: 'CrashGame', _id: string, status: string, elapsed: number, multiplier: number, startsAt: any, gameId: string }, cashedIn?: Array<{ __typename?: 'CrashBet', _id: string, totalWin?: number | null | undefined, payoutMultiplier?: number | null | undefined, amount: number, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, avatar?: string | null | undefined, displayName: string } }> | null | undefined, cashedOut?: Array<{ __typename?: 'CrashBet', _id: string, totalWin?: number | null | undefined, payoutMultiplier?: number | null | undefined, amount: number, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, avatar?: string | null | undefined, displayName: string } } | null | undefined> | null | undefined } | null | undefined };
 
 export type CrashInitialQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CrashInitialQuery = { __typename?: 'Query', crashInitial: { __typename?: 'CrashInitial', crashGame: { __typename?: 'CrashGame', _id: string, status: string, startsAt: any, elapsed: number } } };
+export type CrashInitialQuery = { __typename?: 'Query', crashInitial: { __typename?: 'CrashInitial', crashGame: { __typename?: 'CrashGame', _id: string, status: string, startsAt: any, elapsed: number, gameId: string }, cashedIn: Array<{ __typename?: 'CrashBet', _id: string, totalWin?: number | null | undefined, payoutMultiplier?: number | null | undefined, amount: number, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, avatar?: string | null | undefined, displayName: string } } | null | undefined>, cashedOut: Array<{ __typename?: 'CrashBet', _id: string, totalWin?: number | null | undefined, payoutMultiplier?: number | null | undefined, amount: number, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, avatar?: string | null | undefined, displayName: string } } | null | undefined>, pastGames: Array<{ __typename?: 'CrashGame', _id: string, multiplier: number }>, currentBet?: { __typename?: 'CrashBet', _id: string, amount: number, currency: CurrencyEnum, gameId: string } | null | undefined } };
+
+export type CreateCrashBetMutationVariables = Exact<{
+  input: CreateCrashBetInput;
+}>;
+
+
+export type CreateCrashBetMutation = { __typename?: 'Mutation', createCrashBet: { __typename?: 'CreateCrashBetMutationResult', success: boolean, user?: { __typename?: 'User', _id: string, balance: number } | null | undefined } };
+
+export type CashoutCrashBetMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CashoutCrashBetMutation = { __typename?: 'Mutation', cashoutCrashBet: { __typename?: 'CashoutCrashBetMutationResult', success: boolean } };
 
 export type UserInfoFragment = { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined };
 
@@ -534,11 +589,38 @@ export const UserInfoFragmentDoc = gql`
 export const CrashSubscriptionDocument = gql`
     subscription CrashSubscription {
   crashGame {
-    _id
-    status
-    elapsed
-    multiplier
-    startsAt
+    crashGame {
+      _id
+      status
+      elapsed
+      multiplier
+      startsAt
+      gameId
+    }
+    cashedIn {
+      _id
+      user {
+        _id
+        avatar
+        displayName
+      }
+      totalWin
+      payoutMultiplier
+      amount
+      currency
+    }
+    cashedOut {
+      _id
+      user {
+        _id
+        avatar
+        displayName
+      }
+      totalWin
+      payoutMultiplier
+      amount
+      currency
+    }
   }
 }
     `;
@@ -550,7 +632,60 @@ export const CrashInitialDocument = gql`
       status
       startsAt
       elapsed
+      gameId
     }
+    cashedIn {
+      _id
+      user {
+        _id
+        avatar
+        displayName
+      }
+      totalWin
+      payoutMultiplier
+      amount
+      currency
+    }
+    cashedOut {
+      _id
+      user {
+        _id
+        avatar
+        displayName
+      }
+      totalWin
+      payoutMultiplier
+      amount
+      currency
+    }
+    pastGames {
+      _id
+      multiplier
+    }
+    currentBet {
+      _id
+      amount
+      currency
+      gameId
+    }
+  }
+}
+    `;
+export const CreateCrashBetDocument = gql`
+    mutation CreateCrashBet($input: CreateCrashBetInput!) {
+  createCrashBet(input: $input) {
+    success
+    user {
+      _id
+      balance
+    }
+  }
+}
+    `;
+export const CashoutCrashBetDocument = gql`
+    mutation CashoutCrashBet {
+  cashoutCrashBet {
+    success
   }
 }
     `;
@@ -715,6 +850,8 @@ export const AvailableBalancesDocument = gql`
     `;
 export type CrashSubscriptionSubscriptionStore = OperationStore<CrashSubscriptionSubscription, CrashSubscriptionSubscriptionVariables>;
 export type CrashInitialQueryStore = OperationStore<CrashInitialQuery, CrashInitialQueryVariables>;
+export type CreateCrashBetMutationStore = OperationStore<CreateCrashBetMutation, CreateCrashBetMutationVariables>;
+export type CashoutCrashBetMutationStore = OperationStore<CashoutCrashBetMutation, CashoutCrashBetMutationVariables>;
 export type RouletteInitialQueryStore = OperationStore<RouletteInitialQuery, RouletteInitialQueryVariables>;
 export type CreateBetMutationStore = OperationStore<CreateBetMutation, CreateBetMutationVariables>;
 export type RouletteGameSubscriptionStore = OperationStore<RouletteGameSubscription, RouletteGameSubscriptionVariables>;

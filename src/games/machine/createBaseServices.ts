@@ -3,7 +3,7 @@ import type { EventObject, InvokeCreator } from 'xstate';
 
 type GeneralModule = ReturnType<typeof generalCreate>;
 
-type ServiceNames = 'mutationBet';
+type ServiceNames = 'mutationBet' | 'mutationCashout';
 
 export type HandlerArgs<GameState extends Object> = {
 	general: GeneralModule;
@@ -33,7 +33,17 @@ export function createBaseServices<
 		}
 	};
 
+	const mutationCashout: InvokeCreator<Context, EventObject> = (
+		_,
+		event
+	) => {
+		if ('mutationCashout' in services) {
+			return services.mutationCashout(event);
+		}
+	};
+
 	return {
-		mutationBet
+		mutationBet,
+		mutationCashout
 	};
 }

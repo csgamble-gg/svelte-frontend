@@ -1,5 +1,8 @@
 <script>
-	let bets = new Array(9).fill(0);
+	import Currency from '$components/Currency/Currency.svelte';
+	import { convertPenniesToDollars } from '$libs/currencyConversion';
+	import sumArrayNumber from '$utils/sumArrayNumber';
+	import { cashedIn, cashedOut } from '../state/game';
 </script>
 
 <div>
@@ -8,10 +11,12 @@
 			<h2 class="text-white text-xl font-bold">Round Stats</h2>
 			<div class="flex">
 				<span class="text-lightblue opacity-70 pr-1">Total Bets:</span>
-				<span class="text-lightblue">$256,78</span>
+				<span class="text-lightblue"
+					>${convertPenniesToDollars(sumArrayNumber($cashedIn), 2)}</span
+				>
 			</div>
 		</div>
-		{#each bets as bet, i}
+		{#each $cashedIn as bet, i}
 			<div
 				class="flex px-6 py-4 items-center relative"
 				style:background={i % 2 ? '#21283F' : 'transparent'}
@@ -21,26 +26,67 @@
 					width="40px"
 					height="40px"
 					alt="user profile avatar"
-					src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/ac/ac292f8791d0ea5888172186853d2d144031ee7d_full.jpg"
+					src={bet.user.avatar}
 				/>
 				<div
-					class="flex bg-cover bg-center w-14 h-10 border-2 border-lightblue/10 rounded-md mr-3"
-				/>
+					class="flex bg-cover bg-center w-14 h-10 border-2 border-lightblue/10 rounded-md mr-3 items-center justify-center"
+				>
+					<div class="w-6 h-6">
+						<Currency type={bet.currency} />
+					</div>
+				</div>
 				<div class="flex flex-col gap-y-0.5 mr-4">
 					<span class="text-lightblue text-xs opacity-70">Deposit</span>
-					<span class="text-white text-xs font-bold">$33.66</span>
+					<span class="text-white text-xs font-bold"
+						>${convertPenniesToDollars(bet.amount, 2)}</span
+					>
 				</div>
 				<div
 					class="flex bg-cover bg-center w-14 h-10 border-2 border-lightblue/10 rounded-md mr-3"
 				/>
 				<div class="flex flex-col gap-y-0.5 mr-4">
 					<span class="text-lightblue text-xs opacity-70">Won</span>
-					<span class="text-white text-xs font-bold">$33.66</span>
+					<span class="text-white text-xs font-bold"
+						>{bet.totalWin ? bet.totalWin : ''}</span
+					>
 				</div>
 				<span
 					class="multiplier-box text-brown font-bold flex items-center justify-center text-xs"
 				>
-					x3.45
+					LIVE
+				</span>
+				<div class="border-block" />
+			</div>
+		{/each}
+		{#each $cashedOut as bet, i}
+			<div
+				class="flex px-6 py-4 items-center relative"
+				style:background={i % 2 ? '#21283F' : 'transparent'}
+			>
+				<img
+					class="rounded mr-4"
+					width="40px"
+					height="40px"
+					alt="user profile avatar"
+					src={bet.user.avatar}
+				/>
+				<div class="w-6 h-6 mr-3">
+					<Currency type={bet.currency} />
+				</div>
+				<div class="flex flex-col gap-y-0.5 mr-4">
+					<span class="text-white text-sm font-bold"
+						>${convertPenniesToDollars(bet.amount, 2)}</span
+					>
+				</div>
+				<div class="flex flex-col gap-y-0.5 mr-4 ml-auto">
+					<span class="text-white text-xs font-bold"
+						>{bet.totalWin ? bet.totalWin : ''}</span
+					>
+				</div>
+				<span
+					class="multiplier-box text-brown font-bold flex items-center justify-center text-xs"
+				>
+					{bet.payoutMultiplier.toFixed(2)}x
 				</span>
 				<div class="border-block" />
 			</div>

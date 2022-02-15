@@ -1,8 +1,13 @@
 <script lang="ts">
 	import ChatBubble from '$icons/svgs/Chat/ChatBubble.svelte';
+	import { chatStore } from '$stores/app';
 
 	export let title: string;
 	export let subTitle: string = '';
+
+	function handleChatClick() {
+		chatStore.toggle();
+	}
 </script>
 
 <div class="game-wrapper">
@@ -16,7 +21,7 @@
 			</div>
 			<span class="text-lightblue mt-3">{subTitle}</span>
 		</div>
-		<button class="absolute right-4">
+		<button class="absolute right-4" on:click={handleChatClick}>
 			<div
 				class="bg-foreground bg-opacity-50 w-10 h-10 rounded-md flex items-center justify-center"
 			>
@@ -32,7 +37,7 @@
 <style>
 	.game-wrapper {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 		width: 100%;
 		border-radius: 24px;
 		height: 100%;
@@ -41,6 +46,7 @@
 		background: no-repeat center center;
 		z-index: 1;
 		overflow: hidden;
+		margin: 12px 10px;
 	}
 
 	.game-wrapper::before {
@@ -62,5 +68,7 @@
 		width: 100%;
 		padding: 24px;
 		position: relative;
+		height: 100vh;
+		margin: auto;
 	}
 </style>

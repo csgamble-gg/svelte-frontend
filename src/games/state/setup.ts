@@ -84,7 +84,6 @@ export const createGameConfig = (baseConfig: Config) => {
 				})
 				.catch((error) => {
 					if (error) {
-						console.log(error);
 						errorEventEmitter.next({
 							error
 						});

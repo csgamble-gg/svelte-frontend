@@ -16,7 +16,7 @@ export class LoadingView extends View {
 		this.header = new LeonSans({
 			text: 'Loading Crash',
 			color: ['0xffffff'],
-			size: 70,
+			size: this.getSize(70),
 			weight: 800
 		});
 
@@ -35,7 +35,6 @@ export class LoadingView extends View {
 	}
 
 	onResize(width: number, height: number): void {
-		console.log(width, height);
 		this.drawText();
 	}
 

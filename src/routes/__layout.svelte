@@ -1,6 +1,7 @@
 <script context="module" lang="ts">
 	import { browser } from '$app/env';
 	import { page } from '$app/stores';
+	import Chat from '$components/Chat/Chat.svelte';
 	import Header from '$components/Header/Header.svelte';
 	import Modal from '$components/Modals/Modal.svelte';
 	import Sidebar from '$components/Sidebar/Sidebar.svelte';
@@ -140,8 +141,9 @@
 		<nav>
 			<Header />
 		</nav>
-		<main class="pr-3 mt-3">
+		<main class="flex flex-row">
 			<slot />
+			<Chat />
 		</main>
 	</div>
 </div>

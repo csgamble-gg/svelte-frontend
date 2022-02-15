@@ -1,10 +1,37 @@
 subscription CrashSubscription {
 	crashGame {
-		_id
-		status
-		elapsed
-		multiplier
-		startsAt
+		crashGame {
+			_id
+			status
+			elapsed
+			multiplier
+			startsAt
+			gameId
+		}
+		cashedIn {
+			_id
+			user {
+				_id
+				avatar
+				displayName
+			}
+			totalWin
+			payoutMultiplier
+			amount
+			currency
+		}
+		cashedOut {
+			_id
+			user {
+				_id
+				avatar
+				displayName
+			}
+			totalWin
+			payoutMultiplier
+			amount
+			currency
+		}
 	}
 }
 
@@ -15,10 +42,57 @@ query CrashInitial {
 			status
 			startsAt
 			elapsed
+			gameId
+		}
+		cashedIn {
+			_id
+			user {
+				_id
+				avatar
+				displayName
+			}
+			totalWin
+			payoutMultiplier
+			amount
+			currency
+		}
+		cashedOut {
+			_id
+			user {
+				_id
+				avatar
+				displayName
+			}
+			totalWin
+			payoutMultiplier
+			amount
+			currency
+		}
+		pastGames {
+			_id
+			multiplier
+		}
+		currentBet {
+			_id
+			amount
+			currency
+			gameId
 		}
 	}
 }
 
-mutation CreateCrashBet {
-	
+mutation CreateCrashBet($input: CreateCrashBetInput!) {
+	createCrashBet(input: $input) {
+		success
+		user {
+			_id
+			balance
+		}
+	}
+}
+
+mutation CashoutCrashBet {
+	cashoutCrashBet {
+		success
+	}
 }

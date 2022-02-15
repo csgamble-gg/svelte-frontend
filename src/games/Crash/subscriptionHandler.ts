@@ -1,6 +1,6 @@
 import type {
 	CrashInitialQuery,
-	CrashSubscriptionSubscription
+	CrashSubscriptionResult
 } from '$generated/graphql';
 import {
 	CrashInitialDocument,
@@ -8,8 +8,8 @@ import {
 } from '$generated/graphql';
 import { createRawQuery, subscriptionClient } from '$libs/urql/urqlClient';
 import { print } from 'graphql';
-import { get } from 'svelte/store';
-import { state } from './state/game';
+import { service } from './machine';
+import { cashedIn, cashedOut, gameHistory, state } from './state/game';
 
 let subscriptionStream: ReturnType<typeof subscribeToStream>;
 
@@ -18,12 +18,20 @@ let subscribeToStream = (client: typeof subscriptionClient) => {
 		{ query: print(CrashSubscriptionDocument) },
 		{
 			next: (value) => {
-				const game = value.data
-					?.crashGame as CrashSubscriptionSubscription['crashGame'];
+				const {
+					crashGame,
+					cashedIn: cashedInBets,
+					cashedOut: cashedOutBets
+				} = value.data?.crashGame as CrashSubscriptionResult;
 
-				const $state = get(state);
+				state.update(() => crashGame);
+				cashedIn.set(cashedInBets);
+				cashedOut.set(cashedOutBets);
 
-				state.update(() => game);
+				if (crashGame.status === 'crashed') {
+					service.send({ type: 'GAME_FINISHED' });
+					gameHistory.addGame(crashGame);
+				}
 			},
 			error: () => {},
 			complete: () => {}
@@ -37,9 +45,24 @@ export const initialize = (): { unsubscribe: () => void } => {
 	const query = createRawQuery();
 
 	query<CrashInitialQuery>(CrashInitialDocument, {}).then(({ data }) => {
-		const { crashGame } = data.crashInitial;
+		const {
+			crashGame,
+			currentBet,
+			cashedIn: cashedInBets,
+			cashedOut: cashedOutBets,
+			pastGames
+		} = data.crashInitial;
 
 		state.set(crashGame);
+		cashedIn.set(cashedInBets);
+		cashedOut.set(cashedOutBets);
+		gameHistory.set(pastGames);
+
+		if (currentBet) {
+			service.send({ type: 'HAS_STATE', bet: currentBet });
+		} else {
+			service.send({ type: 'NO_STATE' });
+		}
 	});
 
 	return {

@@ -1,6 +1,7 @@
 import extendBet from '$games/machine/extendBet';
 import type { StateNodeConfig } from 'xstate';
 import type { CrashContext } from '.';
+import play from './play';
 
 export type BetEvent = {
 	type: 'BET';
@@ -17,13 +18,17 @@ const betting: StateNodeConfig<
 	BettingSchema,
 	BettingEvents
 > = {
+	id: 'betting',
+	type: 'compound',
 	states: {
 		idle: {},
-		fetching: {
+		fetching: {},
+		pending: {
 			on: {
-				SUCCESS: { target: 'idle' }
+				GAME_FINISHED: { target: 'fetching', actions: 'resetState' }
 			}
-		}
+		},
+		play
 	}
 };
 

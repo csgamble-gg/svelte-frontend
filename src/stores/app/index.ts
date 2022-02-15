@@ -1,16 +1,16 @@
 import { cookieStore } from '$stores/extras';
 
-export type SidebarOptions = 'hidden' | 'visible';
+export type VisibilityOptions = 'hidden' | 'visible';
 
-const togglesidebar: Record<SidebarOptions, SidebarOptions> = {
+const togglesidebar: Record<VisibilityOptions, VisibilityOptions> = {
 	hidden: 'visible',
 	visible: 'hidden'
 };
 
 export const sidebarStore = (() => {
-	let defaultValue = 'visible' as SidebarOptions;
+	let defaultValue = 'visible' as VisibilityOptions;
 
-	const store = cookieStore<SidebarOptions>(
+	const store = cookieStore<VisibilityOptions>(
 		'sidebarVisibility',
 		defaultValue
 	);
@@ -18,5 +18,24 @@ export const sidebarStore = (() => {
 	return {
 		...store,
 		toggle: () => store.update((val) => togglesidebar[val])
+	};
+})();
+
+const toggleChat: Record<VisibilityOptions, VisibilityOptions> = {
+	hidden: 'visible',
+	visible: 'hidden'
+};
+
+export const chatStore = (() => {
+	let defaultValue = 'visible' as VisibilityOptions;
+
+	const store = cookieStore<VisibilityOptions>(
+		'chatVisibility',
+		defaultValue
+	);
+
+	return {
+		...store,
+		toggle: () => store.update((val) => toggleChat[val])
 	};
 })();

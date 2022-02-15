@@ -1,26 +1,36 @@
 import type {
-	CreateBetMutation,
-	CreateBetMutationVariables
+	CashoutCrashBetMutationResult,
+	CreateCrashBetMutation,
+	CreateCrashBetMutationVariables,
+	MutationCashoutCrashBetArgs
 } from '$generated/graphql';
-import { CreateBetDocument } from '$generated/graphql';
+import {
+	CashoutCrashBetDocument,
+	CreateCrashBetDocument
+} from '$generated/graphql';
 import { CurrencyEnum } from '$types/index';
 import { get } from 'svelte/store';
 import { requestClient } from '../config';
-import type { BetEvent } from '../machine/betting';
+import * as general from '../state/general';
 import { state } from './game';
-import * as general from './general';
 
-export const crashBet = (variables: CreateBetMutationVariables['input']) =>
+export const mutationBet = () =>
 	new Promise(async (resolve, reject) => {
+		const amount = Number(get(general.amount));
+		const currency = CurrencyEnum[get(general.currency)];
 		try {
 			const { data } = await requestClient<
-				CreateBetMutation,
-				CreateBetMutationVariables
-			>(CreateBetDocument, {
-				input: variables
+				CreateCrashBetMutation,
+				CreateCrashBetMutationVariables
+			>(CreateCrashBetDocument, {
+				input: {
+					betAmount: amount,
+					currency: CurrencyEnum[currency],
+					gameId: get(state).gameId
+				}
 			});
 
-			if (data?.createBet) {
+			if (data?.createCrashBet) {
 				resolve(data);
 			} else {
 				reject();
@@ -30,26 +40,24 @@ export const crashBet = (variables: CreateBetMutationVariables['input']) =>
 		}
 	});
 
-export const mutationBet = (event: BetEvent) =>
+export const mutationCashout = () =>
 	new Promise(async (resolve, reject) => {
-		const amount = Number(get(general.amount));
-		const currency = CurrencyEnum[get(general.currency)];
-
 		try {
-			const variables: CreateBetMutationVariables['input'] = {
-				betAmount: amount,
-				currency: CurrencyEnum[currency],
-				gameId: get(state).gameId,
-				selections: event.selections
-			};
+			const {} = await requestClient<
+				CashoutCrashBetMutationResult,
+				MutationCashoutCrashBetArgs
+			>(CashoutCrashBetDocument, {
+				input: {
+					gameId: get(state).gameId
+				}
+			});
 
-			const bet = await rouletteBet(variables);
-
-			if (bet) {
-				resolve(bet);
-			} else {
-				reject();
-			}
+			// if (bet) {
+			// 	resolve(bet);
+			// } else {
+			// 	reject();
+			// }
+			resolve({});
 		} catch (error) {
 			reject(error);
 		}

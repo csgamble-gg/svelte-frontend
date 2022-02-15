@@ -41,7 +41,7 @@ export const notificationsEmitter = () => {
 		}
 	});
 
-	let errorEmitter = errorEventEmitter.subscribe((error) => {
+	let errorEmitter = errorEventEmitter.subscribe(({ error }) => {
 		if (browser) {
 			notifications.error.open({ message: error.message });
 		}

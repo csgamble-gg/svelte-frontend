@@ -1,7 +1,13 @@
 <script lang="ts">
 	import Currency from '$components/Currency/Currency.svelte';
 	import BackgroundButton from '$components/generics/BackgroundButton.svelte';
+	import { getGeneralContext } from '$games/state/setup';
+	import { state } from './state/game';
 	import { amount } from './state/general';
+
+	const { send, machineState, fetching } = getGeneralContext();
+
+	$: canCashout = $state?.status === 'in-progress';
 </script>
 
 <div class="flex flex-col rounded-large bet-input relative">
@@ -52,10 +58,12 @@
 		</div>
 		<div class="w-full">
 			<BackgroundButton
-				onClick={() => {}}
+				onClick={canCashout
+					? () => send({ type: 'CASHOUT' })
+					: () => send({ type: 'BET' })}
 				background="orange"
-				title="Place Bet"
-				disabled={false}
+				title={canCashout ? 'Cashout' : 'Place Bet'}
+				disabled={$fetching}
 			/>
 		</div>
 	</div>
