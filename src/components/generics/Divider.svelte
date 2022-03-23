@@ -16,7 +16,7 @@
 			rgba(116, 148, 221, 0.1) 48.96%,
 			rgba(116, 148, 221, 0) 100%
 		);
-		z-index: 99999;
+		z-index: 50;
 	}
 
 	.divider-vertical {

@@ -1,0 +1,79 @@
+query AllCases($input: GetCasesInput) {
+	getCases(input: $input) {
+		_id
+		name
+		price
+		slug
+		image
+	}
+}
+
+query SingleCase($slug: String!) {
+	getCase(slug: $slug) {
+		_id
+		name
+		price
+		slug
+		image
+		items {
+			_id
+			odds
+			name
+			rarity
+			rarityColor
+			gunType
+			knifeType
+			iconUrl
+			skinName
+			skins {
+				_id
+				name
+				iconUrl
+				type
+				weaponType
+				rarity
+				rarityColor
+				quality
+				gunType
+				knifeType
+				price
+				skinName
+				odds
+			}
+		}
+		slots {
+			_id
+			iconUrl
+			skinName
+			gunType
+			knifeType
+			price
+			quality
+			name
+			odds
+		}
+	}
+}
+
+mutation OpenCase($input: OpenCaseInput!) {
+	openCase(input: $input) {
+		message
+	}
+}
+
+subscription UnboxingSubscription {
+	caseOpened {
+		_id
+		name
+		iconUrl
+		type
+		weaponType
+		rarity
+		rarityColor
+		quality
+		gunType
+		knifeType
+		price
+		skinName
+	}
+}

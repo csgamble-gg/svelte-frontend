@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { sidebarStore } from '$stores/app';
+	import { mobileView } from '$stores/window';
 	import { cubicOut } from 'svelte/easing';
 	import { spring } from 'svelte/motion';
 	import { fly } from 'svelte/transition';
 	import Caret from '../../icons/svgs/Caret/Caret.svelte';
-	import SiteLogo from '../../svgs/MainLogo.svg';
 	import SiteLogoSmall from '../../svgs/MainLogoSmall.svg';
 	import Divider from '../generics/Divider.svelte';
 	import UserInfo from './UserInfo.svelte';
@@ -21,51 +21,101 @@
 	}
 </script>
 
-<div>
-	<div
-		class="header flex flex-row items-center justify-between px-3 sm:px-6 relative"
-	>
-		<button
-			class="rounded-full w-8 h-8 bg-foreground flex items-center justify-center z-10"
-			on:click={handleClick}
-			style="transform: rotate({$rotation}deg);"
-		>
-			<Caret />
-		</button>
-		{#if $sidebarStore === 'hidden'}
-			<a
-				class="absolute w-full bg-cover bg-no-repeat bg-center logo hidden sm:block"
-				style="background-image: url({SiteLogo});"
-				href="/"
-				in:fly={{ x: -400, duration: 400, easing: cubicOut }}
-				out:fly={{ x: -400, duration: 400, easing: cubicOut }}><span /></a
-			>
-			<a
-				class="absolute w-full bg-cover bg-no-repeat bg-center visible sm:hidden small-logo"
-				style="background-image: url({SiteLogoSmall});"
-				href="/"
-				in:fly={{ x: -400, duration: 400, easing: cubicOut }}
-				out:fly={{ x: -400, duration: 400, easing: cubicOut }}><span /></a
-			>
-		{/if}
-		<UserInfo />
+<nav>
+	<div class="header">
+		<div class="header-content">
+			<div class="wrapper">
+				<div class="toggle-logo">
+					{#if !$mobileView}
+						<button
+							class="icon-button rounded-full w-8 h-8 bg-foreground flex items-center justify-center z-10"
+							on:click={handleClick}
+							style="transform: rotate({$rotation}deg);"
+						>
+							<Caret />
+						</button>
+					{/if}
+					{#if $mobileView}
+						<a
+							class="small-logo"
+							style="background-image: url({SiteLogoSmall});"
+							href="/"
+							in:fly={{ x: -400, duration: 400, easing: cubicOut }}
+							out:fly={{ x: -400, duration: 400, easing: cubicOut }}
+							><span /></a
+						>
+					{:else if $sidebarStore === 'hidden'}
+						<a
+							class="small-logo"
+							style="background-image: url({SiteLogoSmall});"
+							href="/"
+							in:fly={{ x: -400, duration: 400, easing: cubicOut }}
+							out:fly={{ x: -400, duration: 400, easing: cubicOut }}
+							><span /></a
+						>
+					{/if}
+				</div>
+				<UserInfo />
+			</div>
+			<Divider />
+		</div>
 	</div>
-	<Divider />
-</div>
+</nav>
 
-<style>
+<style lang="scss">
 	.header {
+		height: 91px;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.header-content {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		padding: 0 1vw;
+	}
+
+	.wrapper {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
 		height: 91px;
 	}
 
+	.icon-button {
+		border-radius: 16px;
+		background-color: var(--variant-alt-grey-color);
+		border: none;
+		width: 32px;
+		height: 32px;
+	}
+
+	.logo-wrapper {
+		position: relative;
+		width: 208px;
+	}
+
+	.toggle-logo {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
 	.logo {
-		height: 91px;
-		width: 210px;
-		left: 40px;
+		position: relative;
+		left: 10px;
+		top: 5px;
 		z-index: 0;
 	}
 
 	.small-logo {
+		width: 100%;
+		background-size: cover;
+		background-repeat: no-repeat;
 		height: 50px;
 		width: 50px;
 		left: 60px;

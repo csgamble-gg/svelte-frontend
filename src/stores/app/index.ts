@@ -17,7 +17,10 @@ export const sidebarStore = (() => {
 
 	return {
 		...store,
-		toggle: () => store.update((val) => togglesidebar[val])
+		toggle: () => {
+			console.log('toggled');
+			store.update((val) => togglesidebar[val]);
+		}
 	};
 })();
 
@@ -25,6 +28,15 @@ const toggleChat: Record<VisibilityOptions, VisibilityOptions> = {
 	hidden: 'visible',
 	visible: 'hidden'
 };
+
+type MobileToggleType =
+	| {
+			value: SidebarViewEnum;
+			type: 'sidebar';
+	  }
+	| {
+			type: 'leftSidebar';
+	  };
 
 export const chatStore = (() => {
 	let defaultValue = 'visible' as VisibilityOptions;

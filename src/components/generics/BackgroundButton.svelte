@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Text } from '@csgamble-gg/nebula-ui';
 	export let background;
 	export let disabled: boolean = false;
 	export let title: string;
@@ -26,23 +27,23 @@
 
 <button
 	{...$$restProps}
-	class="w-auto h-12 wrapper relative {disabled === true
-		? 'disabled'
-		: ''}"
+	class="wrapper {disabled === true ? 'disabled' : ''}"
 	on:click={onClick}
 	{disabled}
 	style="background: {backgroundImage[background]}; background-size: 165%;"
 >
-	<span class="text-white font-semibold text-sm">{title}</span>
+	<Text weight="semibold" size="sm">{title}</Text>
 </button>
 
 <style>
 	.wrapper {
+		height: 48px;
 		width: 100%;
 		border: none;
 		z-index: 1;
 		border-radius: 6px;
 		cursor: pointer;
+		position: relative;
 	}
 
 	.wrapper::before {

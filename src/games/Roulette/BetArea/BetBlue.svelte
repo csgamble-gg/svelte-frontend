@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Currency from '$components/Currency/Currency.svelte';
 	import { getGeneralContext } from '$games/state/setup';
 	import { convertPenniesToDollars } from '$libs/currencyConversion';
+	import { CryptoIcon, Text } from '@csgamble-gg/nebula-ui';
 	import Big from 'big.js';
 	import { quintInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
@@ -17,12 +17,12 @@
 	const { send, fetching } = getGeneralContext();
 </script>
 
-<div class="px-3 pb-4 relative flex flex-col rounded-large w-full card">
-	<div class="absolute multiplier-wrapper">
-		<span class="multiplier-number">2</span>
-		<span class="multiplier-amount">x</span>
+<div class="bet-card">
+	<div class="multiplier">
+		<span class="number">2</span>
+		<span class="amount">x</span>
 	</div>
-	<div class="mt-8">
+	<div class="content">
 		<BackgroundButton
 			background="blue"
 			onClick={() =>
@@ -36,18 +36,14 @@
 			title="Place Bet"
 			disabled={isSpinning || $fetching}
 		/>
-		<div class="flex py-4 gap-6">
-			<div class="flex">
+		<div class="info">
+			<div>
 				<People color="blue" />
-				<span class="text-white font-semibold pl-3">{bets.length}</span>
+				<Text weight="semibold">{bets.length}</Text>
 			</div>
-			<div class="flex items-center">
-				<div class="w-5 h-5">
-					<Currency />
-				</div>
-				<span class="text-white font-semibold pl-3"
-					>{convertPenniesToDollars(sum, 2)}</span
-				>
+			<div>
+				<CryptoIcon type="USD" />
+				<Text weight="semibold">${convertPenniesToDollars(sum, 2)}</Text>
 			</div>
 		</div>
 		<Divider />
@@ -74,7 +70,7 @@
 						>
 						<div class="flex flex-grow justify-end gap-2">
 							<div class="w-6 h-6">
-								<Currency type={bet.currency} />
+								<!-- <Currency type={bet.currency} /> -->
 							</div>
 							<span class="text-white font-semibold"
 								>{new Big(bet.amount).div(100).toFixed(2)}</span
@@ -87,54 +83,10 @@
 	</div>
 </div>
 
-<style>
-	.card {
-		min-width: 140px;
-		max-width: 495px;
-		background: linear-gradient(
-			180deg,
-			#181d2d 0%,
-			rgba(24, 29, 45, 0.4) 100%
-		);
-		z-index: 1;
-		max-height: 600px;
-	}
+<style lang="scss">
+	@use '_betting.scss' as *;
 
-	.card::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		z-index: -1;
-		border-radius: 16px;
-		opacity: 0.15;
-		background: radial-gradient(
-			67.34% 78.69% at 29.44% -1.27%,
-			#55fcc0 0%,
-			rgba(0, 117, 255, 0) 100%
-		);
-	}
-
-	.multiplier-wrapper {
-		top: -41px;
-	}
-
-	.multiplier-number {
-		font-size: 88px;
-		font-weight: bold;
-		line-height: 1;
-		background: -webkit-linear-gradient(#32937b, #25464f);
-		background-clip: text;
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-	}
-
-	.multiplier-amount {
-		font-size: 40px;
-		font-weight: bold;
-		line-height: 1.45;
-		background: -webkit-linear-gradient(#32937b, #25464f);
-		background-clip: text;
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
+	.bet-card {
+		@include bet-card('blue');
 	}
 </style>

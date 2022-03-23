@@ -1,52 +1,46 @@
 <script lang="ts">
-	import Currency from '$components/Currency/Currency.svelte';
 	import { getGeneralContext } from '$games/state/setup';
+	import { Card, Text } from '@csgamble-gg/nebula-ui';
 
 	const { amount } = getGeneralContext();
 </script>
 
-<div class="flex flex-col rounded-large bet-input relative">
-	<div class="flex w-full align-center flex-nowrap">
-		<div class="flex flex-col flex-nowrap">
-			<span class="text-lightblue text-sm">Bet Amount</span>
-
-			<span class="flex flex-row align-center items-center">
-				<div class="w-5 h-5 mr-2">
-					<Currency />
-				</div>
-				<input
-					bind:value={$amount}
-					class="outline-none bg-transparent text-white placeholder:text-white font-semibold"
-					placeholder="0.00"
-					type="number"
-				/>
-			</span>
-		</div>
-		<div class="absolute overflow-hidden w-auto right-4">
-			<div class="mx-2">
+<div class="bet-input">
+	<Card fullWidth>
+		<div class="content">
+			<div class="bet-amount">
+				<Text variant="subtle" size="sm">Bet Amount</Text>
+				<span class="">
+					<div class="w-5 h-5 mr-2">
+						<!-- <Currency /> -->
+					</div>
+					<input bind:value={$amount} placeholder="0.00" type="number" />
+				</span>
+			</div>
+			<div class="bet-buttons">
 				<button
-					class="bet-amount-button "
+					class="bet-amount-button mobile-visible"
 					on:click={() => amount.add(1)}
 					type="button"
 				>
 					+1
 				</button>
 				<button
-					class="bet-amount-button"
+					class="bet-amount-button mobile-visible"
 					on:click={() => amount.add(10)}
 					type="button"
 				>
 					+10
 				</button>
 				<button
-					class="bet-amount-button hidden md:inline"
+					class="bet-amount-button"
 					on:click={() => amount.add(100)}
 					type="button"
 				>
 					+100
 				</button>
 				<button
-					class="bet-amount-button hidden md:inline"
+					class="bet-amount-button mobile-visible"
 					on:click={() => amount.double()}
 					type="button"
 					value="x2"
@@ -54,7 +48,7 @@
 					x2
 				</button>
 				<button
-					class="bet-amount-button hidden md:inline"
+					class="bet-amount-button"
 					on:click={() => amount.max()}
 					type="button"
 					value="MAX"
@@ -63,22 +57,42 @@
 				</button>
 			</div>
 		</div>
-	</div>
+	</Card>
 </div>
 
-<style>
+<style lang="scss">
+	@use '../../../styles/_breakpoints' as *;
+
 	.bet-input {
-		background: radial-gradient(
-				48.42% 387.61% at 88.24% 214.96%,
-				rgba(94, 209, 225, 0.15) 0%,
-				rgba(16, 128, 233, 0) 100%
-			),
-			linear-gradient(
-				rgba(34, 40, 64, 0.12) 0%,
-				rgba(61, 73, 118, 0.15) 100%
-			);
-		padding: 20px 15px;
-		backdrop-filter: blur(80px);
+		width: 100%;
+		display: flex;
+		flex-direction: row;
+
+		.content {
+			display: flex;
+			flex-direction: row;
+			padding: 25px;
+
+			.bet-amount {
+				display: flex;
+				flex-direction: column;
+
+				input {
+					outline: none;
+					background-color: transparent;
+					color: white;
+					font-weight: semibold;
+					font-size: 24px;
+					border: none;
+				}
+			}
+		}
+
+		.bet-buttons {
+			position: absolute;
+			right: 0;
+			padding: 0 0.75vw;
+		}
 	}
 
 	.bet-amount-button {
@@ -95,5 +109,11 @@
 		font-family: Poppins;
 		cursor: pointer;
 		font-size: 13.33px;
+
+		&:not(.mobile-visible) {
+			@include break-at('mobile') {
+				display: none;
+			}
+		}
 	}
 </style>

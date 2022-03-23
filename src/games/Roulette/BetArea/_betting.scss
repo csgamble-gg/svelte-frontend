@@ -1,0 +1,120 @@
+@use 'sass:map';
+@use '../../../styles/breakpoints' as *;
+
+$card-variant-backgrounds: (
+	'purple':
+		radial-gradient(
+			67.34% 78.69% at 29.44% -1.27%,
+			#ca2fb8 0%,
+			rgba(202, 47, 184, 0) 100%
+		),
+	'blue':
+		radial-gradient(
+			67.34% 78.69% at 29.44% -1.27%,
+			#55fcc0 0%,
+			rgba(0, 117, 255, 0) 100%
+		),
+	'orange':
+		radial-gradient(
+			67.34% 78.69% at 29.44% -1.27%,
+			#ff5c00 0%,
+			rgba(255, 214, 0, 0) 100%
+		)
+);
+
+$card-multiplier-colors: (
+	'purple': linear-gradient(#a34f81, #542761),
+	'blue': linear-gradient(#32937b, #25464f),
+	'orange': linear-gradient(#a8643e, #593a29)
+);
+
+@mixin bet-card($variant) {
+	min-width: 140px;
+	max-width: 495px;
+	// width: 33.33%;
+	background: linear-gradient(
+		180deg,
+		#181d2d 0%,
+		rgba(24, 29, 45, 0.4) 100%
+	);
+	z-index: 1;
+	max-height: 600px;
+	position: relative;
+	padding: 0 2vw;
+	margin: 35px 0 0 0;
+
+	&:before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		border-radius: 16px;
+		background: map.get($card-variant-backgrounds, $variant);
+		opacity: 0.15;
+	}
+
+	.multiplier {
+		position: absolute;
+		top: -41px;
+
+		.number {
+			font-size: 88px;
+			font-weight: bold;
+			line-height: 1;
+			background: map.get($card-multiplier-colors, $variant);
+			background-clip: text;
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+
+		.amount {
+			font-size: 40px;
+			font-weight: bold;
+			line-height: 1.45;
+			background: map.get($card-multiplier-colors, $variant);
+			background-clip: text;
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+	}
+
+	.content {
+		margin: 2rem 0 0 0;
+
+		.info {
+			margin: 15px 0;
+			display: flex;
+			gap: 20px;
+			& > div {
+				display: flex;
+				align-items: center;
+				gap: 5px;
+			}
+		}
+
+		.players {
+			@include break-at('mobile') {
+				display: none;
+			}
+
+			display: flex;
+			flex-direction: column;
+			margin: 20px 0px;
+			.player {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: 15px;
+				margin: 5px 0px;
+
+				.bet {
+					display: flex;
+					flex: 1;
+					justify-content: end;
+					align-items: center;
+					gap: 5px;
+				}
+			}
+		}
+	}
+}

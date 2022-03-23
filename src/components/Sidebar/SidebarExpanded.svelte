@@ -1,6 +1,9 @@
 <script lang="ts">
-	import Box from '../../icons/svgs/Box/Box.svelte';
-	import SiteLogo from '../../svgs/MainLogo.svg';
+	import MainLogo from '$icons/svgs/MainLogo/MainLogo.svelte';
+	import { mobileView, sideBarSize } from '$stores/window';
+	import { sizes } from '$styles/variables';
+	import { Link } from '@csgamble-gg/nebula-ui';
+	import BoxIcon from '../../icons/svgs/Box/Box.svelte';
 	import { slideLeft } from '../../transitions/slideX';
 	import Divider from '../generics/Divider.svelte';
 
@@ -9,98 +12,83 @@
 </script>
 
 <div
-	class="flex flex-col pl-2 relative h-full w-[208px]"
 	transition:slideLeft|local={{
 		from: 'right',
 		duration: 400,
 		skip: false
 	}}
+	class="sidebar {$sideBarSize}"
+	style="--width: {sizes.sidebarWidth}"
 >
-	<div class="logo-wrapper relative">
-		<a
-			class="absolute w-full bg-cover bg-no-repeat bg-center logo"
-			style="background-image: url({SiteLogo});"
-			href="/"><span /></a
-		>
-	</div>
-	<div class="mb-1">
+	<div>
+		{#if !$mobileView}
+			<div class="logo-wrapper">
+				<MainLogo />
+			</div>
+		{/if}
 		<Divider />
-	</div>
-	<div class="flex flex-col items-start justify-start">
-		{#each routes[0] as route}
-			<div class="flex mt-5 mb-2">
-				<span>
-					<Box width="20px" height="20px" />
-				</span>
-				<a href={route.route} class="ml-4 text-white">{route.name}</a>
+		<div>
+			<div class="link-group">
+				{#each routes[0] as route}
+					<div class="link">
+						<BoxIcon width="20px" height="20px" />
+						<Link href={route.route} prefetch>{route.name}</Link>
+					</div>
+				{/each}
 			</div>
-		{/each}
-		<div class="mt-3 mb-1">
 			<Divider />
-		</div>
-		{#each routes[1] as route}
-			<div class="flex mt-5 mb-2">
-				<span>
-					<Box width="20px" height="20px" />
-				</span>
-				<a href={route.route} class="ml-4 text-white">{route.name}</a>
+			<div class="link-group">
+				{#each routes[1] as route}
+					<div class="link">
+						<BoxIcon width="20px" height="20px" />
+						<Link href={route.route} prefetch>{route.name}</Link>
+					</div>
+				{/each}
 			</div>
-		{/each}
+		</div>
 	</div>
 </div>
 
-<!-- <MediaQuery query="(max-width: 767px)" let:matches>
-	{#if matches}
-		<div
-			class="flex flex-col pl-2 fixed z-10 h-screen bg-primaryBg"
-			style="width: {$tweenWidth}vw; opacity: {$tweenOpacity};"
-		>
-			<div
-				class="logo-wrapper relative flex justify-center items-center w-full"
-			>
-				<a
-					class="w-full bg-cover bg-no-repeat bg-center logo-mobile"
-					style="background-image: url({SiteLogo});"
-					href="/"><span /></a
-				>
-			</div>
-			<div class="mb-1">
-				<Divider />
-			</div>
-			<div class="flex-col items-center justify-center">
-				{#each firstRoutes as route, index}
-					<div class="flex items-start mt-5 mb-2 justify-center">
-						<span>
-							<Box width="20px" height="20px" />
-						</span>
-						<a href={route.route} class="ml-4 text-white">{route.name}</a>
-					</div>
-				{/each}
-				<div class="mt-3 mb-1">
-					<Divider />
-				</div>
-				{#each secondRoutes as route}
-					<div class="flex mt-5 mb-2 justify-center">
-						<span>
-							<Box width="20px" height="20px" />
-						</span>
-						<a href={route.route} class="ml-4 text-white">{route.name}</a>
-					</div>
-				{/each}
-			</div>
-		</div>
-	{/if}
-</MediaQuery> -->
-<style>
+<style lang="scss">
+	.sidebar {
+		position: relative;
+		width: auto;
+		height: 100%;
+		padding: 0 0 0 15px;
+		background: var(--variant-grey-color);
+
+		&.normal {
+			width: var(--width);
+		}
+
+		&.full {
+			position: fixed;
+			inset: 0;
+			width: 100%;
+			top: var(--header-height);
+			z-index: 100;
+		}
+	}
+
 	.logo {
 		height: 91px;
 		width: 210px;
 	}
+
 	.logo-wrapper {
 		height: 91px;
+		display: flex;
+		align-items: center;
 	}
-	.logo-mobile {
-		height: 91px;
-		width: 300px;
+
+	.link-group {
+		margin: 13.5px 0 13.5px 0;
+	}
+
+	.link {
+		padding: 13px 5px;
+		display: flex;
+		align-items: center;
+		gap: 22px;
 	}
 </style>

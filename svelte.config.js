@@ -2,7 +2,6 @@ import adapter from '@sveltejs/adapter-node';
 import autoprefixer from 'autoprefixer';
 import { resolve } from 'path';
 import preprocess from 'svelte-preprocess';
-import tailwindcss from 'tailwindcss';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -10,14 +9,11 @@ const config = {
 	// for more information about preprocessors
 	preprocess: preprocess({
 		postcss: {
-			plugins: [tailwindcss, autoprefixer]
+			plugins: [ autoprefixer]
 		}
 	}),
 	kit: {
 		adapter: adapter({ out: 'build' }),
-
-		// hydrate the <div id="svelte"> element in src/app.html
-		target: '#svelte',
 		vite: {
 			optimizeDeps: {
 				exclude: ['@urql/svelte']
@@ -34,7 +30,8 @@ const config = {
 					$stores: resolve('./src/stores'),
 					$utils: resolve('./src/utils'),
 					$emitters: resolve('./src/emitters'),
-					$notifications: resolve('./src/notifications')
+					$notifications: resolve('./src/notifications'),
+					$styles: resolve('./src/styles')
 				}
 			}
 		}

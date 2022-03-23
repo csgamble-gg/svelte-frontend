@@ -192,6 +192,37 @@ export type BuyJackpotTicketMutationResult = {
   success: Scalars['Boolean'];
 };
 
+export type Case = {
+  __typename?: 'Case';
+  _id: Scalars['ID'];
+  image: Scalars['String'];
+  items: Array<CaseSkins>;
+  name: Scalars['String'];
+  price: Scalars['Float'];
+  slots: Array<Skin>;
+  slug: Scalars['String'];
+};
+
+export enum CaseGroup {
+  Featured = 'FEATURED',
+  New = 'NEW',
+  Popular = 'POPULAR'
+}
+
+export type CaseSkins = {
+  __typename?: 'CaseSkins';
+  _id: Scalars['ID'];
+  gunType?: Maybe<Scalars['String']>;
+  iconUrl: Scalars['String'];
+  knifeType?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  odds: Scalars['Float'];
+  rarity: Scalars['String'];
+  rarityColor: Scalars['String'];
+  skinName: Scalars['String'];
+  skins: Array<Skin>;
+};
+
 export type CashoutCrashBetMutationResult = {
   __typename?: 'CashoutCrashBetMutationResult';
   success: Scalars['Boolean'];
@@ -294,8 +325,15 @@ export type GameSecrets = {
   serverSeed: Scalars['String'];
 };
 
+export type GameUnion = CrashGame | RouletteGame;
+
 export type GetBetsForGameInput = {
   gameId: Scalars['String'];
+};
+
+export type GetCasesInput = {
+  group?: InputMaybe<CaseGroup>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type GetLatestGameInput = {
@@ -353,6 +391,7 @@ export type Mutation = {
   createCrashBet: CreateCrashBetMutationResult;
   createJackpotGame: JackpotGameMutationResult;
   minusBalance: Scalars['Boolean'];
+  openCase: OpenCaseMutationResult;
 };
 
 
@@ -375,6 +414,21 @@ export type MutationCreateJackpotGameArgs = {
   input: CreateJackpotGameInput;
 };
 
+
+export type MutationOpenCaseArgs = {
+  input: OpenCaseInput;
+};
+
+export type OpenCaseInput = {
+  caseId: Scalars['ID'];
+  currency: CurrencyEnum;
+};
+
+export type OpenCaseMutationResult = {
+  __typename?: 'OpenCaseMutationResult';
+  message: Scalars['String'];
+};
+
 export type Prize = {
   __typename?: 'Prize';
   skin: Skin;
@@ -384,21 +438,34 @@ export type Query = {
   __typename?: 'Query';
   crashInitial: CrashInitial;
   getBetsForGame: Array<Bet>;
+  getCase?: Maybe<Case>;
+  getCases: Array<Case>;
   getCurrentUser?: Maybe<User>;
   getJackpots: Array<Maybe<JackpotGame>>;
   getLatestGame: LatestGame;
   getPaginatedUsers: Array<Maybe<User>>;
-  getRecentGames: Array<RouletteGame>;
+  getRecentGames: Array<GameUnion>;
   getSkinQualities: Array<Scalars['String']>;
   getSkins: Array<Maybe<Skin>>;
   rouletteInitial: RouletteIntitial;
   testError: Scalars['Boolean'];
+  userInventory: Array<Maybe<Skin>>;
   userWallets: Array<UserWallet>;
 };
 
 
 export type QueryGetBetsForGameArgs = {
   input: GetBetsForGameInput;
+};
+
+
+export type QueryGetCaseArgs = {
+  slug: Scalars['String'];
+};
+
+
+export type QueryGetCasesArgs = {
+  input?: InputMaybe<GetCasesInput>;
 };
 
 
@@ -414,6 +481,11 @@ export type QueryGetRecentGamesArgs = {
 
 export type QueryGetSkinsArgs = {
   input?: InputMaybe<GetSkinsInput>;
+};
+
+
+export type QueryUserInventoryArgs = {
+  input: UserInventoryInput;
 };
 
 export type RouletteBets = {
@@ -454,10 +526,13 @@ export type Skin = {
   iconUrlLarge: Scalars['String'];
   knifeType?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  odds: Scalars['Float'];
   price: Scalars['Float'];
   quality?: Maybe<Scalars['String']>;
   rarity: Scalars['String'];
-  rarityColor?: Maybe<Scalars['String']>;
+  rarityColor: Scalars['String'];
+  rollMax: Scalars['Int'];
+  rollMin: Scalars['Int'];
   skinName?: Maybe<Scalars['String']>;
   type?: Maybe<Scalars['String']>;
   weaponType?: Maybe<Scalars['String']>;
@@ -467,6 +542,7 @@ export type Subscription = {
   __typename?: 'Subscription';
   availableBalances: AvailableBalances;
   betCreated: Bet;
+  caseOpened: Skin;
   crashGame?: Maybe<CrashSubscriptionResult>;
   rouletteGame: RouletteSubscriptionResult;
   userError: UserErrorSubscription;
@@ -485,6 +561,7 @@ export type User = {
   balance: Scalars['Float'];
   createdAt: Scalars['String'];
   displayName: Scalars['String'];
+  inventory: Array<Maybe<Skin>>;
   steamID: Scalars['String'];
   wallets: Array<UserWallet>;
 };
@@ -505,6 +582,10 @@ export type UserInfo = {
   _id: Scalars['ID'];
   avatar?: Maybe<Scalars['String']>;
   displayName: Scalars['String'];
+};
+
+export type UserInventoryInput = {
+  limit?: InputMaybe<Scalars['Int']>;
 };
 
 export type UserWallet = {
@@ -534,6 +615,32 @@ export type CashoutCrashBetMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type CashoutCrashBetMutation = { __typename?: 'Mutation', cashoutCrashBet: { __typename?: 'CashoutCrashBetMutationResult', success: boolean } };
+
+export type AllCasesQueryVariables = Exact<{
+  input?: InputMaybe<GetCasesInput>;
+}>;
+
+
+export type AllCasesQuery = { __typename?: 'Query', getCases: Array<{ __typename?: 'Case', _id: string, name: string, price: number, slug: string, image: string }> };
+
+export type SingleCaseQueryVariables = Exact<{
+  slug: Scalars['String'];
+}>;
+
+
+export type SingleCaseQuery = { __typename?: 'Query', getCase?: { __typename?: 'Case', _id: string, name: string, price: number, slug: string, image: string, items: Array<{ __typename?: 'CaseSkins', _id: string, odds: number, name: string, rarity: string, rarityColor: string, gunType?: string | null | undefined, knifeType?: string | null | undefined, iconUrl: string, skinName: string, skins: Array<{ __typename?: 'Skin', _id: string, name: string, iconUrl: string, type?: string | null | undefined, weaponType?: string | null | undefined, rarity: string, rarityColor: string, quality?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, skinName?: string | null | undefined, odds: number }> }>, slots: Array<{ __typename?: 'Skin', _id: string, iconUrl: string, skinName?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, quality?: string | null | undefined, name: string, odds: number }> } | null | undefined };
+
+export type OpenCaseMutationVariables = Exact<{
+  input: OpenCaseInput;
+}>;
+
+
+export type OpenCaseMutation = { __typename?: 'Mutation', openCase: { __typename?: 'OpenCaseMutationResult', message: string } };
+
+export type UnboxingSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UnboxingSubscriptionSubscription = { __typename?: 'Subscription', caseOpened: { __typename?: 'Skin', _id: string, name: string, iconUrl: string, type?: string | null | undefined, weaponType?: string | null | undefined, rarity: string, rarityColor: string, quality?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, skinName?: string | null | undefined } };
 
 export type UserInfoFragment = { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined };
 
@@ -568,6 +675,13 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type CurrentUserQuery = { __typename?: 'Query', getCurrentUser?: { __typename?: 'User', _id: string, displayName: string, avatar?: string | null | undefined, wallets: Array<{ __typename?: 'UserWallet', type: CurrencyEnum, balance: number }> } | null | undefined };
+
+export type UserInventoryQueryVariables = Exact<{
+  input: UserInventoryInput;
+}>;
+
+
+export type UserInventoryQuery = { __typename?: 'Query', userInventory: Array<{ __typename?: 'Skin', _id: string, quality?: string | null | undefined, name: string, price: number, iconUrl: string } | null | undefined> };
 
 export type UserWalletsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -686,6 +800,90 @@ export const CashoutCrashBetDocument = gql`
     mutation CashoutCrashBet {
   cashoutCrashBet {
     success
+  }
+}
+    `;
+export const AllCasesDocument = gql`
+    query AllCases($input: GetCasesInput) {
+  getCases(input: $input) {
+    _id
+    name
+    price
+    slug
+    image
+  }
+}
+    `;
+export const SingleCaseDocument = gql`
+    query SingleCase($slug: String!) {
+  getCase(slug: $slug) {
+    _id
+    name
+    price
+    slug
+    image
+    items {
+      _id
+      odds
+      name
+      rarity
+      rarityColor
+      gunType
+      knifeType
+      iconUrl
+      skinName
+      skins {
+        _id
+        name
+        iconUrl
+        type
+        weaponType
+        rarity
+        rarityColor
+        quality
+        gunType
+        knifeType
+        price
+        skinName
+        odds
+      }
+    }
+    slots {
+      _id
+      iconUrl
+      skinName
+      gunType
+      knifeType
+      price
+      quality
+      name
+      odds
+    }
+  }
+}
+    `;
+export const OpenCaseDocument = gql`
+    mutation OpenCase($input: OpenCaseInput!) {
+  openCase(input: $input) {
+    message
+  }
+}
+    `;
+export const UnboxingSubscriptionDocument = gql`
+    subscription UnboxingSubscription {
+  caseOpened {
+    _id
+    name
+    iconUrl
+    type
+    weaponType
+    rarity
+    rarityColor
+    quality
+    gunType
+    knifeType
+    price
+    skinName
   }
 }
     `;
@@ -829,6 +1027,17 @@ export const CurrentUserDocument = gql`
   }
 }
     `;
+export const UserInventoryDocument = gql`
+    query UserInventory($input: UserInventoryInput!) {
+  userInventory(input: $input) {
+    _id
+    quality
+    name
+    price
+    iconUrl
+  }
+}
+    `;
 export const UserWalletsDocument = gql`
     query UserWallets {
   userWallets {
@@ -852,11 +1061,16 @@ export type CrashSubscriptionSubscriptionStore = OperationStore<CrashSubscriptio
 export type CrashInitialQueryStore = OperationStore<CrashInitialQuery, CrashInitialQueryVariables>;
 export type CreateCrashBetMutationStore = OperationStore<CreateCrashBetMutation, CreateCrashBetMutationVariables>;
 export type CashoutCrashBetMutationStore = OperationStore<CashoutCrashBetMutation, CashoutCrashBetMutationVariables>;
+export type AllCasesQueryStore = OperationStore<AllCasesQuery, AllCasesQueryVariables>;
+export type SingleCaseQueryStore = OperationStore<SingleCaseQuery, SingleCaseQueryVariables>;
+export type OpenCaseMutationStore = OperationStore<OpenCaseMutation, OpenCaseMutationVariables>;
+export type UnboxingSubscriptionSubscriptionStore = OperationStore<UnboxingSubscriptionSubscription, UnboxingSubscriptionSubscriptionVariables>;
 export type RouletteInitialQueryStore = OperationStore<RouletteInitialQuery, RouletteInitialQueryVariables>;
 export type CreateBetMutationStore = OperationStore<CreateBetMutation, CreateBetMutationVariables>;
 export type RouletteGameSubscriptionStore = OperationStore<RouletteGameSubscription, RouletteGameSubscriptionVariables>;
 export type ErrorSubscriptionStore = OperationStore<ErrorSubscription, ErrorSubscriptionVariables>;
 export type UserEventSubscriptionStore = OperationStore<UserEventSubscription, UserEventSubscriptionVariables>;
 export type CurrentUserQueryStore = OperationStore<CurrentUserQuery, CurrentUserQueryVariables>;
+export type UserInventoryQueryStore = OperationStore<UserInventoryQuery, UserInventoryQueryVariables>;
 export type UserWalletsQueryStore = OperationStore<UserWalletsQuery, UserWalletsQueryVariables>;
 export type AvailableBalancesSubscriptionStore = OperationStore<AvailableBalancesSubscription, AvailableBalancesSubscriptionVariables>;

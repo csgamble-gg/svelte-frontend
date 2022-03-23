@@ -13,6 +13,7 @@ const config = {
 				foreground: '#242B43',
 				lightblue: '#9CBBFF',
 				lightBlue10: 'rgba(156, 187, 255, 0.1)',
+				lightBlue30: 'rgba(156, 187, 255, 0.3)',
 				lightBlue70: 'rgba(156, 187, 255, 0.7)',
 				brown: '#574600',
 				darkBlue: '#0C0F1A',

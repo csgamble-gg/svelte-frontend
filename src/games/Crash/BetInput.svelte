@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Currency from '$components/Currency/Currency.svelte';
 	import BackgroundButton from '$components/generics/BackgroundButton.svelte';
 	import { getGeneralContext } from '$games/state/setup';
 	import { state } from './state/game';
@@ -10,9 +9,9 @@
 	$: canCashout = $state?.status === 'in-progress';
 </script>
 
-<div class="flex flex-col rounded-large bet-input relative">
-	<div class="flex w-full items-center flex-nowrap gap-x-2">
-		<div class="flex gap-3">
+<div class="bet-input">
+	<div class="">
+		<div class="">
 			<button
 				class="bet-amount-button"
 				type="button"
@@ -45,12 +44,12 @@
 			</button>
 		</div>
 
-		<div class="bet-amount-input flex gap-x-2 items-center h-full px-4">
-			<div class="w-6 h-6">
-				<Currency />
+		<div class="bet-amount-input">
+			<div class="">
+				<!-- <Currency /> -->
 			</div>
 			<input
-				class="bg-transparent text-white placeholder:text-white font-semibold w-full"
+				class=""
 				type="number"
 				bind:value={$amount}
 				placeholder="0.00"

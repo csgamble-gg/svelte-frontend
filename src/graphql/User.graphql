@@ -10,6 +10,16 @@ query CurrentUser {
 	}
 }
 
+query UserInventory($input: UserInventoryInput!) {
+	userInventory(input: $input) {
+		_id
+		quality
+		name
+		price
+		iconUrl
+	}
+}
+
 query UserWallets {
 	userWallets {
 		type

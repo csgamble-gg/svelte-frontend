@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Currency from '$components/Currency/Currency.svelte';
 	import { getGeneralContext } from '$games/state/setup';
 	import { convertPenniesToDollars } from '$libs/currencyConversion';
+	import { CryptoIcon, Text } from '@csgamble-gg/nebula-ui';
 	import Big from 'big.js';
 	import { quintInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
@@ -16,30 +16,26 @@
 	const { send, fetching } = getGeneralContext();
 </script>
 
-<div class="px-3 pb-4 relative flex flex-col rounded-large w-full card">
-	<div class="absolute multiplier-wrapper">
-		<span class="multiplier-number">15</span>
-		<span class="multiplier-amount">x</span>
+<div class="bet-card">
+	<div class="multiplier">
+		<span class="number">15</span>
+		<span class="amount">x</span>
 	</div>
-	<div class="mt-8">
+	<div class="content">
 		<BackgroundButton
 			background="orange"
 			onClick={() => send({ type: 'BET', selections: [28] })}
 			title="Place Bet"
 			disabled={isSpinning || $fetching}
 		/>
-		<div class="flex py-4 gap-6">
-			<div class="flex">
+		<div class="info">
+			<div class="players-in">
 				<People color="orange" />
-				<span class="text-white font-semibold pl-3">{bets.length}</span>
+				<Text weight="semibold">{bets.length}</Text>
 			</div>
-			<div class="flex items-center">
-				<div class="w-5 h-5">
-					<Currency />
-				</div>
-				<span class="text-white font-semibold pl-3"
-					>{convertPenniesToDollars(sum, 2)}</span
-				>
+			<div>
+				<CryptoIcon type="USD" />
+				<Text weight="semibold">${convertPenniesToDollars(sum, 2)}</Text>
 			</div>
 		</div>
 		<Divider />
@@ -66,7 +62,7 @@
 						>
 						<div class="flex flex-grow justify-end gap-2">
 							<div class="w-6 h-6">
-								<Currency type={bet.currency} />
+								<!-- <Currency type={bet.currency} /> -->
 							</div>
 							<span class="text-white font-semibold"
 								>{new Big(bet.amount).div(100).toFixed(2)}</span
@@ -79,17 +75,11 @@
 	</div>
 </div>
 
-<style>
-	.card {
-		min-width: 140px;
-		max-width: 495px;
-		background: linear-gradient(
-			180deg,
-			#181d2d 0%,
-			rgba(24, 29, 45, 0.4) 100%
-		);
-		z-index: 1;
-		max-height: 600px;
+<style lang="scss">
+	@use '_betting.scss' as *;
+
+	.bet-card {
+		@include bet-card('orange');
 	}
 
 	.card::before {

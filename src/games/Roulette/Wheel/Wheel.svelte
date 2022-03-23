@@ -38,14 +38,14 @@
 	});
 </script>
 
-<div class="flex align-center flex-nowrap justify-center overflow-hidden">
+<div class="wheel">
 	<div class="wheel-wrapper">
-		<div class="z-10 w-auto absolute inner-wheel">
+		<div class="inner-wheel">
 			<Timer />
 		</div>
 		<div class="tick" />
 		<Motion let:motion style={{ rotate }}>
-			<div class="wheelItems" use:motion>
+			<div class="wheel-items" use:motion>
 				{#each thetaPositions as wheelSlot, index}
 					<WheelItem position={wheelSlot} {index} />
 				{/each}
@@ -54,7 +54,15 @@
 	</div>
 </div>
 
-<style>
+<style lang="scss">
+	.wheel {
+		display: flex;
+		align-items: center;
+		flex-wrap: nowrap;
+		justify-content: center;
+		overflow: hidden;
+	}
+
 	.tick {
 		position: absolute;
 		width: 2px;
@@ -115,7 +123,7 @@
 		backdrop-filter: blur(7px);
 	}
 
-	.wheelItems {
+	.wheel-items {
 		height: 1112px;
 		width: 1112px;
 		border-radius: 100%;
@@ -124,5 +132,8 @@
 
 	.inner-wheel {
 		top: 800px;
+		position: absolute;
+		width: auto;
+		z-index: 10;
 	}
 </style>

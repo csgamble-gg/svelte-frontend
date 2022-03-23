@@ -88,5 +88,12 @@ export enum CurrencyEnum {
 
 export enum HouseGameEnum {
 	roulette = 'roulette',
-	crash = 'crash'
+	crash = 'crash',
+	unboxing = 'unboxing'
+}
+
+export enum CaseFilters {
+	new = 'NEW',
+	featured = 'FEATURED',
+	percent10 = '10%'
 }

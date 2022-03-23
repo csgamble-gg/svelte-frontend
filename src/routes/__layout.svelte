@@ -1,8 +1,8 @@
 <script context="module" lang="ts">
 	import { browser } from '$app/env';
 	import { page } from '$app/stores';
-	import Chat from '$components/Chat/Chat.svelte';
 	import Header from '$components/Header/Header.svelte';
+	import MobileFooter from '$components/MobileFooter/MobileFooter.svelte';
 	import Modal from '$components/Modals/Modal.svelte';
 	import Sidebar from '$components/Sidebar/Sidebar.svelte';
 	import ToastList from '$components/ToastList/index.svelte';
@@ -13,8 +13,8 @@
 	} from '$libs/urql/createSSRClient';
 	import { sidebarStore } from '$stores/app';
 	import { createStores, getStores } from '$stores/user/index';
-	import type { LoadOutput, LoadProps } from '$types/index';
-	import type { LoadInput } from '@sveltejs/kit';
+	import { mobileView } from '$stores/window';
+	import type { LoadInput, LoadOutput, LoadProps } from '$types/index';
 	import { setClient } from '@urql/svelte';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -124,34 +124,49 @@
 <ToastList />
 
 {#if ready === false}
-	<div
-		class="w-screen h-screen bg-primaryBg fixed z-50 flex items-center justify-center"
-		transition:fade={{ duration: 150 }}
-	>
-		<div class="loading">
+	<div class="loading">
+		<div class="loading logo" transition:fade={{ duration: 150 }}>
 			<MainLogo />
 		</div>
 	</div>
 {/if}
 
-<div class="bg-primaryBg h-screen w-screen flex flex-row">
+<div class="wrapper">
 	<Sidebar />
-
-	<div class="flex flex-col w-full min-w-0 overflow-x-hidden">
-		<nav>
-			<Header />
-		</nav>
-		<main class="flex flex-row">
+	<div class="content">
+		<Header />
+		<main class="game">
 			<slot />
-			<Chat />
 		</main>
+		{#if $mobileView}
+			<MobileFooter />
+		{/if}
 	</div>
 </div>
 
-<style global lang="postcss">
-	@tailwind base;
-	@tailwind components;
-	@tailwind utilities;
+<style lang="scss">
+	@use '@csgamble-gg/nebula-ui/style/main.scss';
+
+	:global(:root) {
+		margin: 0;
+		height: 100%;
+		width: 100%;
+		background-color: var(--variant-grey-color);
+		--header-height: 91px;
+	}
+
+	:global(body) {
+		margin: 0;
+		height: 100%;
+		width: 100%;
+		background-color: var(--variant-grey-color);
+		font-family: Poppins;
+	}
+
+	:global(#svelte) {
+		height: 100%;
+		width: 100%;
+	}
 
 	@keyframes breathing {
 		0% {
@@ -172,6 +187,41 @@
 	}
 
 	.loading {
-		animation: breathing 2s ease-out infinite;
+		position: relative;
+		width: 100%;
+		height: 100%;
+		&.logo {
+			position: absolute;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			animation: breathing 2s ease-out infinite;
+		}
+	}
+
+	.wrapper {
+		display: flex;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		height: 100%;
+	}
+
+	.game {
+		// no clue why this only causes padding on the left side
+		// padding: 0 2vw;
+		flex: 1;
+		display: flex;
+		justify-content: center;
+		width: 100%;
+		max-width: 100%;
+		height: 100%;
+		overflow-y: scroll;
 	}
 </style>

@@ -18,7 +18,10 @@
 	positions = getPosition();
 </script>
 
-<div class="absolute" style="left: {positions.x}px; top: {positions.y}px;">
+<div
+	class="wheel-item"
+	style="left: {positions.x}px; top: {positions.y}px;"
+>
 	{#if index === 0}
 		<img
 			src={OrangePlanet}
@@ -42,3 +45,12 @@
 		/>
 	{/if}
 </div>
+
+<style lang="scss">
+	.wheel-item {
+		position: absolute;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+</style>

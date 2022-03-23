@@ -1,16 +1,15 @@
-<!-- svelte-ignore a11y-mouse-events-have-key-events --><svg
-	width="1500px"
-	height="1500px"
+<script lang="ts">
+	export let width: string = '176.32';
+	export let height: string = '42.433';
+</script>
+
+<svg
+	{width}
+	{height}
 	version="1.1"
-	viewBox="0 0 220 300"
+	viewBox="0 0 129.3 42.433"
 	xmlns="http://www.w3.org/2000/svg"
-	{...$$restProps}
-	on:click
-	on:mouseover
-	on:mouseenter
-	on:mouseleave
-	on:keydown
-	><slot />
+>
 	<defs>
 		<clipPath id="clipPath714">
 			<path
@@ -25,7 +24,7 @@
 			cx="0"
 			cy="0"
 			r="1"
-			gradientTransform="matrix(-27.324 -54.828 -54.828 27.324 350.5 300.35)"
+			gradientTransform="matrix(-27.324,-54.828,-54.828,27.324,350.5,300.35)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#fff" offset="0" />
@@ -52,7 +51,7 @@
 			cx="0"
 			cy="0"
 			r="1"
-			gradientTransform="matrix(-27.324 -54.828 -54.828 27.324 350.5 300.35)"
+			gradientTransform="matrix(-27.324,-54.828,-54.828,27.324,350.5,300.35)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#f20074" offset="0" />
@@ -69,7 +68,7 @@
 			cx="0"
 			cy="0"
 			r="1"
-			gradientTransform="matrix(-43.509 -87.304 -87.304 43.509 361.54 321.73)"
+			gradientTransform="matrix(-43.509,-87.304,-87.304,43.509,361.54,321.73)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#f20074" offset="0" />
@@ -94,7 +93,7 @@
 			cx="0"
 			cy="0"
 			r="1"
-			gradientTransform="matrix(-50.38 -148.11 -148.11 50.38 367.98 354.24)"
+			gradientTransform="matrix(-50.38,-148.11,-148.11,50.38,367.98,354.24)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#f20074" offset="0" />
@@ -116,7 +115,7 @@
 			cx="0"
 			cy="0"
 			r="1"
-			gradientTransform="matrix(-33.473 -67.166 -67.166 33.473 341.44 316.77)"
+			gradientTransform="matrix(-33.473,-67.166,-67.166,33.473,341.44,316.77)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#f20074" offset="0" />
@@ -138,7 +137,7 @@
 			cx="0"
 			cy="0"
 			r="1"
-			gradientTransform="matrix(-35.976 -72.189 -72.189 35.976 366.72 323.69)"
+			gradientTransform="matrix(-35.976,-72.189,-72.189,35.976,366.72,323.69)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#f20074" offset="0" />
@@ -160,7 +159,7 @@
 			cx="0"
 			cy="0"
 			r="1"
-			gradientTransform="matrix(-27.771 -55.724 -55.724 27.771 337.73 315.14)"
+			gradientTransform="matrix(-27.771,-55.724,-55.724,27.771,337.73,315.14)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#f20074" offset="0" />
@@ -185,7 +184,7 @@
 			cx="0"
 			cy="0"
 			r="1"
-			gradientTransform="matrix(-122.27 -9.9422 -8.7311 107.29 453.43 312.77)"
+			gradientTransform="matrix(-122.27,-9.9422,-8.7311,107.29,453.43,312.77)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#f20074" offset="0" />
@@ -207,7 +206,7 @@
 			cx="0"
 			cy="0"
 			r="1"
-			gradientTransform="matrix(-19.794 -22.695 -22.695 19.794 392.2 337.59)"
+			gradientTransform="matrix(-19.794,-22.695,-22.695,19.794,392.2,337.59)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#f20074" offset="0" />
@@ -229,7 +228,7 @@
 			cx="0"
 			cy="0"
 			r="1"
-			gradientTransform="matrix(-15.126 -6.8674 -6.8674 15.126 398.41 306.95)"
+			gradientTransform="matrix(-15.126,-6.8674,-6.8674,15.126,398.41,306.95)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#f20074" offset="0" />
@@ -246,7 +245,7 @@
 		<linearGradient
 			id="linearGradient1096"
 			x2="1"
-			gradientTransform="matrix(-4.5e-6 -103.43 -103.43 4.5e-6 433.36 342.05)"
+			gradientTransform="matrix(-4.5e-6,-103.43,-103.43,4.5e-6,433.36,342.05)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#f20074" offset="0" />
@@ -263,7 +262,7 @@
 		<linearGradient
 			id="linearGradient1122"
 			x2="1"
-			gradientTransform="matrix(-4.5e-6 -103.43 -103.43 4.5e-6 489.76 342.05)"
+			gradientTransform="matrix(-4.5e-6,-103.43,-103.43,4.5e-6,489.76,342.05)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#f20074" offset="0" />
@@ -280,7 +279,7 @@
 		<linearGradient
 			id="linearGradient1148"
 			x2="1"
-			gradientTransform="matrix(-4.5e-6 -103.43 -103.43 4.5e-6 546.17 342.05)"
+			gradientTransform="matrix(-4.5e-6,-103.43,-103.43,4.5e-6,546.17,342.05)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#f20074" offset="0" />
@@ -295,7 +294,7 @@
 		<linearGradient
 			id="linearGradient1174"
 			x2="1"
-			gradientTransform="matrix(-4.5e-6 -103.43 -103.43 4.5e-6 580 342.05)"
+			gradientTransform="matrix(-4.5e-6,-103.43,-103.43,4.5e-6,580,342.05)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#f20074" offset="0" />
@@ -312,7 +311,7 @@
 		<linearGradient
 			id="linearGradient1200"
 			x2="1"
-			gradientTransform="matrix(-4.5e-6 -103.43 -103.43 4.5e-6 613.85 342.05)"
+			gradientTransform="matrix(-4.5e-6,-103.43,-103.43,4.5e-6,613.85,342.05)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#f20074" offset="0" />
@@ -329,7 +328,7 @@
 		<linearGradient
 			id="linearGradient1500"
 			x2="1"
-			gradientTransform="matrix(-5e-6 -114.89 -114.89 5e-6 197.54 342.72)"
+			gradientTransform="matrix(-5e-6,-114.89,-114.89,5e-6,197.54,342.72)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#0ff" offset="0" />
@@ -343,17 +342,17 @@
 		<linearGradient
 			id="linearGradient1520"
 			x2="1"
-			gradientTransform="matrix(-5e-6 -114.89 -114.89 5e-6 272.7 342.72)"
+			gradientTransform="matrix(-5e-6,-114.89,-114.89,5e-6,272.7,342.72)"
 			gradientUnits="userSpaceOnUse"
 		>
 			<stop stop-color="#0ff" offset="0" />
 			<stop stop-color="#3fa9f5" offset="1" />
 		</linearGradient>
 	</defs>
-	<g transform="translate(-.50917 10.896)">
+	<g transform="translate(-45.874 -117.14)">
 		<g transform="translate(-.21889 1.986)">
 			<g transform="matrix(.35278 0 0 -.35278 117.86 246.15)">
-				<g transform="translate(-404.93 11.067)">
+				<g transform="translate(-404.93,11.067)">
 					<g clip-path="url(#clipPath714)">
 						<g mask="url(#mask732)">
 							<path
@@ -369,7 +368,7 @@
 						/>
 					</g>
 				</g>
-				<g transform="translate(-405.83 10.413)">
+				<g transform="translate(-405.83,10.413)">
 					<g clip-path="url(#clipPath790)">
 						<g clip-path="url(#clipPath798)">
 							<g clip-path="url(#clipPath802)">
@@ -399,7 +398,7 @@
 							<g clip-path="url(#clipPath916)">
 								<path
 									d="m330.36 342.82s-25.119-9.323-28.638-37.829c-3.517-28.502 20.709-46.088 31.178-44.361 10.471 1.726 11.826 25.46-0.459 38.117-12.287 12.657 11.281 25.752 10.17 36.416-1.113 10.663-8.538 8.658-12.251 7.657"
-									fill="url(#radialGradient928)"
+									fill="url(#radialGradient928>"
 								/>
 							</g>
 						</g>
@@ -429,7 +428,7 @@
 								</g>
 							</g>
 						</g>
-						<g transform="translate(315 279.89)">
+						<g transform="translate(315,279.89)">
 							<path
 								d="m0 0 35.499-20.35 35.501 20.35v24.108h-38v-11h26v-6.668l-24-13.908-24 13.908v27.817l24.076 13.909 25.928-14.973 11.151 6.441-36.999 21.412-35.156-20.348z"
 								fill="#fff"
@@ -437,7 +436,7 @@
 						</g>
 					</g>
 				</g>
-				<g transform="translate(-404.93 11.067)">
+				<g transform="translate(-404.93,11.067)">
 					<g clip-path="url(#clipPath1080)">
 						<path
 							d="m422.38 313.77-6.393-12.785h22.073c0.624 0 0.939-0.376 0.939-1.128v-1.127h-19.74c-4.387 0-6.58-2.131-6.58-6.392v-14.1c0-4.264 2.193-6.393 6.58-6.393h34.781v35.532c0 4.261-2.193 6.393-6.58 6.393zm5.339-28.013v1.88c0 0.752 0.313 1.128 0.94 1.128h10.34v-4.136h-10.34c-0.627 0-0.94 0.376-0.94 1.128"
@@ -471,9 +470,9 @@
 				</g>
 			</g>
 			<g transform="matrix(.35278 0 0 -.35278 -318.63 243.12)">
-				<g transform="translate(719.75 5.6064)">
+				<g transform="translate(719.75,5.6064)">
 					<g
-						transform="translate(83.212 -3.568)"
+						transform="translate(83.212,-3.568)"
 						clip-path="url(#clipPath1490)"
 					>
 						<path
@@ -482,7 +481,7 @@
 						/>
 					</g>
 				</g>
-				<g transform="translate(807.13 2.0383)">
+				<g transform="translate(807.13,2.0383)">
 					<g clip-path="url(#clipPath1510)">
 						<path
 							d="m226.77 262.25 16.702 17.494h37.58l8.35 8.746h-50.105v26.24l16.702 17.493h62.632l-16.701-17.493h-37.581l-8.35-8.747h50.106v-26.239l-16.703-17.494z"

@@ -5,13 +5,36 @@
 	import BetPurple from './BetPurple.svelte';
 </script>
 
-<div class="px-4 my-14 z-10">
+<div class="betting-area">
 	<BetInput />
-	<div
-		class="pt-16 flex flex-row sm:flex-nowrap flex-wrap gap-x-7 gap-y-7 justify-center"
-	>
+	<div class="bet-cards">
 		<BetPurple />
 		<BetBlue />
 		<BetOrange />
 	</div>
 </div>
+
+<style lang="scss">
+	@use '../../../styles/_breakpoints' as *;
+
+	.betting-area {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 1vw;
+	}
+
+	.bet-cards {
+		width: 100%;
+		gap: 28px;
+		padding: 16px 0 0 0;
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: 2.5rem;
+
+		@include break-at('mobile') {
+			grid-template-columns: 1fr 1fr;
+			gap: 0.25rem;
+		}
+	}
+</style>

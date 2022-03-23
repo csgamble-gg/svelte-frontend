@@ -1,9 +1,11 @@
 <script lang="ts">
-	import ChatBubble from '$icons/svgs/Chat/ChatBubble.svelte';
 	import { chatStore } from '$stores/app';
+	import { mobileView } from '$stores/window';
+	import { Text } from '@csgamble-gg/nebula-ui';
 
 	export let title: string;
 	export let subTitle: string = '';
+	export let padding: boolean = true;
 
 	function handleChatClick() {
 		chatStore.toggle();
@@ -11,17 +13,19 @@
 </script>
 
 <div class="game-wrapper">
-	<div class="content">
-		<div class="mb-4">
-			<div class="flex items-center">
-				<h1 class="text-white text-4xl font-bold">{title}</h1>
-				<div style="max-width: 88%;">
-					<slot name="header-content" />
-				</div>
+	<div class="content" class:padded={padding}>
+		<div>
+			<div
+				class="header"
+				class:mobile={$mobileView}
+				class:padded={!padding}
+			>
+				<Text as="h1" size="3xl" tag="h1">{title}</Text>
+				<slot name="header-content" />
 			</div>
-			<span class="text-lightblue mt-3">{subTitle}</span>
+			<span>{subTitle}</span>
 		</div>
-		<button class="absolute right-4" on:click={handleChatClick}>
+		<!-- <button class="chat-button" on:click={handleChatClick}>
 			<div
 				class="bg-foreground bg-opacity-50 w-10 h-10 rounded-md flex items-center justify-center"
 			>
@@ -29,24 +33,24 @@
 					<ChatBubble />
 				</div>
 			</div>
-		</button>
+		</button> -->
 		<slot />
 	</div>
 </div>
 
-<style>
+<style lang="scss">
 	.game-wrapper {
 		display: flex;
 		flex-direction: row;
 		width: 100%;
 		border-radius: 24px;
-		height: 100%;
+		height: fit-content;
 		border: 1px solid #1a1f31;
 		position: relative;
 		background: no-repeat center center;
 		z-index: 1;
+		margin: 21px 0;
 		overflow: hidden;
-		margin: 12px 10px;
 	}
 
 	.game-wrapper::before {
@@ -58,6 +62,7 @@
 		opacity: 0.4;
 		z-index: -1;
 		background: url('/assets/StarBackground.png');
+		border-radius: 24px;
 	}
 
 	.content {
@@ -66,9 +71,28 @@
 		max-width: 1700px;
 		align-self: center;
 		width: 100%;
-		padding: 24px;
+		padding-bottom: 75px;
 		position: relative;
-		height: 100vh;
+		/* height: 100vh; */
 		margin: auto;
+
+		&.padded {
+			padding: 24px;
+		}
+	}
+
+	.header {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+
+		&.mobile {
+			flex-wrap: wrap;
+			gap: 5px;
+		}
+
+		&.padded {
+			padding: 24px;
+		}
 	}
 </style>

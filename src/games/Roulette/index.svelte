@@ -1,7 +1,8 @@
 <script lang="ts">
+	import GameContainer from '$components/GameContainer/GameContainer.svelte';
 	import { setConfigContext, setup } from '$games/state/setup';
-	import ChatBubble from '$icons/svgs/Chat/ChatBubble.svelte';
 	import { chatStore } from '$stores/app';
+	import { mobileView } from '$stores/window';
 	import { onMount } from 'svelte';
 	import BettingArea from './BetArea/BettingArea.svelte';
 	import { config } from './config';
@@ -31,57 +32,17 @@
 	}
 </script>
 
-<div class="roulette-wrapper">
-	<div class="content">
-		<button class="absolute right-4" on:click={handleChatClick}>
-			<div
-				class="bg-foreground bg-opacity-50 w-10 h-10 rounded-md flex items-center justify-center chat-button"
-			>
-				<div class="h-6 w-6">
-					<ChatBubble />
-				</div>
-			</div>
-		</button>
-		<div class="absolute left-0 pt-9 pl-10 z-10">
-			<div class="mb-4">
-				<h1 class="text-white text-4xl font-bold mb-3">Roulette</h1>
-				<span class="text-lightblue">History</span>
-			</div>
-			<RecentRolls />
-		</div>
-
-		<Wheel />
-		<BettingArea />
-	</div>
-</div>
+<GameContainer title="Roulette" padding={false}>
+	{#if !$mobileView}
+		<RecentRolls />
+	{/if}
+	<Wheel />
+	<BettingArea />
+</GameContainer>
 
 <style>
 	.chat-button {
 		z-index: 9999;
-	}
-	.roulette-wrapper {
-		display: flex;
-		flex-direction: column;
-		width: 100%;
-		border-radius: 24px;
-		height: 100%;
-		border: 1px solid #1a1f31;
-		position: relative;
-		background: no-repeat center center;
-		z-index: 1;
-		overflow: hidden;
-		margin: 12px 10px;
-	}
-
-	.roulette-wrapper::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		height: 100%;
-		width: 100%;
-		opacity: 0.4;
-		z-index: -1;
-		background: url('/assets/StarBackground.png');
 	}
 
 	.content {

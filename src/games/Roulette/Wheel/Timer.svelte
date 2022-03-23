@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/env';
+	import { Text } from '@csgamble-gg/nebula-ui';
 	import { differenceInMilliseconds, parseISO } from 'date-fns';
 	import { readable } from 'svelte/store';
 	import { fade } from 'svelte/transition';
@@ -23,11 +24,21 @@
 	});
 </script>
 
-<div class="flex flex-col align-center items-center">
+<div class="timer">
 	{#if $timer > 0}
-		<span class="text-4xl text-white" transition:fade={{ duration: 200 }}>
-			{($timer / 1000).toFixed(2)}
+		<span transition:fade={{ duration: 200 }}>
+			<Text size="3xl">
+				{($timer / 1000).toFixed(2)}
+			</Text>
 		</span>
-		<span class="text-lightblue mt-2">until the next round</span>
+		<Text variant="subtle" size="sm">until the next round</Text>
 	{/if}
 </div>
+
+<style lang="scss">
+	.timer {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+</style>
