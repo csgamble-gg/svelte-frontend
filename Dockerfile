@@ -2,11 +2,13 @@
 FROM node:alpine AS builder
 
 ARG ENVIRONMENT
+ARG NPM_TOKEN_GITHUB
 ENV ENVIRONMENT=${ENVIRONMENT}
 
 WORKDIR /app
 COPY . .
-RUN yarn install && yarn build
+
+RUN npm ci && npm run build
 
 # Production image, copy all the files and run next
 FROM node:alpine AS runner
