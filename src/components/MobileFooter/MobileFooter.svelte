@@ -4,13 +4,17 @@
 	import { sidebarStore } from '$stores/app';
 	import { sizes } from '$styles/variables';
 	import { Text } from '@csgamble-gg/nebula-ui';
+
+	const handleClick = () => {
+		sidebarStore.toggle();
+	};
 </script>
 
 <div
 	class="footer"
 	style="--mobile-footer-height: {sizes.mobileFooterHeight}"
 >
-	<button on:click={() => sidebarStore.toggle()}>
+	<button on:click={handleClick}>
 		<div class="content">
 			<Menu />
 			<Text size="sm" weight="semibold">Menu</Text>

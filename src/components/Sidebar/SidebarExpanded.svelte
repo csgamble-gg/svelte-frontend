@@ -1,5 +1,6 @@
 <script lang="ts">
 	import MainLogo from '$icons/svgs/MainLogo/MainLogo.svelte';
+	import { sidebarStore } from '$stores/app';
 	import { mobileView, sideBarSize } from '$stores/window';
 	import { sizes } from '$styles/variables';
 	import { Link } from '@csgamble-gg/nebula-ui';
@@ -9,6 +10,12 @@
 
 	type Route = { route: string; name: string };
 	export let routes: Array<Array<Route>>;
+
+	const handleClick = () => {
+		if (mobileView) {
+			sidebarStore.toggle();
+		}
+	};
 </script>
 
 <div
@@ -30,7 +37,7 @@
 		<div>
 			<div class="link-group">
 				{#each routes[0] as route}
-					<div class="link">
+					<div class="link" on:click={handleClick}>
 						<BoxIcon width="20px" height="20px" />
 						<Link href={route.route} prefetch>{route.name}</Link>
 					</div>
@@ -39,7 +46,7 @@
 			<Divider />
 			<div class="link-group">
 				{#each routes[1] as route}
-					<div class="link">
+					<div class="link" on:click={handleClick}>
 						<BoxIcon width="20px" height="20px" />
 						<Link href={route.route} prefetch>{route.name}</Link>
 					</div>

@@ -18,7 +18,6 @@ export const sidebarStore = (() => {
 	return {
 		...store,
 		toggle: () => {
-			console.log('toggled');
 			store.update((val) => togglesidebar[val]);
 		}
 	};
