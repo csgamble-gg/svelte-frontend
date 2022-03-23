@@ -2,6 +2,7 @@
 	"name": "svelte-frontend",
 	"version": "0.0.1",
 	"exports": "./*",
+	"private": true,
 	"scripts": {
 		"dev": "svelte-kit dev",
 		"build": "svelte-kit build",

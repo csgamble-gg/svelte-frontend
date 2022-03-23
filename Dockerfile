@@ -1,17 +1,17 @@
 # Install deps and build app
-FROM node:alpine AS builder
+FROM node:14-alpine AS builder
 
 ARG ENVIRONMENT
-ARG NPM_TOKEN_GITHUB
 ENV ENVIRONMENT=${ENVIRONMENT}
+ARG NPM_TOKEN_GITHUB
 
 WORKDIR /app
+
 COPY ./ ./
 
 RUN npm ci 
 RUN npm run build
 
-# Production image, copy all the files and run next
 FROM node:alpine AS runner
 WORKDIR /app
 
