@@ -6,9 +6,10 @@ ARG NPM_TOKEN_GITHUB
 ENV ENVIRONMENT=${ENVIRONMENT}
 
 WORKDIR /app
-COPY . .
+COPY ./ ./
 
-RUN npm ci && npm run build
+RUN npm ci 
+RUN npm run build
 
 # Production image, copy all the files and run next
 FROM node:alpine AS runner
