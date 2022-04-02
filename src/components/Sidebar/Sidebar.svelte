@@ -13,7 +13,7 @@
 			{ name: 'Unboxing', route: '/unboxing/cases' },
 			{ name: 'Roulette', route: '/roulette' },
 			{ name: 'Jackpot', route: '/jackpot' },
-			{ name: 'Battles', route: '/battles' },
+			{ name: 'Battle', route: '/battle' },
 			{ name: 'Crash', route: '/crash' },
 			{ name: 'Upgrade', route: '/upgrade' }
 		]

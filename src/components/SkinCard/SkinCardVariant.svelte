@@ -40,7 +40,7 @@
 							<th class="rarity-{rarity}">Price</th>
 							<th class="rarity-{rarity}">Odds</th>
 						</tr>
-						{#each skin.skins as subSkin}
+						{#each skin.qualities as subSkin}
 							<tr>
 								<td class="wear">{QualityEnum[subSkin.quality]}</td>
 								<td class="price">${subSkin.price}</td>

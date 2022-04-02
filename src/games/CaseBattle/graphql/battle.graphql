@@ -1,0 +1,79 @@
+fragment Battle on Battle {
+	_id
+	price
+	cases {
+		_id
+		image
+		name
+		price
+		items {
+			_id
+			iconUrl
+		}
+		slots {
+			...CaseSkin
+		}
+	}
+	currentRound
+	players {
+		_id
+		avatar
+		displayName
+	}
+	rounds
+	status
+	createdBy
+}
+
+query GetBattles {
+	getBattles {
+		price
+		_id
+		cases {
+			image
+		}
+		currentRound
+		players {
+			avatar
+			displayName
+		}
+		rounds
+		status
+	}
+}
+
+query GetBattle($getBattleId: ID!) {
+	getBattle(id: $getBattleId) {
+		...Battle
+	}
+}
+
+mutation CreateBattle($input: CreateBattleInput!) {
+	createBattle(input: $input) {
+		message
+		battle {
+			_id
+			cases {
+				_id
+			}
+		}
+	}
+}
+
+mutation JoinBattle($input: JoinBattleInput!) {
+	joinBattle(input: $input) {
+		message
+	}
+}
+
+subscription BattleCreated {
+	battleCreated {
+		...Battle
+	}
+}
+
+subscription BattleUpdated {
+	battleUpdated {
+		...Battle
+	}
+}

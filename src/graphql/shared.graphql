@@ -1,0 +1,61 @@
+subscription Error {
+	userError {
+		message
+	}
+}
+
+subscription UserEvent {
+	userEvent {
+		user {
+			_id
+			balance
+		}
+	}
+}
+
+fragment Skin on Skin {
+	_id
+	gunType
+	iconUrl
+	iconUrlLarge
+	knifeType
+	name
+	odds
+	price
+	quality
+	rarity
+	rarityColor
+	skinName
+	weaponType
+	type
+}
+
+fragment CaseSkin on Skin {
+	...Skin
+	rollMin
+	rollMax
+}
+
+# fragment Case on Case {
+# 	_id
+# 	image
+# 	name
+# 	price
+# 	items {
+# 		_id
+# 		gunType
+# 		iconUrl
+# 		knifeType
+# 		name
+# 		odds
+# 		rarity
+# 		rarityColor
+# 		skinName
+# 		skins {
+# 			...Skin
+# 		}
+# 		slots {
+# 			...CaseSkin
+# 		}
+# 	}
+# }

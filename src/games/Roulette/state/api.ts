@@ -2,8 +2,7 @@ import type {
 	CreateBetMutation,
 	CreateBetMutationVariables
 } from '$generated/graphql';
-import { CreateBetDocument } from '$generated/graphql';
-import { CurrencyEnum } from '$types/index';
+import { CreateBetDocument, CurrencyEnum } from '$generated/graphql';
 import { get } from 'svelte/store';
 import { requestClient } from '../config';
 import type { BetEvent } from '../machine/betting';

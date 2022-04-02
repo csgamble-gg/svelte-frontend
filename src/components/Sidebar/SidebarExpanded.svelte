@@ -12,7 +12,7 @@
 	export let routes: Array<Array<Route>>;
 
 	const handleClick = () => {
-		if (mobileView) {
+		if ($mobileView) {
 			sidebarStore.toggle();
 		}
 	};
@@ -39,7 +39,7 @@
 				{#each routes[0] as route}
 					<div class="link" on:click={handleClick}>
 						<BoxIcon width="20px" height="20px" />
-						<Link href={route.route} prefetch>{route.name}</Link>
+						<Link href={route.route}>{route.name}</Link>
 					</div>
 				{/each}
 			</div>
@@ -48,7 +48,7 @@
 				{#each routes[1] as route}
 					<div class="link" on:click={handleClick}>
 						<BoxIcon width="20px" height="20px" />
-						<Link href={route.route} prefetch>{route.name}</Link>
+						<Link href={route.route}>{route.name}</Link>
 					</div>
 				{/each}
 			</div>

@@ -1,7 +1,8 @@
-const config = ({ message }) => ({
+const config = ({ message, title }) => ({
 	body: message,
-	title: 'Error',
-	icon: 'error'
+	title: title || 'Error',
+	icon: 'error',
+	type: 'error'
 });
 
 export default config;

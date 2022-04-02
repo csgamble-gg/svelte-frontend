@@ -25,7 +25,7 @@
 		const caseQuery = await queryClient<
 			SingleCaseQuery,
 			SingleCaseQueryVariables
-		>(SingleCaseDocument, { slug });
+		>(SingleCaseDocument, { input: { slug } });
 
 		const caseData = caseQuery.data?.getCase;
 

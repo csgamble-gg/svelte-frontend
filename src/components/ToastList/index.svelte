@@ -13,7 +13,7 @@
 				<Toast
 					{...toast}
 					{index}
-					{...notificationMap[toast.name]({
+					props={notificationMap[toast.name]({
 						...toast.props,
 						createdAt: null
 					})}

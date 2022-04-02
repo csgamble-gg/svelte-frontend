@@ -1,4 +1,5 @@
 <script lang="ts">
+	import resize, { ResizeObserverEvent } from '$utils/resizeObserver';
 	import { Text } from '@csgamble-gg/nebula-ui';
 	import { onMount } from 'svelte';
 	import { quartOut } from 'svelte/easing';
@@ -65,11 +66,6 @@
 			anim($winningIndex);
 			activeIndex = null;
 		}
-		// if ($isDoneRolling) {
-		// 	transX.update((currentValue) => currentValue + 50, {
-		// 		duration: ROLL_TIME / 4
-		// 	});
-		// }
 	});
 
 	onMount(() => {
@@ -77,9 +73,21 @@
 		amountVisible = Math.round(containerWidth / ITEM_WIDTH);
 		transX.reset(containerWidth / 2);
 	});
+
+	function handleResize(event: ResizeObserverEvent) {
+		const { width } = event.detail;
+
+		amountVisible = Math.round(width / ITEM_WIDTH);
+		transX.reset(width / 2);
+	}
 </script>
 
-<div class="roller" bind:this={container}>
+<div
+	class="roller"
+	bind:this={container}
+	use:resize
+	on:resize={handleResize}
+>
 	<div class="win-line" class:rolling={$isRolling} />
 	<div
 		class="internal-roller"

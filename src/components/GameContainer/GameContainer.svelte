@@ -3,8 +3,8 @@
 	import { mobileView } from '$stores/window';
 	import { Text } from '@csgamble-gg/nebula-ui';
 
-	export let title: string;
-	export let subTitle: string = '';
+	export let title: string | undefined = undefined;
+	export let subTitle: string | undefined = undefined;
 	export let padding: boolean = true;
 
 	function handleChatClick() {
@@ -15,15 +15,19 @@
 <div class="game-wrapper">
 	<div class="content" class:padded={padding}>
 		<div>
-			<div
-				class="header"
-				class:mobile={$mobileView}
-				class:padded={!padding}
-			>
-				<Text as="h1" size="3xl" tag="h1">{title}</Text>
-				<slot name="header-content" />
-			</div>
-			<span>{subTitle}</span>
+			{#if title}
+				<div
+					class="header"
+					class:mobile={$mobileView}
+					class:padded={!padding}
+				>
+					<Text as="h1" size="3xl" tag="h1">{title}</Text>
+					<slot name="header-content" />
+				</div>
+			{/if}
+			{#if subTitle}
+				<span>{subTitle}</span>
+			{/if}
 		</div>
 		<!-- <button class="chat-button" on:click={handleChatClick}>
 			<div
@@ -49,8 +53,9 @@
 		position: relative;
 		background: no-repeat center center;
 		z-index: 1;
-		margin: 21px 0;
+		margin: 21px 0px;
 		overflow: hidden;
+		justify-content: center;
 	}
 
 	.game-wrapper::before {
@@ -69,15 +74,15 @@
 		display: flex;
 		flex-direction: column;
 		max-width: 1700px;
-		align-self: center;
+		align-self: baseline;
 		width: 100%;
 		padding-bottom: 75px;
 		position: relative;
 		/* height: 100vh; */
-		margin: auto;
+		// margin: auto;
 
 		&.padded {
-			padding: 24px;
+			padding: 24px 1vw;
 		}
 	}
 
@@ -92,7 +97,7 @@
 		}
 
 		&.padded {
-			padding: 24px;
+			padding: 24px 1vw;
 		}
 	}
 </style>

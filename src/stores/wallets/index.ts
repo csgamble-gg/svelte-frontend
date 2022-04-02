@@ -1,10 +1,10 @@
 import { browser } from '$app/env';
-import type { UserWallet, UserWalletsQuery } from '$generated/graphql';
-import {
+import type {
 	CurrencyEnum as TCurrencyEnum,
-	UserWalletsDocument
+	UserWallet,
+	UserWalletsQuery
 } from '$generated/graphql';
-import { CurrencyEnum } from '$types/index';
+import { CurrencyEnum, UserWalletsDocument } from '$generated/graphql';
 import { getClient } from '@urql/svelte';
 import { mapValues } from 'lodash-es';
 import { writable } from 'svelte/store';
@@ -13,17 +13,16 @@ type Balance = {
 	balance: number;
 };
 
-export type Currency = TCurrencyEnum;
-
-export type Balances = Record<Currency, Balance>;
+export type Balances = Record<keyof typeof TCurrencyEnum, Balance>;
 
 export type State = {
 	balances: Balances;
 };
 
 export const rawWallets = (() => {
-	const defaultBalances = mapValues(CurrencyEnum, () => ({
-		balance: 0
+	const defaultBalances = mapValues(CurrencyEnum, (val) => ({
+		balance: 0,
+		type: val.toUpperCase()
 	}));
 
 	const transformToWallets = (userWallets: [UserWallet]): Balances => {

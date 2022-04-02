@@ -1,10 +1,10 @@
 <script lang="ts">
+	import Caret from '$icons/svgs/Caret/Caret.svelte';
 	import { sidebarStore } from '$stores/app';
 	import { mobileView } from '$stores/window';
 	import { cubicOut } from 'svelte/easing';
 	import { spring } from 'svelte/motion';
 	import { fly } from 'svelte/transition';
-	import Caret from '../../icons/svgs/Caret/Caret.svelte';
 	import SiteLogoSmall from '../../svgs/MainLogoSmall.svg';
 	import Divider from '../generics/Divider.svelte';
 	import UserInfo from './UserInfo.svelte';
@@ -28,8 +28,8 @@
 				<div class="toggle-logo">
 					{#if !$mobileView}
 						<button
-							class="icon-button rounded-full w-8 h-8 bg-foreground flex items-center justify-center z-10"
-							on:click={handleClick}
+							class="icon-button"
+							on:click={() => handleClick()}
 							style="transform: rotate({$rotation}deg);"
 						>
 							<Caret />

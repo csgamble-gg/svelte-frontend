@@ -28,15 +28,6 @@ const toggleChat: Record<VisibilityOptions, VisibilityOptions> = {
 	visible: 'hidden'
 };
 
-type MobileToggleType =
-	| {
-			value: SidebarViewEnum;
-			type: 'sidebar';
-	  }
-	| {
-			type: 'leftSidebar';
-	  };
-
 export const chatStore = (() => {
 	let defaultValue = 'visible' as VisibilityOptions;
 

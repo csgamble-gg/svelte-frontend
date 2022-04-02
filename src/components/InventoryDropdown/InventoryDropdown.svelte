@@ -5,11 +5,13 @@
 		UserInventoryQueryVariables
 	} from '$generated/graphql';
 	import { createQuery } from '$libs/urql/urqlClient';
+	import { SkinQualityEnum } from '$types/';
 	import { clickOutside } from '$utils/clickOutside';
 	import {
 		Backpack,
 		Button,
 		ButtonBase,
+		Exit,
 		Radio,
 		Text
 	} from '@csgamble-gg/nebula-ui';
@@ -32,7 +34,7 @@
 				{
 					name: 'offset',
 					options: {
-						offset: [-220, 11]
+						offset: [-0, 11]
 					}
 				}
 			]
@@ -96,12 +98,13 @@
 </button>
 <div bind:this={dropdown} role="tooltip" class="dropdown">
 	{#if isDropdownVisible}
-		<div
-			class="content"
-			use:clickOutside
-			on:clickOutside={() => toggleDropdown()}
-		>
-			<Text tag="h3">Inventory</Text>
+		<div class="content" use:clickOutside on:clickOutside={toggleDropdown}>
+			<div class="header">
+				<Text tag="h3">Inventory</Text>
+				<div class="close-button" role="button" on:click={toggleDropdown}>
+					<Exit />
+				</div>
+			</div>
 			<div class="buttons">
 				<ButtonBase variant="overlay" fullWidth on:click={checkAll}>
 					<Text variant="subtle" size="sm" weight="medium">Select All</Text
@@ -134,7 +137,7 @@
 								<div>
 									<Text size="md" weight="semibold">{item.name}</Text>
 									<Text variant="subtle" size="sm" weight="medium"
-										>{item.quality}</Text
+										>{SkinQualityEnum[item.quality]}</Text
 									>
 								</div>
 								<Text size="md" variant="subtle">{item.price}</Text>
@@ -171,11 +174,24 @@
 </div>
 
 <style lang="scss">
+	@use '../../styles/_breakpoints' as *;
+
 	.overlay {
 		position: absolute;
 		inset: 0;
 		background-color: rgba(0, 0, 0, 0.1);
 		z-index: 99;
+	}
+
+	.header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		.close-button {
+			width: 25px;
+			height: 25px;
+		}
 	}
 	.inventory {
 		position: relative;
@@ -203,6 +219,12 @@
 	.dropdown {
 		z-index: 9999;
 		position: relative;
+
+		width: 470px;
+
+		@include break-at('mobile') {
+			width: 100%;
+		}
 		.content {
 			background: #191e30;
 			box-shadow: 0px 57px 80px rgba(0, 0, 0, 0.56);
@@ -225,8 +247,9 @@
 
 				.item {
 					cursor: pointer;
-					width: 448px;
-					padding: 12px;
+					// width: 448px;
+					width: 100%;
+					padding: 12px 0;
 					display: flex;
 					flex-direction: row;
 					align-items: center;

@@ -1,4 +1,5 @@
 import { browser } from '$app/env';
+import { errorEventEmitter } from '$emitters/error';
 import type { Exchange, OperationResult } from '@urql/core';
 import {
 	Client,
@@ -55,8 +56,6 @@ export function subscription<
 }
 
 const createClient = (args?: any) => {
-	// create our subscription exchange
-
 	const createSubscriptionsExchange = (): Exchange[] => {
 		if (!browser) return [];
 
@@ -313,7 +312,8 @@ export function createMutation<TData, TVariables extends Object>(
 						error: response.error.message,
 						loadding: false
 					}));
-					throw new Error(response.error.message);
+
+					errorEventEmitter.next(response.error.message);
 				} else {
 					store.update((prev) => ({
 						...prev,
@@ -324,9 +324,7 @@ export function createMutation<TData, TVariables extends Object>(
 				}
 
 				resolve(response);
-			} catch (e) {
-				// do something important, idk
-			}
+			} catch (e) {}
 		});
 	};
 

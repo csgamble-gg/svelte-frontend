@@ -1,8 +1,8 @@
-import Deposit from './Deposit.svelte';
-
 const deposit = {
-	component: Deposit,
-	title: 'Deposit'
+	component: () => import('./Deposit.svelte'),
+	title: 'Deposit',
+	stepper: true,
+	step: 0
 };
 
 export default deposit;

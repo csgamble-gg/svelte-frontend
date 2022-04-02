@@ -81,19 +81,31 @@ export enum RouletteStatusEnum {
 	finished = 'finished'
 }
 
-export enum CurrencyEnum {
-	btc = 'btc',
-	eth = 'eth'
-}
-
 export enum HouseGameEnum {
 	roulette = 'roulette',
 	crash = 'crash',
-	unboxing = 'unboxing'
+	unboxing = 'unboxing',
+	battle = 'battle'
 }
 
 export enum CaseFilters {
 	new = 'NEW',
 	featured = 'FEATURED',
 	percent10 = '10%'
+}
+
+export enum SkinQualityEnum {
+	'Battle-Scarred' = 'BS',
+	'Well-Worn' = 'WW',
+	'Factory New' = 'FN',
+	'Field-Tested' = 'FT',
+	'Minimal Wear' = 'MW'
+}
+
+export enum CurrencyEnum {
+	USD = 'USD',
+	BTC = 'BTC',
+	ETH = 'ETH',
+	DOGE = 'DOGE',
+	EOS = 'EOS'
 }

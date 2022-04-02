@@ -1,11 +1,13 @@
 import { goto } from '$app/navigation';
 import { omit } from 'lodash-es';
 import queryString from 'query-string';
+import caseBattle from './CaseBattle/caseBattle';
 import deposit from './Deposit/deposit';
 import { createModals } from './helpers';
 
 const modalsMap = {
-	deposit
+	deposit,
+	createBattle: caseBattle
 };
 
 export const modals = createModals(modalsMap);

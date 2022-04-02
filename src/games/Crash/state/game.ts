@@ -12,7 +12,6 @@ export const gameHistory = (() => {
 	return {
 		...gameHistoryStore,
 		addGame: (game: any) => {
-			console.log(game);
 			gameHistoryStore.update((games) => [game, ...games].slice(0, 18));
 		}
 	};

@@ -1,7 +1,10 @@
+import { CurrencyEnum } from '$generated/graphql';
 import { cookieStore } from '$stores/extras';
-import { CurrencyEnum } from '$types/index';
 
+// deprecate this
 export const currency = cookieStore<CurrencyEnum>(
 	'currency',
-	CurrencyEnum.btc
+	CurrencyEnum.BTC
 );
+
+export const inPlayCurrency = currency;

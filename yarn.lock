@@ -469,10 +469,10 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     "to-fast-properties" "^2.0.0"
 
-"@csgamble-gg/nebula-ui@1.0.0":
-  "integrity" "sha512-2lT2yKNj+GED7HSwz7zQErPkzPTchrScCX5m3eenl566Z5QfWxQTMXkLIRmxR5U1Pf8a6+r/wTiTL/krR2RKkw=="
-  "resolved" "https://npm.pkg.github.com/download/@csgamble-gg/nebula-ui/1.0.0/3e9e42e56f2b7510708b60a3cf158a258cbd532fcfd2510c6ff722b78884f937"
-  "version" "1.0.0"
+"@csgamble-gg/nebula-ui@^1.0.5":
+  "integrity" "sha512-Ds0ym2f8l7AdLSt6CH2uiP7RmG3vXwx63lEFuUQ2NYxCUTdjOCTpBbbh0E4f0pJirIK+YnAZU+u5j11KLPOP9g=="
+  "resolved" "https://npm.pkg.github.com/download/@csgamble-gg/nebula-ui/1.0.5/8942324263b6ad1ef65dbebb05a1e8012e99a8e7f6ceeab3f86797005df22c4b"
+  "version" "1.0.5"
   dependencies:
     "@popperjs/core" "^2.11.4"
 

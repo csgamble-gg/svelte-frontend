@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
 	import { browser } from '$app/env';
-	import { page } from '$app/stores';
+	import { navigating, page } from '$app/stores';
 	import Header from '$components/Header/Header.svelte';
 	import MobileFooter from '$components/MobileFooter/MobileFooter.svelte';
 	import Modal from '$components/Modals/Modal.svelte';
@@ -105,6 +105,22 @@
 			'font-size: 24px; color: white; font-weight: bold;'
 		);
 	}
+
+	let fromTo = [
+		(from: string, to: string) => {
+			let rootFrom = from.split('/')[1];
+			let rootTo = to.split('/')[1];
+
+			return rootFrom !== rootTo;
+		}
+	];
+
+	$: isLoading =
+		$navigating &&
+		$navigating.from.pathname !== $navigating.to.pathname &&
+		fromTo.some((has) =>
+			has($navigating.from.pathname, $navigating.to.pathname)
+		);
 </script>
 
 {#if modal}
@@ -135,9 +151,11 @@
 	<Sidebar />
 	<div class="content">
 		<Header />
+		<!-- <ContentLoader loading={isLoading}> -->
 		<main class="game">
 			<slot />
 		</main>
+		<!-- </ContentLoader> -->
 		{#if $mobileView}
 			<MobileFooter />
 		{/if}
@@ -190,6 +208,7 @@
 		position: relative;
 		width: 100%;
 		height: 100%;
+		background-color: var(--variant-grey-color);
 		&.logo {
 			position: absolute;
 			display: flex;
@@ -197,6 +216,7 @@
 			justify-content: center;
 			animation: breathing 2s ease-out infinite;
 		}
+		z-index: 9999;
 	}
 
 	.wrapper {

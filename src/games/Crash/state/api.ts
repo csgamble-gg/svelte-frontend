@@ -6,9 +6,9 @@ import type {
 } from '$generated/graphql';
 import {
 	CashoutCrashBetDocument,
-	CreateCrashBetDocument
+	CreateCrashBetDocument,
+	CurrencyEnum
 } from '$generated/graphql';
-import { CurrencyEnum } from '$types/index';
 import { get } from 'svelte/store';
 import { requestClient } from '../config';
 import * as general from '../state/general';

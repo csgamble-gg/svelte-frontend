@@ -1,9 +1,14 @@
 <script lang="ts">
-	import Exit from '$icons/svgs/Exit/Exit.svelte';
+	import Error from '$icons/svgs/Error.svelte';
+	import Info from '$icons/svgs/Info.svelte';
+	import Success from '$icons/svgs/Success.svelte';
+
 	export let icon: 'error' | 'success' | 'warning' | 'info';
 
 	const icons = {
-		error: Exit
+		error: Error,
+		info: Info,
+		success: Success
 	};
 
 	const selectedIcon = icons[icon];

@@ -1,5 +1,7 @@
+import { CurrencyEnum } from '../types/index';
 import type { OperationStore } from '@urql/svelte';
 import gql from 'graphql-tag';
+import * as Urql from 'urql';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -171,6 +173,26 @@ export type Balance = {
   currency: CurrencyEnum;
 };
 
+export type Battle = {
+  __typename?: 'Battle';
+  _id: Scalars['ID'];
+  cases: Array<Case>;
+  createdAt: Scalars['DateTime'];
+  createdBy: Scalars['ID'];
+  currentRound: Scalars['Int'];
+  players: Array<User>;
+  price: Scalars['Int'];
+  rounds: Scalars['Int'];
+  status: BattleStatus;
+};
+
+export enum BattleStatus {
+  AwaitingCreation = 'AWAITING_CREATION',
+  Created = 'CREATED',
+  Finished = 'FINISHED',
+  Started = 'STARTED'
+}
+
 export type Bet = {
   __typename?: 'Bet';
   _id: Scalars['ID'];
@@ -217,10 +239,10 @@ export type CaseSkins = {
   knifeType?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   odds: Scalars['Float'];
+  qualities: Array<Skin>;
   rarity: Scalars['String'];
   rarityColor: Scalars['String'];
   skinName: Scalars['String'];
-  skins: Array<Skin>;
 };
 
 export type CashoutCrashBetMutationResult = {
@@ -266,6 +288,17 @@ export type CrashSubscriptionResult = {
   crashGame: CrashGame;
 };
 
+export type CreateBattleInput = {
+  cases: Array<Scalars['String']>;
+  currency: CurrencyEnum;
+};
+
+export type CreateBattleMutationResult = {
+  __typename?: 'CreateBattleMutationResult';
+  battle?: Maybe<Battle>;
+  message: Scalars['String'];
+};
+
 export type CreateBetInput = {
   betAmount: Scalars['Float'];
   currency: CurrencyEnum;
@@ -303,10 +336,7 @@ export type CreatedGameResult = {
   game: Game;
 };
 
-export enum CurrencyEnum {
-  Btc = 'btc',
-  Eth = 'eth'
-}
+export { CurrencyEnum };
 
 export type Game = {
   __typename?: 'Game';
@@ -329,6 +359,11 @@ export type GameUnion = CrashGame | RouletteGame;
 
 export type GetBetsForGameInput = {
   gameId: Scalars['String'];
+};
+
+export type GetCaseInput = {
+  id?: InputMaybe<Scalars['String']>;
+  slug?: InputMaybe<Scalars['String']>;
 };
 
 export type GetCasesInput = {
@@ -377,6 +412,16 @@ export type JackpotGameUpdatedResult = {
   ticketPurchase: Scalars['Boolean'];
 };
 
+export type JoinBattleInput = {
+  battleId: Scalars['String'];
+  currency: CurrencyEnum;
+};
+
+export type JoinBattleMutationResult = {
+  __typename?: 'JoinBattleMutationResult';
+  message: Scalars['String'];
+};
+
 export type LatestGame = {
   __typename?: 'LatestGame';
   currentBets: Array<Maybe<Bet>>;
@@ -387,16 +432,22 @@ export type Mutation = {
   __typename?: 'Mutation';
   buyJackpotTicket: BuyJackpotTicketMutationResult;
   cashoutCrashBet: CashoutCrashBetMutationResult;
+  createBattle: CreateBattleMutationResult;
   createBet: CreateBetMutationResult;
   createCrashBet: CreateCrashBetMutationResult;
   createJackpotGame: JackpotGameMutationResult;
-  minusBalance: Scalars['Boolean'];
+  joinBattle: JoinBattleMutationResult;
   openCase: OpenCaseMutationResult;
 };
 
 
 export type MutationBuyJackpotTicketArgs = {
   input: BuyJackpotTicketInput;
+};
+
+
+export type MutationCreateBattleArgs = {
+  input: CreateBattleInput;
 };
 
 
@@ -412,6 +463,11 @@ export type MutationCreateCrashBetArgs = {
 
 export type MutationCreateJackpotGameArgs = {
   input: CreateJackpotGameInput;
+};
+
+
+export type MutationJoinBattleArgs = {
+  input: JoinBattleInput;
 };
 
 
@@ -437,6 +493,8 @@ export type Prize = {
 export type Query = {
   __typename?: 'Query';
   crashInitial: CrashInitial;
+  getBattle?: Maybe<Battle>;
+  getBattles: Array<Maybe<Battle>>;
   getBetsForGame: Array<Bet>;
   getCase?: Maybe<Case>;
   getCases: Array<Case>;
@@ -448,9 +506,13 @@ export type Query = {
   getSkinQualities: Array<Scalars['String']>;
   getSkins: Array<Maybe<Skin>>;
   rouletteInitial: RouletteIntitial;
-  testError: Scalars['Boolean'];
   userInventory: Array<Maybe<Skin>>;
   userWallets: Array<UserWallet>;
+};
+
+
+export type QueryGetBattleArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -460,7 +522,7 @@ export type QueryGetBetsForGameArgs = {
 
 
 export type QueryGetCaseArgs = {
-  slug: Scalars['String'];
+  input: GetCaseInput;
 };
 
 
@@ -541,6 +603,8 @@ export type Skin = {
 export type Subscription = {
   __typename?: 'Subscription';
   availableBalances: AvailableBalances;
+  battleCreated: Battle;
+  battleUpdated?: Maybe<Battle>;
   betCreated: Bet;
   caseOpened: Skin;
   crashGame?: Maybe<CrashSubscriptionResult>;
@@ -594,6 +658,44 @@ export type UserWallet = {
   type: CurrencyEnum;
 };
 
+export type BattleFragment = { __typename?: 'Battle', _id: string, price: number, currentRound: number, rounds: number, status: BattleStatus, createdBy: string, cases: Array<{ __typename?: 'Case', _id: string, image: string, name: string, price: number, items: Array<{ __typename?: 'CaseSkins', _id: string, iconUrl: string }>, slots: Array<{ __typename?: 'Skin', rollMin: number, rollMax: number, _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, rarityColor: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined }> }>, players: Array<{ __typename?: 'User', _id: string, avatar?: string | null | undefined, displayName: string }> };
+
+export type GetBattlesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBattlesQuery = { __typename?: 'Query', getBattles: Array<{ __typename?: 'Battle', price: number, _id: string, currentRound: number, rounds: number, status: BattleStatus, cases: Array<{ __typename?: 'Case', image: string }>, players: Array<{ __typename?: 'User', avatar?: string | null | undefined, displayName: string }> } | null | undefined> };
+
+export type GetBattleQueryVariables = Exact<{
+  getBattleId: Scalars['ID'];
+}>;
+
+
+export type GetBattleQuery = { __typename?: 'Query', getBattle?: { __typename?: 'Battle', _id: string, price: number, currentRound: number, rounds: number, status: BattleStatus, createdBy: string, cases: Array<{ __typename?: 'Case', _id: string, image: string, name: string, price: number, items: Array<{ __typename?: 'CaseSkins', _id: string, iconUrl: string }>, slots: Array<{ __typename?: 'Skin', rollMin: number, rollMax: number, _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, rarityColor: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined }> }>, players: Array<{ __typename?: 'User', _id: string, avatar?: string | null | undefined, displayName: string }> } | null | undefined };
+
+export type CreateBattleMutationVariables = Exact<{
+  input: CreateBattleInput;
+}>;
+
+
+export type CreateBattleMutation = { __typename?: 'Mutation', createBattle: { __typename?: 'CreateBattleMutationResult', message: string, battle?: { __typename?: 'Battle', _id: string, cases: Array<{ __typename?: 'Case', _id: string }> } | null | undefined } };
+
+export type JoinBattleMutationVariables = Exact<{
+  input: JoinBattleInput;
+}>;
+
+
+export type JoinBattleMutation = { __typename?: 'Mutation', joinBattle: { __typename?: 'JoinBattleMutationResult', message: string } };
+
+export type BattleCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type BattleCreatedSubscription = { __typename?: 'Subscription', battleCreated: { __typename?: 'Battle', _id: string, price: number, currentRound: number, rounds: number, status: BattleStatus, createdBy: string, cases: Array<{ __typename?: 'Case', _id: string, image: string, name: string, price: number, items: Array<{ __typename?: 'CaseSkins', _id: string, iconUrl: string }>, slots: Array<{ __typename?: 'Skin', rollMin: number, rollMax: number, _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, rarityColor: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined }> }>, players: Array<{ __typename?: 'User', _id: string, avatar?: string | null | undefined, displayName: string }> } };
+
+export type BattleUpdatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type BattleUpdatedSubscription = { __typename?: 'Subscription', battleUpdated?: { __typename?: 'Battle', _id: string, price: number, currentRound: number, rounds: number, status: BattleStatus, createdBy: string, cases: Array<{ __typename?: 'Case', _id: string, image: string, name: string, price: number, items: Array<{ __typename?: 'CaseSkins', _id: string, iconUrl: string }>, slots: Array<{ __typename?: 'Skin', rollMin: number, rollMax: number, _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, rarityColor: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined }> }>, players: Array<{ __typename?: 'User', _id: string, avatar?: string | null | undefined, displayName: string }> } | null | undefined };
+
 export type CrashSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -624,11 +726,11 @@ export type AllCasesQueryVariables = Exact<{
 export type AllCasesQuery = { __typename?: 'Query', getCases: Array<{ __typename?: 'Case', _id: string, name: string, price: number, slug: string, image: string }> };
 
 export type SingleCaseQueryVariables = Exact<{
-  slug: Scalars['String'];
+  input: GetCaseInput;
 }>;
 
 
-export type SingleCaseQuery = { __typename?: 'Query', getCase?: { __typename?: 'Case', _id: string, name: string, price: number, slug: string, image: string, items: Array<{ __typename?: 'CaseSkins', _id: string, odds: number, name: string, rarity: string, rarityColor: string, gunType?: string | null | undefined, knifeType?: string | null | undefined, iconUrl: string, skinName: string, skins: Array<{ __typename?: 'Skin', _id: string, name: string, iconUrl: string, type?: string | null | undefined, weaponType?: string | null | undefined, rarity: string, rarityColor: string, quality?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, skinName?: string | null | undefined, odds: number }> }>, slots: Array<{ __typename?: 'Skin', _id: string, iconUrl: string, skinName?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, quality?: string | null | undefined, name: string, odds: number }> } | null | undefined };
+export type SingleCaseQuery = { __typename?: 'Query', getCase?: { __typename?: 'Case', _id: string, name: string, price: number, slug: string, image: string, items: Array<{ __typename?: 'CaseSkins', _id: string, odds: number, name: string, rarity: string, rarityColor: string, gunType?: string | null | undefined, knifeType?: string | null | undefined, iconUrl: string, skinName: string, qualities: Array<{ __typename?: 'Skin', _id: string, name: string, iconUrl: string, type?: string | null | undefined, weaponType?: string | null | undefined, rarity: string, rarityColor: string, quality?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, skinName?: string | null | undefined, odds: number }> }>, slots: Array<{ __typename?: 'Skin', _id: string, iconUrl: string, skinName?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, quality?: string | null | undefined, name: string, odds: number }> } | null | undefined };
 
 export type OpenCaseMutationVariables = Exact<{
   input: OpenCaseInput;
@@ -661,16 +763,6 @@ export type RouletteGameSubscriptionVariables = Exact<{ [key: string]: never; }>
 
 export type RouletteGameSubscription = { __typename?: 'Subscription', rouletteGame: { __typename?: 'RouletteSubscriptionResult', rouletteGame: { __typename?: 'RouletteGame', _id: string, gameId: string, rollValue?: number | null | undefined, status: string, createdAt: any, startsAt: any }, currentBets: { __typename?: 'RouletteBets', orange: Array<{ __typename?: 'Bet', _id: string, amount: number, currency: CurrencyEnum, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, purple: Array<{ __typename?: 'Bet', _id: string, amount: number, currency: CurrencyEnum, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, blue: Array<{ __typename?: 'Bet', _id: string, amount: number, currency: CurrencyEnum, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined> } } };
 
-export type ErrorSubscriptionVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ErrorSubscription = { __typename?: 'Subscription', userError: { __typename?: 'UserErrorSubscription', message: string } };
-
-export type UserEventSubscriptionVariables = Exact<{ [key: string]: never; }>;
-
-
-export type UserEventSubscription = { __typename?: 'Subscription', userEvent: { __typename?: 'UserEventResult', user: { __typename?: 'User', _id: string, balance: number } } };
-
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -693,6 +785,73 @@ export type AvailableBalancesSubscriptionVariables = Exact<{ [key: string]: neve
 
 export type AvailableBalancesSubscription = { __typename?: 'Subscription', availableBalances: { __typename?: 'AvailableBalances', amount: number, balance: { __typename?: 'Balance', amount: number, currency: CurrencyEnum } } };
 
+export type ErrorSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ErrorSubscription = { __typename?: 'Subscription', userError: { __typename?: 'UserErrorSubscription', message: string } };
+
+export type UserEventSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserEventSubscription = { __typename?: 'Subscription', userEvent: { __typename?: 'UserEventResult', user: { __typename?: 'User', _id: string, balance: number } } };
+
+export type SkinFragment = { __typename?: 'Skin', _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, rarityColor: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined };
+
+export type CaseSkinFragment = { __typename?: 'Skin', rollMin: number, rollMax: number, _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, rarityColor: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined };
+
+export const SkinFragmentDoc = gql`
+    fragment Skin on Skin {
+  _id
+  gunType
+  iconUrl
+  iconUrlLarge
+  knifeType
+  name
+  odds
+  price
+  quality
+  rarity
+  rarityColor
+  skinName
+  weaponType
+  type
+}
+    `;
+export const CaseSkinFragmentDoc = gql`
+    fragment CaseSkin on Skin {
+  ...Skin
+  rollMin
+  rollMax
+}
+    ${SkinFragmentDoc}`;
+export const BattleFragmentDoc = gql`
+    fragment Battle on Battle {
+  _id
+  price
+  cases {
+    _id
+    image
+    name
+    price
+    items {
+      _id
+      iconUrl
+    }
+    slots {
+      ...CaseSkin
+    }
+  }
+  currentRound
+  players {
+    _id
+    avatar
+    displayName
+  }
+  rounds
+  status
+  createdBy
+}
+    ${CaseSkinFragmentDoc}`;
 export const UserInfoFragmentDoc = gql`
     fragment UserInfo on UserInfo {
   _id
@@ -700,6 +859,89 @@ export const UserInfoFragmentDoc = gql`
   avatar
 }
     `;
+export const GetBattlesDocument = gql`
+    query GetBattles {
+  getBattles {
+    price
+    _id
+    cases {
+      image
+    }
+    currentRound
+    players {
+      avatar
+      displayName
+    }
+    rounds
+    status
+  }
+}
+    `;
+
+export function useGetBattlesQuery(options?: Omit<Urql.UseQueryArgs<GetBattlesQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetBattlesQuery>({ query: GetBattlesDocument, ...options });
+};
+export const GetBattleDocument = gql`
+    query GetBattle($getBattleId: ID!) {
+  getBattle(id: $getBattleId) {
+    ...Battle
+  }
+}
+    ${BattleFragmentDoc}`;
+
+export function useGetBattleQuery(options: Omit<Urql.UseQueryArgs<GetBattleQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetBattleQuery>({ query: GetBattleDocument, ...options });
+};
+export const CreateBattleDocument = gql`
+    mutation CreateBattle($input: CreateBattleInput!) {
+  createBattle(input: $input) {
+    message
+    battle {
+      _id
+      cases {
+        _id
+      }
+    }
+  }
+}
+    `;
+
+export function useCreateBattleMutation() {
+  return Urql.useMutation<CreateBattleMutation, CreateBattleMutationVariables>(CreateBattleDocument);
+};
+export const JoinBattleDocument = gql`
+    mutation JoinBattle($input: JoinBattleInput!) {
+  joinBattle(input: $input) {
+    message
+  }
+}
+    `;
+
+export function useJoinBattleMutation() {
+  return Urql.useMutation<JoinBattleMutation, JoinBattleMutationVariables>(JoinBattleDocument);
+};
+export const BattleCreatedDocument = gql`
+    subscription BattleCreated {
+  battleCreated {
+    ...Battle
+  }
+}
+    ${BattleFragmentDoc}`;
+
+export function useBattleCreatedSubscription<TData = BattleCreatedSubscription>(options: Omit<Urql.UseSubscriptionArgs<BattleCreatedSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<BattleCreatedSubscription, TData>) {
+  return Urql.useSubscription<BattleCreatedSubscription, TData, BattleCreatedSubscriptionVariables>({ query: BattleCreatedDocument, ...options }, handler);
+};
+export const BattleUpdatedDocument = gql`
+    subscription BattleUpdated {
+  battleUpdated {
+    ...Battle
+  }
+}
+    ${BattleFragmentDoc}`;
+
+export function useBattleUpdatedSubscription<TData = BattleUpdatedSubscription>(options: Omit<Urql.UseSubscriptionArgs<BattleUpdatedSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<BattleUpdatedSubscription, TData>) {
+  return Urql.useSubscription<BattleUpdatedSubscription, TData, BattleUpdatedSubscriptionVariables>({ query: BattleUpdatedDocument, ...options }, handler);
+};
 export const CrashSubscriptionDocument = gql`
     subscription CrashSubscription {
   crashGame {
@@ -738,6 +980,10 @@ export const CrashSubscriptionDocument = gql`
   }
 }
     `;
+
+export function useCrashSubscriptionSubscription<TData = CrashSubscriptionSubscription>(options: Omit<Urql.UseSubscriptionArgs<CrashSubscriptionSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<CrashSubscriptionSubscription, TData>) {
+  return Urql.useSubscription<CrashSubscriptionSubscription, TData, CrashSubscriptionSubscriptionVariables>({ query: CrashSubscriptionDocument, ...options }, handler);
+};
 export const CrashInitialDocument = gql`
     query CrashInitial {
   crashInitial {
@@ -785,6 +1031,10 @@ export const CrashInitialDocument = gql`
   }
 }
     `;
+
+export function useCrashInitialQuery(options?: Omit<Urql.UseQueryArgs<CrashInitialQueryVariables>, 'query'>) {
+  return Urql.useQuery<CrashInitialQuery>({ query: CrashInitialDocument, ...options });
+};
 export const CreateCrashBetDocument = gql`
     mutation CreateCrashBet($input: CreateCrashBetInput!) {
   createCrashBet(input: $input) {
@@ -796,6 +1046,10 @@ export const CreateCrashBetDocument = gql`
   }
 }
     `;
+
+export function useCreateCrashBetMutation() {
+  return Urql.useMutation<CreateCrashBetMutation, CreateCrashBetMutationVariables>(CreateCrashBetDocument);
+};
 export const CashoutCrashBetDocument = gql`
     mutation CashoutCrashBet {
   cashoutCrashBet {
@@ -803,6 +1057,10 @@ export const CashoutCrashBetDocument = gql`
   }
 }
     `;
+
+export function useCashoutCrashBetMutation() {
+  return Urql.useMutation<CashoutCrashBetMutation, CashoutCrashBetMutationVariables>(CashoutCrashBetDocument);
+};
 export const AllCasesDocument = gql`
     query AllCases($input: GetCasesInput) {
   getCases(input: $input) {
@@ -814,9 +1072,13 @@ export const AllCasesDocument = gql`
   }
 }
     `;
+
+export function useAllCasesQuery(options?: Omit<Urql.UseQueryArgs<AllCasesQueryVariables>, 'query'>) {
+  return Urql.useQuery<AllCasesQuery>({ query: AllCasesDocument, ...options });
+};
 export const SingleCaseDocument = gql`
-    query SingleCase($slug: String!) {
-  getCase(slug: $slug) {
+    query SingleCase($input: GetCaseInput!) {
+  getCase(input: $input) {
     _id
     name
     price
@@ -832,7 +1094,7 @@ export const SingleCaseDocument = gql`
       knifeType
       iconUrl
       skinName
-      skins {
+      qualities {
         _id
         name
         iconUrl
@@ -862,6 +1124,10 @@ export const SingleCaseDocument = gql`
   }
 }
     `;
+
+export function useSingleCaseQuery(options: Omit<Urql.UseQueryArgs<SingleCaseQueryVariables>, 'query'>) {
+  return Urql.useQuery<SingleCaseQuery>({ query: SingleCaseDocument, ...options });
+};
 export const OpenCaseDocument = gql`
     mutation OpenCase($input: OpenCaseInput!) {
   openCase(input: $input) {
@@ -869,6 +1135,10 @@ export const OpenCaseDocument = gql`
   }
 }
     `;
+
+export function useOpenCaseMutation() {
+  return Urql.useMutation<OpenCaseMutation, OpenCaseMutationVariables>(OpenCaseDocument);
+};
 export const UnboxingSubscriptionDocument = gql`
     subscription UnboxingSubscription {
   caseOpened {
@@ -887,6 +1157,10 @@ export const UnboxingSubscriptionDocument = gql`
   }
 }
     `;
+
+export function useUnboxingSubscriptionSubscription<TData = UnboxingSubscriptionSubscription>(options: Omit<Urql.UseSubscriptionArgs<UnboxingSubscriptionSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<UnboxingSubscriptionSubscription, TData>) {
+  return Urql.useSubscription<UnboxingSubscriptionSubscription, TData, UnboxingSubscriptionSubscriptionVariables>({ query: UnboxingSubscriptionDocument, ...options }, handler);
+};
 export const RouletteInitialDocument = gql`
     query RouletteInitial {
   rouletteInitial {
@@ -939,6 +1213,10 @@ export const RouletteInitialDocument = gql`
   }
 }
     ${UserInfoFragmentDoc}`;
+
+export function useRouletteInitialQuery(options?: Omit<Urql.UseQueryArgs<RouletteInitialQueryVariables>, 'query'>) {
+  return Urql.useQuery<RouletteInitialQuery>({ query: RouletteInitialDocument, ...options });
+};
 export const CreateBetDocument = gql`
     mutation createBet($input: CreateBetInput!) {
   createBet(input: $input) {
@@ -951,6 +1229,10 @@ export const CreateBetDocument = gql`
   }
 }
     `;
+
+export function useCreateBetMutation() {
+  return Urql.useMutation<CreateBetMutation, CreateBetMutationVariables>(CreateBetDocument);
+};
 export const RouletteGameDocument = gql`
     subscription RouletteGame {
   rouletteGame {
@@ -997,23 +1279,10 @@ export const RouletteGameDocument = gql`
   }
 }
     ${UserInfoFragmentDoc}`;
-export const ErrorDocument = gql`
-    subscription Error {
-  userError {
-    message
-  }
-}
-    `;
-export const UserEventDocument = gql`
-    subscription UserEvent {
-  userEvent {
-    user {
-      _id
-      balance
-    }
-  }
-}
-    `;
+
+export function useRouletteGameSubscription<TData = RouletteGameSubscription>(options: Omit<Urql.UseSubscriptionArgs<RouletteGameSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<RouletteGameSubscription, TData>) {
+  return Urql.useSubscription<RouletteGameSubscription, TData, RouletteGameSubscriptionVariables>({ query: RouletteGameDocument, ...options }, handler);
+};
 export const CurrentUserDocument = gql`
     query CurrentUser {
   getCurrentUser {
@@ -1027,6 +1296,10 @@ export const CurrentUserDocument = gql`
   }
 }
     `;
+
+export function useCurrentUserQuery(options?: Omit<Urql.UseQueryArgs<CurrentUserQueryVariables>, 'query'>) {
+  return Urql.useQuery<CurrentUserQuery>({ query: CurrentUserDocument, ...options });
+};
 export const UserInventoryDocument = gql`
     query UserInventory($input: UserInventoryInput!) {
   userInventory(input: $input) {
@@ -1038,6 +1311,10 @@ export const UserInventoryDocument = gql`
   }
 }
     `;
+
+export function useUserInventoryQuery(options: Omit<Urql.UseQueryArgs<UserInventoryQueryVariables>, 'query'>) {
+  return Urql.useQuery<UserInventoryQuery>({ query: UserInventoryDocument, ...options });
+};
 export const UserWalletsDocument = gql`
     query UserWallets {
   userWallets {
@@ -1046,6 +1323,10 @@ export const UserWalletsDocument = gql`
   }
 }
     `;
+
+export function useUserWalletsQuery(options?: Omit<Urql.UseQueryArgs<UserWalletsQueryVariables>, 'query'>) {
+  return Urql.useQuery<UserWalletsQuery>({ query: UserWalletsDocument, ...options });
+};
 export const AvailableBalancesDocument = gql`
     subscription AvailableBalances {
   availableBalances {
@@ -1057,6 +1338,41 @@ export const AvailableBalancesDocument = gql`
   }
 }
     `;
+
+export function useAvailableBalancesSubscription<TData = AvailableBalancesSubscription>(options: Omit<Urql.UseSubscriptionArgs<AvailableBalancesSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<AvailableBalancesSubscription, TData>) {
+  return Urql.useSubscription<AvailableBalancesSubscription, TData, AvailableBalancesSubscriptionVariables>({ query: AvailableBalancesDocument, ...options }, handler);
+};
+export const ErrorDocument = gql`
+    subscription Error {
+  userError {
+    message
+  }
+}
+    `;
+
+export function useErrorSubscription<TData = ErrorSubscription>(options: Omit<Urql.UseSubscriptionArgs<ErrorSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<ErrorSubscription, TData>) {
+  return Urql.useSubscription<ErrorSubscription, TData, ErrorSubscriptionVariables>({ query: ErrorDocument, ...options }, handler);
+};
+export const UserEventDocument = gql`
+    subscription UserEvent {
+  userEvent {
+    user {
+      _id
+      balance
+    }
+  }
+}
+    `;
+
+export function useUserEventSubscription<TData = UserEventSubscription>(options: Omit<Urql.UseSubscriptionArgs<UserEventSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<UserEventSubscription, TData>) {
+  return Urql.useSubscription<UserEventSubscription, TData, UserEventSubscriptionVariables>({ query: UserEventDocument, ...options }, handler);
+};
+export type GetBattlesQueryStore = OperationStore<GetBattlesQuery, GetBattlesQueryVariables>;
+export type GetBattleQueryStore = OperationStore<GetBattleQuery, GetBattleQueryVariables>;
+export type CreateBattleMutationStore = OperationStore<CreateBattleMutation, CreateBattleMutationVariables>;
+export type JoinBattleMutationStore = OperationStore<JoinBattleMutation, JoinBattleMutationVariables>;
+export type BattleCreatedSubscriptionStore = OperationStore<BattleCreatedSubscription, BattleCreatedSubscriptionVariables>;
+export type BattleUpdatedSubscriptionStore = OperationStore<BattleUpdatedSubscription, BattleUpdatedSubscriptionVariables>;
 export type CrashSubscriptionSubscriptionStore = OperationStore<CrashSubscriptionSubscription, CrashSubscriptionSubscriptionVariables>;
 export type CrashInitialQueryStore = OperationStore<CrashInitialQuery, CrashInitialQueryVariables>;
 export type CreateCrashBetMutationStore = OperationStore<CreateCrashBetMutation, CreateCrashBetMutationVariables>;
@@ -1068,9 +1384,9 @@ export type UnboxingSubscriptionSubscriptionStore = OperationStore<UnboxingSubsc
 export type RouletteInitialQueryStore = OperationStore<RouletteInitialQuery, RouletteInitialQueryVariables>;
 export type CreateBetMutationStore = OperationStore<CreateBetMutation, CreateBetMutationVariables>;
 export type RouletteGameSubscriptionStore = OperationStore<RouletteGameSubscription, RouletteGameSubscriptionVariables>;
-export type ErrorSubscriptionStore = OperationStore<ErrorSubscription, ErrorSubscriptionVariables>;
-export type UserEventSubscriptionStore = OperationStore<UserEventSubscription, UserEventSubscriptionVariables>;
 export type CurrentUserQueryStore = OperationStore<CurrentUserQuery, CurrentUserQueryVariables>;
 export type UserInventoryQueryStore = OperationStore<UserInventoryQuery, UserInventoryQueryVariables>;
 export type UserWalletsQueryStore = OperationStore<UserWalletsQuery, UserWalletsQueryVariables>;
 export type AvailableBalancesSubscriptionStore = OperationStore<AvailableBalancesSubscription, AvailableBalancesSubscriptionVariables>;
+export type ErrorSubscriptionStore = OperationStore<ErrorSubscription, ErrorSubscriptionVariables>;
+export type UserEventSubscriptionStore = OperationStore<UserEventSubscription, UserEventSubscriptionVariables>;

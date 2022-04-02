@@ -8,8 +8,8 @@ query AllCases($input: GetCasesInput) {
 	}
 }
 
-query SingleCase($slug: String!) {
-	getCase(slug: $slug) {
+query SingleCase($input: GetCaseInput!) {
+	getCase(input: $input) {
 		_id
 		name
 		price
@@ -25,7 +25,7 @@ query SingleCase($slug: String!) {
 			knifeType
 			iconUrl
 			skinName
-			skins {
+			qualities {
 				_id
 				name
 				iconUrl
