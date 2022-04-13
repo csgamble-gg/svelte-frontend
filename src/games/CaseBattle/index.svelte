@@ -5,11 +5,10 @@
 	import { setup } from '$games/state/setup';
 	import { Battle, BattleStatus } from '$generated/graphql';
 	import { convertPenniesToDollars } from '$libs/currencyConversion';
-	import { Text } from '@csgamble-gg/nebula-ui';
+	import { Button, Text } from '@csgamble-gg/nebula-ui';
 	import { onDestroy, onMount } from 'svelte';
 	import BattlePlayer from './components/BattlePlayer.svelte';
 	import CaseCard from './components/CaseCard.svelte';
-	import Reel from './components/Reel.svelte';
 	import { service } from './machine';
 	import { currentBattle } from './state/game';
 	import * as general from './state/general';
@@ -32,31 +31,43 @@
 		}
 	});
 
-	const rounds = new Array($currentBattle.rounds).fill(null);
+	$: currentRound =
+		$currentBattle.currentRound === null ||
+		$currentBattle.currentRound === 0
+			? 0
+			: $currentBattle.currentRound;
 </script>
 
 <GameContainer>
+	<button on:click={() => service.send('ROLL')}>spin</button>
 	<div class="header">
+		<!-- {#if $currentBattle.status === BattleStatus.Finished}
+			<div>
+				<Text variant="yellowGradient" size="3xl" weight="bold"
+					>{$currentBattle.winner.displayName} has won!</Text
+				>
+			</div>
+		{:else} -->
 		<div class="round-counter">
 			<div class="numbers">
 				<Text tag="h2" size="3xl" variant="yellowGradient">Round</Text>
 				<div>
-					<Text size="3xl" weight="semibold"
-						>{$currentBattle.currentRound}</Text
-					>
+					<Text size="3xl" weight="semibold">{currentRound ?? 0}</Text>
 					<Text size="lg" variant="yellowGradient" weight="semibold"
 						>of</Text
 					>
-					<Text size="3xl" weight="semibold">{$currentBattle.rounds}</Text>
+					<Text size="3xl" weight="semibold"
+						>{$currentBattle.totalRounds}</Text
+					>
 				</div>
 			</div>
 			<div class="rounds">
-				{#each rounds as round, index}
+				{#each $currentBattle.rounds as round, index}
 					{@const roundNum = index + 1}
 					<div
 						class="round-dot"
-						class:done={$currentBattle.currentRound > roundNum}
-						class:active={$currentBattle.currentRound === roundNum}
+						class:done={currentRound > roundNum}
+						class:active={currentRound === roundNum}
 					/>
 				{/each}
 			</div>
@@ -67,29 +78,33 @@
 				>$ {convertPenniesToDollars($currentBattle.price)}</Text
 			>
 		</div>
+		<!-- {/if} -->
 	</div>
 	<div class="players-wrapper">
 		<div class="case">
-			<CaseCard box={$currentBattle.cases[0]} />
+			{#if $currentBattle.status !== BattleStatus.Finished}
+				<CaseCard
+					box={$currentBattle.rounds.find(
+						(round) => round.roundNumber !== $currentBattle.currentRound
+					).case}
+				/>
+			{:else}
+				<div class="post-battle-buttons">
+					<Button label="Create same battle" />
+					<Button label="Back to battle list" variant="overlay" />
+				</div>
+			{/if}
 		</div>
 		<div class="players">
-			<BattlePlayer
-				{rounds}
-				position="left"
-				player={$currentBattle.players[0]}
-			>
-				{#if $currentBattle.status === BattleStatus.Started}
-					<Reel slots={$currentBattle.cases[0].slots} />
-				{/if}
-			</BattlePlayer>
-			<BattlePlayer
-				{rounds}
-				position="right"
-				player={$currentBattle.players[1]}
-			>
-				{#if $currentBattle.status === BattleStatus.Started}
-					<Reel slots={$currentBattle.cases[0].slots} />
-				{/if}
+			<BattlePlayer position="left" player={$currentBattle.players[0]} />
+			<BattlePlayer position="right" player={$currentBattle.players[1]}>
+				<!-- {#if $currentBattle.status === BattleStatus.Started}
+					<Reel
+						slots={$currentBattle.rounds[$currentBattle.currentRound].case
+							.slots}
+						winningIndex={5}
+					/>
+				{/if} -->
 			</BattlePlayer>
 		</div>
 	</div>
@@ -111,6 +126,13 @@
 	.battle {
 		height: 100%;
 	}
+
+	.post-battle-buttons {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
 	.header {
 		display: flex;
 		flex-direction: column;

@@ -24,7 +24,6 @@ fragment Skin on Skin {
 	price
 	quality
 	rarity
-	rarityColor
 	skinName
 	weaponType
 	type

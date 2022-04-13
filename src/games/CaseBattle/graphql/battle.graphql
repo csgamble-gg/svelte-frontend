@@ -1,17 +1,33 @@
 fragment Battle on Battle {
 	_id
 	price
-	cases {
-		_id
-		image
-		name
-		price
-		items {
+	rounds {
+		roundNumber
+		nonce
+		case {
 			_id
-			iconUrl
+			image
+			name
+			slug
+			price
+			items {
+				_id
+				iconUrl
+			}
 		}
-		slots {
-			...CaseSkin
+		drops {
+			playerId
+			rollValue
+			nonce
+			winningSkin {
+				iconUrl
+				name
+				price
+				quality
+				rarity
+				gunType
+				knifeType
+			}
 		}
 	}
 	currentRound
@@ -20,24 +36,31 @@ fragment Battle on Battle {
 		avatar
 		displayName
 	}
-	rounds
+	totalRounds
 	status
 	createdBy
+	createdAt
+	winner {
+		_id
+		displayName
+	}
 }
 
 query GetBattles {
 	getBattles {
 		price
 		_id
-		cases {
-			image
+		rounds {
+			case {
+				image
+			}
 		}
 		currentRound
 		players {
 			avatar
 			displayName
 		}
-		rounds
+		totalRounds
 		status
 	}
 }
@@ -51,12 +74,6 @@ query GetBattle($getBattleId: ID!) {
 mutation CreateBattle($input: CreateBattleInput!) {
 	createBattle(input: $input) {
 		message
-		battle {
-			_id
-			cases {
-				_id
-			}
-		}
 	}
 }
 
@@ -68,7 +85,23 @@ mutation JoinBattle($input: JoinBattleInput!) {
 
 subscription BattleCreated {
 	battleCreated {
-		...Battle
+		_id
+		rounds {
+			case {
+				image
+			}
+		}
+		players {
+			_id
+			avatar
+			displayName
+		}
+		createdAt
+		currentRound
+		totalRounds
+		price
+		status
+		createdBy
 	}
 }
 

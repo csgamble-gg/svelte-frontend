@@ -176,14 +176,31 @@ export type Balance = {
 export type Battle = {
   __typename?: 'Battle';
   _id: Scalars['ID'];
-  cases: Array<Case>;
   createdAt: Scalars['DateTime'];
   createdBy: Scalars['ID'];
-  currentRound: Scalars['Int'];
-  players: Array<User>;
+  currentRound?: Maybe<Scalars['Int']>;
+  players: Array<UserDetails>;
   price: Scalars['Int'];
-  rounds: Scalars['Int'];
+  rounds: Array<BattleRound>;
   status: BattleStatus;
+  totalRounds: Scalars['Int'];
+  winner?: Maybe<UserDetails>;
+};
+
+export type BattleRound = {
+  __typename?: 'BattleRound';
+  case: Case;
+  drops?: Maybe<Array<Maybe<BattleRoundDrops>>>;
+  nonce: Scalars['Int'];
+  roundNumber: Scalars['Int'];
+};
+
+export type BattleRoundDrops = {
+  __typename?: 'BattleRoundDrops';
+  nonce: Scalars['Int'];
+  playerId: Scalars['ID'];
+  rollValue?: Maybe<Scalars['Int']>;
+  winningSkin?: Maybe<Skin>;
 };
 
 export enum BattleStatus {
@@ -295,7 +312,6 @@ export type CreateBattleInput = {
 
 export type CreateBattleMutationResult = {
   __typename?: 'CreateBattleMutationResult';
-  battle?: Maybe<Battle>;
   message: Scalars['String'];
 };
 
@@ -630,6 +646,13 @@ export type User = {
   wallets: Array<UserWallet>;
 };
 
+export type UserDetails = {
+  __typename?: 'UserDetails';
+  _id: Scalars['ID'];
+  avatar: Scalars['String'];
+  displayName: Scalars['String'];
+};
+
 export type UserErrorSubscription = {
   __typename?: 'UserErrorSubscription';
   message: Scalars['String'];
@@ -658,26 +681,26 @@ export type UserWallet = {
   type: CurrencyEnum;
 };
 
-export type BattleFragment = { __typename?: 'Battle', _id: string, price: number, currentRound: number, rounds: number, status: BattleStatus, createdBy: string, cases: Array<{ __typename?: 'Case', _id: string, image: string, name: string, price: number, items: Array<{ __typename?: 'CaseSkins', _id: string, iconUrl: string }>, slots: Array<{ __typename?: 'Skin', rollMin: number, rollMax: number, _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, rarityColor: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined }> }>, players: Array<{ __typename?: 'User', _id: string, avatar?: string | null | undefined, displayName: string }> };
+export type BattleFragment = { __typename?: 'Battle', _id: string, price: number, currentRound?: number | null | undefined, totalRounds: number, status: BattleStatus, createdBy: string, createdAt: any, rounds: Array<{ __typename?: 'BattleRound', roundNumber: number, nonce: number, case: { __typename?: 'Case', _id: string, image: string, name: string, slug: string, price: number, items: Array<{ __typename?: 'CaseSkins', _id: string, iconUrl: string }> }, drops?: Array<{ __typename?: 'BattleRoundDrops', playerId: string, rollValue?: number | null | undefined, nonce: number, winningSkin?: { __typename?: 'Skin', iconUrl: string, name: string, price: number, quality?: string | null | undefined, rarity: string, gunType?: string | null | undefined, knifeType?: string | null | undefined } | null | undefined } | null | undefined> | null | undefined }>, players: Array<{ __typename?: 'UserDetails', _id: string, avatar: string, displayName: string }>, winner?: { __typename?: 'UserDetails', _id: string, displayName: string } | null | undefined };
 
 export type GetBattlesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBattlesQuery = { __typename?: 'Query', getBattles: Array<{ __typename?: 'Battle', price: number, _id: string, currentRound: number, rounds: number, status: BattleStatus, cases: Array<{ __typename?: 'Case', image: string }>, players: Array<{ __typename?: 'User', avatar?: string | null | undefined, displayName: string }> } | null | undefined> };
+export type GetBattlesQuery = { __typename?: 'Query', getBattles: Array<{ __typename?: 'Battle', price: number, _id: string, currentRound?: number | null | undefined, totalRounds: number, status: BattleStatus, rounds: Array<{ __typename?: 'BattleRound', case: { __typename?: 'Case', image: string } }>, players: Array<{ __typename?: 'UserDetails', avatar: string, displayName: string }> } | null | undefined> };
 
 export type GetBattleQueryVariables = Exact<{
   getBattleId: Scalars['ID'];
 }>;
 
 
-export type GetBattleQuery = { __typename?: 'Query', getBattle?: { __typename?: 'Battle', _id: string, price: number, currentRound: number, rounds: number, status: BattleStatus, createdBy: string, cases: Array<{ __typename?: 'Case', _id: string, image: string, name: string, price: number, items: Array<{ __typename?: 'CaseSkins', _id: string, iconUrl: string }>, slots: Array<{ __typename?: 'Skin', rollMin: number, rollMax: number, _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, rarityColor: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined }> }>, players: Array<{ __typename?: 'User', _id: string, avatar?: string | null | undefined, displayName: string }> } | null | undefined };
+export type GetBattleQuery = { __typename?: 'Query', getBattle?: { __typename?: 'Battle', _id: string, price: number, currentRound?: number | null | undefined, totalRounds: number, status: BattleStatus, createdBy: string, createdAt: any, rounds: Array<{ __typename?: 'BattleRound', roundNumber: number, nonce: number, case: { __typename?: 'Case', _id: string, image: string, name: string, slug: string, price: number, items: Array<{ __typename?: 'CaseSkins', _id: string, iconUrl: string }> }, drops?: Array<{ __typename?: 'BattleRoundDrops', playerId: string, rollValue?: number | null | undefined, nonce: number, winningSkin?: { __typename?: 'Skin', iconUrl: string, name: string, price: number, quality?: string | null | undefined, rarity: string, gunType?: string | null | undefined, knifeType?: string | null | undefined } | null | undefined } | null | undefined> | null | undefined }>, players: Array<{ __typename?: 'UserDetails', _id: string, avatar: string, displayName: string }>, winner?: { __typename?: 'UserDetails', _id: string, displayName: string } | null | undefined } | null | undefined };
 
 export type CreateBattleMutationVariables = Exact<{
   input: CreateBattleInput;
 }>;
 
 
-export type CreateBattleMutation = { __typename?: 'Mutation', createBattle: { __typename?: 'CreateBattleMutationResult', message: string, battle?: { __typename?: 'Battle', _id: string, cases: Array<{ __typename?: 'Case', _id: string }> } | null | undefined } };
+export type CreateBattleMutation = { __typename?: 'Mutation', createBattle: { __typename?: 'CreateBattleMutationResult', message: string } };
 
 export type JoinBattleMutationVariables = Exact<{
   input: JoinBattleInput;
@@ -689,12 +712,12 @@ export type JoinBattleMutation = { __typename?: 'Mutation', joinBattle: { __type
 export type BattleCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type BattleCreatedSubscription = { __typename?: 'Subscription', battleCreated: { __typename?: 'Battle', _id: string, price: number, currentRound: number, rounds: number, status: BattleStatus, createdBy: string, cases: Array<{ __typename?: 'Case', _id: string, image: string, name: string, price: number, items: Array<{ __typename?: 'CaseSkins', _id: string, iconUrl: string }>, slots: Array<{ __typename?: 'Skin', rollMin: number, rollMax: number, _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, rarityColor: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined }> }>, players: Array<{ __typename?: 'User', _id: string, avatar?: string | null | undefined, displayName: string }> } };
+export type BattleCreatedSubscription = { __typename?: 'Subscription', battleCreated: { __typename?: 'Battle', _id: string, createdAt: any, currentRound?: number | null | undefined, totalRounds: number, price: number, status: BattleStatus, createdBy: string, rounds: Array<{ __typename?: 'BattleRound', case: { __typename?: 'Case', image: string } }>, players: Array<{ __typename?: 'UserDetails', _id: string, avatar: string, displayName: string }> } };
 
 export type BattleUpdatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type BattleUpdatedSubscription = { __typename?: 'Subscription', battleUpdated?: { __typename?: 'Battle', _id: string, price: number, currentRound: number, rounds: number, status: BattleStatus, createdBy: string, cases: Array<{ __typename?: 'Case', _id: string, image: string, name: string, price: number, items: Array<{ __typename?: 'CaseSkins', _id: string, iconUrl: string }>, slots: Array<{ __typename?: 'Skin', rollMin: number, rollMax: number, _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, rarityColor: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined }> }>, players: Array<{ __typename?: 'User', _id: string, avatar?: string | null | undefined, displayName: string }> } | null | undefined };
+export type BattleUpdatedSubscription = { __typename?: 'Subscription', battleUpdated?: { __typename?: 'Battle', _id: string, price: number, currentRound?: number | null | undefined, totalRounds: number, status: BattleStatus, createdBy: string, createdAt: any, rounds: Array<{ __typename?: 'BattleRound', roundNumber: number, nonce: number, case: { __typename?: 'Case', _id: string, image: string, name: string, slug: string, price: number, items: Array<{ __typename?: 'CaseSkins', _id: string, iconUrl: string }> }, drops?: Array<{ __typename?: 'BattleRoundDrops', playerId: string, rollValue?: number | null | undefined, nonce: number, winningSkin?: { __typename?: 'Skin', iconUrl: string, name: string, price: number, quality?: string | null | undefined, rarity: string, gunType?: string | null | undefined, knifeType?: string | null | undefined } | null | undefined } | null | undefined> | null | undefined }>, players: Array<{ __typename?: 'UserDetails', _id: string, avatar: string, displayName: string }>, winner?: { __typename?: 'UserDetails', _id: string, displayName: string } | null | undefined } | null | undefined };
 
 export type CrashSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -730,7 +753,7 @@ export type SingleCaseQueryVariables = Exact<{
 }>;
 
 
-export type SingleCaseQuery = { __typename?: 'Query', getCase?: { __typename?: 'Case', _id: string, name: string, price: number, slug: string, image: string, items: Array<{ __typename?: 'CaseSkins', _id: string, odds: number, name: string, rarity: string, rarityColor: string, gunType?: string | null | undefined, knifeType?: string | null | undefined, iconUrl: string, skinName: string, qualities: Array<{ __typename?: 'Skin', _id: string, name: string, iconUrl: string, type?: string | null | undefined, weaponType?: string | null | undefined, rarity: string, rarityColor: string, quality?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, skinName?: string | null | undefined, odds: number }> }>, slots: Array<{ __typename?: 'Skin', _id: string, iconUrl: string, skinName?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, quality?: string | null | undefined, name: string, odds: number }> } | null | undefined };
+export type SingleCaseQuery = { __typename?: 'Query', getCase?: { __typename?: 'Case', _id: string, name: string, price: number, slug: string, image: string, items: Array<{ __typename?: 'CaseSkins', _id: string, odds: number, name: string, rarity: string, gunType?: string | null | undefined, knifeType?: string | null | undefined, iconUrl: string, skinName: string, qualities: Array<{ __typename?: 'Skin', _id: string, name: string, iconUrl: string, type?: string | null | undefined, weaponType?: string | null | undefined, rarity: string, quality?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, skinName?: string | null | undefined, odds: number }> }>, slots: Array<{ __typename?: 'Skin', _id: string, iconUrl: string, skinName?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, quality?: string | null | undefined, name: string, odds: number }> } | null | undefined };
 
 export type OpenCaseMutationVariables = Exact<{
   input: OpenCaseInput;
@@ -742,7 +765,7 @@ export type OpenCaseMutation = { __typename?: 'Mutation', openCase: { __typename
 export type UnboxingSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UnboxingSubscriptionSubscription = { __typename?: 'Subscription', caseOpened: { __typename?: 'Skin', _id: string, name: string, iconUrl: string, type?: string | null | undefined, weaponType?: string | null | undefined, rarity: string, rarityColor: string, quality?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, skinName?: string | null | undefined } };
+export type UnboxingSubscriptionSubscription = { __typename?: 'Subscription', caseOpened: { __typename?: 'Skin', _id: string, name: string, iconUrl: string, type?: string | null | undefined, weaponType?: string | null | undefined, rarity: string, quality?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, skinName?: string | null | undefined } };
 
 export type UserInfoFragment = { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined };
 
@@ -795,10 +818,66 @@ export type UserEventSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 export type UserEventSubscription = { __typename?: 'Subscription', userEvent: { __typename?: 'UserEventResult', user: { __typename?: 'User', _id: string, balance: number } } };
 
-export type SkinFragment = { __typename?: 'Skin', _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, rarityColor: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined };
+export type SkinFragment = { __typename?: 'Skin', _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined };
 
-export type CaseSkinFragment = { __typename?: 'Skin', rollMin: number, rollMax: number, _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, rarityColor: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined };
+export type CaseSkinFragment = { __typename?: 'Skin', rollMin: number, rollMax: number, _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined };
 
+export const BattleFragmentDoc = gql`
+    fragment Battle on Battle {
+  _id
+  price
+  rounds {
+    roundNumber
+    nonce
+    case {
+      _id
+      image
+      name
+      slug
+      price
+      items {
+        _id
+        iconUrl
+      }
+    }
+    drops {
+      playerId
+      rollValue
+      nonce
+      winningSkin {
+        iconUrl
+        name
+        price
+        quality
+        rarity
+        gunType
+        knifeType
+      }
+    }
+  }
+  currentRound
+  players {
+    _id
+    avatar
+    displayName
+  }
+  totalRounds
+  status
+  createdBy
+  createdAt
+  winner {
+    _id
+    displayName
+  }
+}
+    `;
+export const UserInfoFragmentDoc = gql`
+    fragment UserInfo on UserInfo {
+  _id
+  displayName
+  avatar
+}
+    `;
 export const SkinFragmentDoc = gql`
     fragment Skin on Skin {
   _id
@@ -811,7 +890,6 @@ export const SkinFragmentDoc = gql`
   price
   quality
   rarity
-  rarityColor
   skinName
   weaponType
   type
@@ -824,55 +902,22 @@ export const CaseSkinFragmentDoc = gql`
   rollMax
 }
     ${SkinFragmentDoc}`;
-export const BattleFragmentDoc = gql`
-    fragment Battle on Battle {
-  _id
-  price
-  cases {
-    _id
-    image
-    name
-    price
-    items {
-      _id
-      iconUrl
-    }
-    slots {
-      ...CaseSkin
-    }
-  }
-  currentRound
-  players {
-    _id
-    avatar
-    displayName
-  }
-  rounds
-  status
-  createdBy
-}
-    ${CaseSkinFragmentDoc}`;
-export const UserInfoFragmentDoc = gql`
-    fragment UserInfo on UserInfo {
-  _id
-  displayName
-  avatar
-}
-    `;
 export const GetBattlesDocument = gql`
     query GetBattles {
   getBattles {
     price
     _id
-    cases {
-      image
+    rounds {
+      case {
+        image
+      }
     }
     currentRound
     players {
       avatar
       displayName
     }
-    rounds
+    totalRounds
     status
   }
 }
@@ -896,12 +941,6 @@ export const CreateBattleDocument = gql`
     mutation CreateBattle($input: CreateBattleInput!) {
   createBattle(input: $input) {
     message
-    battle {
-      _id
-      cases {
-        _id
-      }
-    }
   }
 }
     `;
@@ -923,10 +962,26 @@ export function useJoinBattleMutation() {
 export const BattleCreatedDocument = gql`
     subscription BattleCreated {
   battleCreated {
-    ...Battle
+    _id
+    rounds {
+      case {
+        image
+      }
+    }
+    players {
+      _id
+      avatar
+      displayName
+    }
+    createdAt
+    currentRound
+    totalRounds
+    price
+    status
+    createdBy
   }
 }
-    ${BattleFragmentDoc}`;
+    `;
 
 export function useBattleCreatedSubscription<TData = BattleCreatedSubscription>(options: Omit<Urql.UseSubscriptionArgs<BattleCreatedSubscriptionVariables>, 'query'> = {}, handler?: Urql.SubscriptionHandler<BattleCreatedSubscription, TData>) {
   return Urql.useSubscription<BattleCreatedSubscription, TData, BattleCreatedSubscriptionVariables>({ query: BattleCreatedDocument, ...options }, handler);
@@ -1089,7 +1144,6 @@ export const SingleCaseDocument = gql`
       odds
       name
       rarity
-      rarityColor
       gunType
       knifeType
       iconUrl
@@ -1101,7 +1155,6 @@ export const SingleCaseDocument = gql`
         type
         weaponType
         rarity
-        rarityColor
         quality
         gunType
         knifeType
@@ -1148,7 +1201,6 @@ export const UnboxingSubscriptionDocument = gql`
     type
     weaponType
     rarity
-    rarityColor
     quality
     gunType
     knifeType

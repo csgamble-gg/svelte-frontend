@@ -1,14 +1,11 @@
 import type { Skin } from '$generated/graphql';
+import { random as randomNumber } from 'lodash-es';
 import { get } from 'svelte/store';
 import { createMachine, interpret, send } from 'xstate';
-import { reelSlots, winningIndex } from '../state/game';
+import { currentCase, winningIndex, winningItem } from '../state/game';
 import * as general from '../state/general';
 import { ROLL_TIME } from '../types';
 import * as services from './services';
-
-function randomNumber(min: number, max: number) {
-	return Math.floor(Math.random() * (max - min + 1) + min);
-}
 
 export type UnboxingContext = {};
 
@@ -82,7 +79,7 @@ const machine = createMachine<
 				}
 			},
 			rolling: {
-				entry: ['injectItem'],
+				// entry: ['injectItem'],
 				after: {
 					[ROLL_TIME]: 'done'
 				}
@@ -114,28 +111,34 @@ const machine = createMachine<
 			...services
 		},
 		actions: {
-			injectItem: (context, event) => {
-				const index = get(winningIndex);
-				// we inject the winning item into the winning index
-				// this allows for a smooth transition into a new roll
-				if (event.mode === 'LIVE') {
-					reelSlots.injectItem(index, event.payload);
-				}
-			},
+			// injectItem: (context, event) => {
+			// 	const index = get(winningIndex);
+			// 	// we inject the winning item into the winning index
+			// 	// this allows for a smooth transition into a new roll
+			// 	if (event.mode === 'LIVE') {
+			// 		reelSlots.injectItem(index, event.payload);
+			// 	}
+			// },
 			demoRoll: () => {
-				winningIndex.set(null);
-				// shuffle the slots
-				// reelSlots.demoShuffle();
-				// get an index between 27 and 34
-				winningIndex.set(randomNumber(27, 34));
+				const items = get(currentCase).items;
+				const index = randomNumber(27, 34);
+
+				const randomSkin = randomNumber(0, items.length - 1);
+				const randomQuality = randomNumber(
+					0,
+					items[randomSkin].qualities.length - 1
+				);
+
+				winningIndex.set(index);
+				winningItem.set(items[randomSkin].qualities[randomQuality]);
 			},
 			liveRoll: (context, event) => {
 				// we need to put the item in an index between 27 and 34
 				const index = randomNumber(27, 30);
-				const winningItem = event.payload;
 
-				reelSlots.alignIndex(index, winningItem);
+				// winningItem.set(event.payload);
 				winningIndex.set(index);
+				winningItem.set(event.payload);
 			}
 		}
 	}

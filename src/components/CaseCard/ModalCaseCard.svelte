@@ -3,7 +3,7 @@
 	import { ButtonBase, Card, Text } from '@csgamble-gg/nebula-ui';
 	import { writable } from 'svelte/store';
 
-	export let box: Case;
+	export let box: Pick<Case, 'image' | 'name' | 'price'>;
 	export let selected: boolean = false;
 
 	const hovered = writable<boolean>(false);

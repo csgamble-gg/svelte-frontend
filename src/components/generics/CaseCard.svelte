@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import type { Case } from '$generated/graphql';
-	import { convertPenniesToDollars } from '$libs/currencyConversion';
 	import { ButtonBase, Card, Text } from '@csgamble-gg/nebula-ui';
 	import { writable } from 'svelte/store';
 
@@ -39,9 +38,7 @@
 					<Text weight="semibold" align="center">Open Case</Text>
 				{:else}
 					<Text variant="lime">Price</Text>
-					<Text weight="semibold"
-						>{convertPenniesToDollars(box.price)}</Text
-					>
+					<Text weight="semibold">{box.price}</Text>
 				{/if}
 			</div>
 		</ButtonBase>

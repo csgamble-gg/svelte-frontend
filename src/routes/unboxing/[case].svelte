@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 	import UnboxingGame from '$games/Unboxing/index.svelte';
-	import { currentCaseId, reelSlots } from '$games/Unboxing/state/game';
+	import { currentCase, currentCaseId } from '$games/Unboxing/state/game';
 	import {
 		Case,
 		SingleCaseDocument,
@@ -31,6 +31,8 @@
 
 		const slots = caseData.slots;
 
+		currentCase.set(caseData);
+
 		return {
 			props: {
 				caseData,
@@ -42,10 +44,11 @@
 
 <script lang="ts">
 	export let caseData: Case;
-	export let slots: any[];
+	// export let slots: any[];
 
 	currentCaseId.set(caseData._id);
-	reelSlots.setRaw(slots);
+	// currentCase.set(caseData);
+	// reelSlots.setRaw(slots);
 </script>
 
-<UnboxingGame {caseData} />
+<UnboxingGame />

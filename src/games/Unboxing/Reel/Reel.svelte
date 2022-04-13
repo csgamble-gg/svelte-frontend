@@ -1,15 +1,17 @@
 <script lang="ts">
 	import resize, { ResizeObserverEvent } from '$utils/resizeObserver';
 	import { Text } from '@csgamble-gg/nebula-ui';
+	import { random as randomNumber } from 'lodash-es';
 	import { onMount } from 'svelte';
 	import { quartOut } from 'svelte/easing';
 	import { tweened } from 'svelte/motion';
 	import { fly } from 'svelte/transition';
 	import {
+		currentCase,
 		isDoneRolling,
 		isRolling,
-		reelSlots,
-		winningIndex
+		winningIndex,
+		winningItem
 	} from '../state/game';
 	import { ROLL_TIME } from '../types';
 
@@ -23,6 +25,21 @@
 	let amountVisible: number | null = null;
 
 	const ITEM_WIDTH = 150;
+	const REEL_LENGTH = 38;
+
+	function getCaseSkin() {
+		return $currentCase.items[
+			randomNumber(0, $currentCase.items.length - 1)
+		].qualities[0];
+	}
+
+	$: slots = new Array(REEL_LENGTH).fill(0).map((_, i) => {
+		if ($winningIndex) {
+			return i === $winningIndex ? $winningItem : getCaseSkin();
+		} else {
+			return getCaseSkin();
+		}
+	});
 
 	const tween = (init: number, options = {}) => {
 		const store = tweened(init, { ...options });
@@ -46,7 +63,7 @@
 	const anim = (toIndex: number) => {
 		transX.reset();
 
-		offset = (amountVisible / 2) * ITEM_WIDTH - 50;
+		offset = (amountVisible / 2) * ITEM_WIDTH - 100;
 		const animateTo = toIndex * ITEM_WIDTH - offset;
 
 		transX.update(() => animateTo);
@@ -93,7 +110,7 @@
 		class="internal-roller"
 		style={`transform: translateX(-${$transX}px)`}
 	>
-		{#each $reelSlots as reelItem, i (i)}
+		{#each slots as reelItem, i (i)}
 			{@const isWinningItem = !$isDoneRolling
 				? false
 				: i === $winningIndex}

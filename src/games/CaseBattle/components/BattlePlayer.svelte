@@ -1,12 +1,15 @@
 <script lang="ts">
+	import SkinCard from '$components/SkinCard/SkinCard.svelte';
 	import { getGeneralContext } from '$games/state/setup';
-	import type { User } from '$generated/graphql';
+	import { BattleStatus, User } from '$generated/graphql';
 	import { Avatar, Button, Card, Text } from '@csgamble-gg/nebula-ui';
 	import { currentBattle } from '../state/game';
+	import Reel from './Reel.svelte';
 
-	export let rounds: Array<any>;
 	export let position: 'left' | 'right';
-	export let player: User | undefined = undefined;
+	export let player:
+		| Pick<User, '_id' | 'avatar' | 'displayName'>
+		| undefined = undefined;
 	const { send } = getGeneralContext();
 
 	function handleJoinBattle() {
@@ -17,11 +20,50 @@
 			}
 		});
 	}
+
+	let winningItem = null;
+	let totalWinningValue = null;
+	let playerRoundData = null;
+
+	$: battleRunning = $currentBattle.status === BattleStatus.Started;
+
+	$: if (player) {
+		playerRoundData = $currentBattle.rounds.flatMap((round) =>
+			round.drops.filter((drop) => drop.playerId === player._id)
+		);
+
+		let currentRunningRound = playerRoundData.find(
+			(round) => round.roundNumber !== $currentBattle.currentRound
+		);
+
+		totalWinningValue =
+			playerRoundData?.reduce((acc, cur) => {
+				return cur?.winningSkin ? acc + cur.winningSkin.price : 0;
+			}, 0) || 0;
+
+		if (currentRunningRound.winningSkin) {
+			winningItem = currentRunningRound.winningSkin;
+		}
+	}
+
+	// $: totalWinningAmount = playerRoundData.reduce((acc, cur) => {
+	// 	return cur. ? acc + cur.winningSkin.price : 0;
+	// }, 0);
+
+	// $: totalWinningAmount = $currentBattle.rounds.reduce((acc, cur) => {
+	// 	return acc + cur.winningSkin.price;
+	// }, 0);
 </script>
 
 <div class="player">
 	<div class="reel-wrapper">
-		<slot />
+		{#if winningItem}
+			<Reel
+				caseSkins={$currentBattle.rounds[$currentBattle.currentRound - 1]
+					.case.items}
+				{winningItem}
+			/>
+		{/if}
 	</div>
 	<Card fullWidth variant="gradient">
 		<div class="player-items">
@@ -34,7 +76,9 @@
 								<Text weight="semibold" size="lg"
 									>{player.displayName}</Text
 								>
-								<Text weight="bold" variant="subtle">$0.00</Text>
+								<Text weight="bold" variant="subtle"
+									>${totalWinningValue.toFixed(2)}</Text
+								>
 							</div>
 						</div>
 					</Card>
@@ -48,18 +92,21 @@
 					</Card>
 				</div>
 			{/if}
-			{#each rounds as round, index}
-				{@const roundNum = index + 1}
-				<Card fullWidth>
-					<div class="round-winnings placeholder">
-						{#if true}
-							<Text variant="yellowGradient" weight="bold" size="3xl"
-								>{roundNum}</Text
-							>
-						{/if}
-					</div>
-				</Card>
-			{/each}
+			{#if playerRoundData}
+				{#each playerRoundData as round, index}
+					<Card fullWidth>
+						<div class="round-winnings placeholder">
+							{#if playerRoundData[index].winningSkin}
+								<SkinCard skin={playerRoundData[index].winningSkin} />
+							{:else}
+								<Text variant="yellowGradient" weight="bold" size="3xl"
+									>{index + 1}</Text
+								>
+							{/if}
+						</div>
+					</Card>
+				{/each}
+			{/if}
 		</div>
 	</Card>
 </div>

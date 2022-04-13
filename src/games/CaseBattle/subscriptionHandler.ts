@@ -33,6 +33,12 @@ let subscribeToStream = (client: typeof subscriptionClient) => {
 							});
 						}
 
+						if (battle.currentRound > _currentBattle.currentRound) {
+							service.send({
+								type: 'ROLL'
+							});
+						}
+
 						// update our battle in state
 						currentBattle.set(battle);
 						// service.send({ type: 'GAME_UPDATE', payload: battle });

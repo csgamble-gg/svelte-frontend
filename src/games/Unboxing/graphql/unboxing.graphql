@@ -20,7 +20,6 @@ query SingleCase($input: GetCaseInput!) {
 			odds
 			name
 			rarity
-			rarityColor
 			gunType
 			knifeType
 			iconUrl
@@ -32,7 +31,6 @@ query SingleCase($input: GetCaseInput!) {
 				type
 				weaponType
 				rarity
-				rarityColor
 				quality
 				gunType
 				knifeType
@@ -69,7 +67,6 @@ subscription UnboxingSubscription {
 		type
 		weaponType
 		rarity
-		rarityColor
 		quality
 		gunType
 		knifeType

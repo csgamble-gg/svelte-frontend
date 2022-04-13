@@ -11,6 +11,9 @@ export type BattleMachineEvents =
 	| {
 			type: 'PLAYER_JOINED';
 			payload: Pick<User, '_id' | 'avatar' | 'displayName'>;
+	  }
+	| {
+			type: 'ROLL';
 	  };
 export type BattleSchema =
 	| {
@@ -18,11 +21,15 @@ export type BattleSchema =
 			context: {};
 	  }
 	| {
-			value: 'STARTING';
+			value: 'RUNNING';
 			context: {};
 	  }
 	| {
 			value: 'JOINING';
+			context: {};
+	  }
+	| {
+			value: 'ROLLING';
 			context: {};
 	  };
 
@@ -33,15 +40,16 @@ const machine = createMachine<
 >(
 	{
 		id: 'battle',
-		initial: 'WAITING_FOR_PLAYER',
+		initial: 'IDLE',
 		states: {
-			WAITING_FOR_PLAYER: {
-				entry: () => console.log('MACHINE READY'),
+			IDLE: {
 				on: {
 					JOIN_BATTLE: {
 						target: 'JOINING'
 					},
-					PLAYER_JOINED: {}
+					PLAYER_JOINED: {
+						target: 'RUNNING'
+					}
 				}
 			},
 			JOINING: {
@@ -50,7 +58,18 @@ const machine = createMachine<
 					src: 'mutationJoinBattle'
 				}
 			},
-			STARTING: {}
+			RUNNING: {
+				on: {
+					ROLL: {
+						target: 'ROLLING'
+					}
+				}
+			},
+			ROLLING: {
+				after: {
+					5000: 'RUNNING'
+				}
+			}
 		}
 	},
 	{

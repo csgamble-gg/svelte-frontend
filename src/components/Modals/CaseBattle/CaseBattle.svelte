@@ -23,6 +23,8 @@
 	import Big from 'big.js';
 	import { includes } from 'lodash-es';
 
+	type Box = Pick<Case, '_id' | 'image' | 'price'>;
+
 	// query for the cases based on filters
 
 	const { query } = createQuery<AllCasesQuery, AllCasesQueryVariables>(
@@ -40,7 +42,7 @@
 		}
 	});
 
-	let selectedCases = [];
+	let selectedCases: Array<Box> = [];
 
 	$: sum = selectedCases.reduce((acc, cur) => {
 		return acc + cur.price;
@@ -48,7 +50,7 @@
 
 	$: totalValue = new Big(sum).toFixed(2);
 
-	function addCase(box: Case) {
+	function addCase(box: Box) {
 		if (includes(selectedCases, box)) {
 			selectedCases = selectedCases.filter((c) => c._id !== box._id);
 		} else {
@@ -68,13 +70,12 @@
 	}
 
 	createBattleMutation.subscribe((data) => {
-		// console.log(data);
 		if (data.error) {
 			errorEventEmitter.next(data.error);
 		}
-		if (data.data?.createBattle?.battle._id) {
-			// goto('/battle/' + data.createBattle.battle._id);
-		}
+		// if (data.data?.createBattle?.battle._id) {
+		// goto('/battle/' + data.createBattle.battle._id);
+		// }
 	});
 
 	$: creatingBattle =

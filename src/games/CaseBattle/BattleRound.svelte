@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import type { Battle } from '$generated/graphql';
 	import { convertPenniesToDollars } from '$libs/currencyConversion';
 	import { mobileView } from '$stores/window';
 	import {
@@ -11,7 +10,8 @@
 		Text
 	} from '@csgamble-gg/nebula-ui';
 	import { fly } from 'svelte/transition';
-	export let battle: Battle;
+	import type { ActiveBattle } from './state/battles';
+	export let battle: ActiveBattle;
 
 	const primaryPlayer = battle.players[0];
 </script>
@@ -25,9 +25,9 @@
 		<Card variant="gradient" fullWidth>
 			<div class="battle">
 				<div class="case-items">
-					{#each battle.cases as battleCase}
+					{#each battle.rounds as round}
 						<div class="item">
-							<img src={battleCase.image} />
+							<img src={round.case.image} alt="case" />
 						</div>
 					{/each}
 				</div>
@@ -94,10 +94,10 @@
 					</div>
 				</div>
 				<div class="case-items">
-					{#each battle.cases as battleCase}
+					{#each battle.rounds as round}
 						<div class="item">
 							<img
-								src={battleCase.image}
+								src={round.case.image}
 								alt="case"
 								width="100%"
 								height="100%"

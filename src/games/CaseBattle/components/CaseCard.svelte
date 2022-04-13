@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Case } from '$generated/graphql';
+	import { convertPenniesToDollars } from '$libs/currencyConversion';
 	import { Card, Text } from '@csgamble-gg/nebula-ui';
 	export let box: Case;
 </script>
@@ -16,7 +17,9 @@
 			/>
 			<div class="info">
 				<Text tag="span" weight="semibold">{box.name}</Text>
-				<Text weight="semibold">{box.price}</Text>
+				<Text weight="semibold"
+					>${convertPenniesToDollars(box.price, 2)}</Text
+				>
 			</div>
 		</div>
 	</Card>

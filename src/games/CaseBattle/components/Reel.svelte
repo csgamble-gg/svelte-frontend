@@ -1,9 +1,13 @@
 <script lang="ts">
-	export let slots;
+	export let caseSkins: CaseSkins[];
+	export let winningItem: Skin;
+	import type { CaseSkins, Skin } from '$generated/graphql';
 	import resize, { ResizeObserverEvent } from '$utils/resizeObserver';
+	import { random as randomNumber } from 'lodash-es';
 	import { onMount } from 'svelte';
 	import { quartOut } from 'svelte/easing';
 	import { tweened } from 'svelte/motion';
+	import { isRolling } from '../state/game';
 	// import {
 	// 	isDoneRolling,
 	// 	isRolling,
@@ -12,16 +16,24 @@
 	// } from '../state/game';
 	// import { ROLL_TIME } from '../types';
 
-	// let translateX = useMotionValue(0);
-	// let winningIndex: null | number = null;
+	const REEL_LENGTH = 32;
+	const ANIMATE_TO_INDEX = 25;
+	const ITEM_WIDTH = 115;
+
+	function getCaseSkin() {
+		return caseSkins[randomNumber(0, caseSkins.length - 1)];
+	}
+
+	$: slots = new Array(REEL_LENGTH)
+		.fill(0)
+		.map((_, i) => (i === ANIMATE_TO_INDEX ? winningItem : getCaseSkin()));
+
 	let activeIndex: null | number = null;
 	let container: HTMLDivElement;
 	$: offset = null;
 
 	// export let amountVisible: number | null = null;
 	let amountVisible: number | null = null;
-
-	const ITEM_WIDTH = 115;
 
 	const tween = (init: number, options = {}) => {
 		const store = tweened(init, { ...options });
@@ -38,7 +50,7 @@
 	};
 
 	const transX = tween(0, {
-		// duration: ROLL_TIME,
+		duration: 5000,
 		easing: quartOut
 	});
 
@@ -52,20 +64,19 @@
 	};
 
 	transX.subscribe((value) => {
-		// if ($isRolling) {
-		// 	// for every divisible of 150, we set the active index
-		// 	activeIndex = Math.round((Math.abs(value) + offset) / ITEM_WIDTH);
-		// } else {
-		// 	activeIndex = null;
-		// }
+		if ($isRolling) {
+			activeIndex = Math.round((Math.abs(value) + offset) / ITEM_WIDTH);
+		} else {
+			activeIndex = null;
+		}
 	});
 
-	// isRolling.subscribe((isRolling) => {
-	// 	if (isRolling) {
-	// 		anim($winningIndex);
-	// 		activeIndex = null;
-	// 	}
-	// });
+	isRolling.subscribe((isRolling) => {
+		if (isRolling) {
+			anim(ANIMATE_TO_INDEX);
+			activeIndex = null;
+		}
+	});
 
 	onMount(() => {
 		const containerWidth = container.getBoundingClientRect().width;
@@ -81,7 +92,12 @@
 	}
 </script>
 
-<div class="roller" bind:this={container} use:resize>
+<div
+	class="roller"
+	bind:this={container}
+	use:resize
+	on:resize={handleResize}
+>
 	<div
 		class="internal-roller"
 		style={`transform: translateX(-${$transX}px)`}
@@ -90,7 +106,8 @@
 			<!-- {@const isWinningItem = !$isDoneRolling
 				? false
 				: i === $winningIndex}
-			{@const isActive = i === activeIndex} -->
+-->
+			{@const isActive = i === activeIndex}
 			<div class="graceful-animation reel-item">
 				<img
 					src={reelItem.iconUrl}
@@ -98,6 +115,7 @@
 					width="115px"
 					height="auto"
 					class="graceful-animation"
+					style:transform={`scale(${isActive ? 1.2 : 1})`}
 				/>
 				<!-- {#if isWinningItem}
 					<div

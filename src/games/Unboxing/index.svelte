@@ -1,15 +1,15 @@
 <script lang="ts">
-	export let caseData: Case;
+	// export let caseData: Case;
 
 	import GameContainer from '$components/GameContainer/GameContainer.svelte';
 	import SkinCard from '$components/SkinCard/SkinCardVariant.svelte';
 	import { getGeneralContext, setup } from '$games/state/setup';
-	import type { Case } from '$generated/graphql';
 	import { mobileView } from '$stores/window';
 	import { Button, Card, Text } from '@csgamble-gg/nebula-ui';
 	import { onMount } from 'svelte';
 	import { service } from './machine';
 	import Reel from './Reel/Reel.svelte';
+	import { currentCase } from './state/game';
 	import * as general from './state/general';
 	import { initialize } from './subscriptionHandler';
 
@@ -36,17 +36,17 @@
 		<div class="content" class:mobile={$mobileView}>
 			<Card>
 				<div class="case-card">
-					<img src={caseData.image} alt="case" />
+					<img src={$currentCase.image} alt="case" />
 					<div class="info">
-						<Text weight="semibold">{caseData.name}</Text>
-						<Text>{caseData.price}</Text>
+						<Text weight="semibold">{$currentCase.name}</Text>
+						<Text>${$currentCase.price.toFixed(2)}</Text>
 					</div>
 				</div>
 			</Card>
 			<div class="info-wrapper">
 				{#if !$mobileView}
 					<Text variant="yellowGradient" tag="h2" size="3xl"
-						>{caseData.name}</Text
+						>{$currentCase.name}</Text
 					>
 				{/if}
 				<div class="buy-section">
@@ -89,7 +89,7 @@
 				>Case Contains</Text
 			>
 			<div class="skins">
-				{#each caseData.items as skin}
+				{#each $currentCase.items as skin}
 					<SkinCard {skin} />
 				{/each}
 			</div>
@@ -168,7 +168,7 @@
 	}
 
 	.case-card {
-		padding: 0 60px;
+		width: 201px;
 		height: 220px;
 		position: relative;
 		display: flex;
