@@ -1,5 +1,5 @@
 # Install deps and build app
-FROM node:14-alpine AS builder
+FROM node:17-alpine AS builder
 
 ARG ENVIRONMENT
 ENV ENVIRONMENT=${ENVIRONMENT}
@@ -11,7 +11,7 @@ COPY ./ ./
 RUN npm ci 
 RUN npm run build
 
-FROM node:14-alpine AS runner
+FROM node:17-alpine AS runner
 
 ARG ENVIRONMENT
 ENV ENVIRONMENT=${ENVIRONMENT}
