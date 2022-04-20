@@ -17,6 +17,8 @@ let subscribeToStream = (client: typeof subscriptionClient) => {
 			next: (value) => {
 				const battle = value.data.battleUpdated;
 
+				console.log({ battle });
+
 				if (battle) {
 					const _currentBattle = get(currentBattle);
 					// if the battle is one that we are currently apart of

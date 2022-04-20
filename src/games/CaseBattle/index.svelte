@@ -1,9 +1,9 @@
 <script lang="ts">
-	export let battle: Battle;
-
+	import { goto } from '$app/navigation';
+	// export let battle: Battle;
 	import GameContainer from '$components/GameContainer/GameContainer.svelte';
 	import { setup } from '$games/state/setup';
-	import { Battle, BattleStatus } from '$generated/graphql';
+	import { BattleStatus } from '$generated/graphql';
 	import { convertPenniesToDollars } from '$libs/currencyConversion';
 	import { Button, Text } from '@csgamble-gg/nebula-ui';
 	import { onDestroy, onMount } from 'svelte';
@@ -14,7 +14,9 @@
 	import * as general from './state/general';
 	import { initialize } from './subscriptionHandler';
 
-	currentBattle.set(battle);
+	function handleBack() {
+		goto('/battle');
+	}
 
 	onMount(() => {
 		initialize();
@@ -39,46 +41,45 @@
 </script>
 
 <GameContainer>
-	<button on:click={() => service.send('ROLL')}>spin</button>
 	<div class="header">
-		<!-- {#if $currentBattle.status === BattleStatus.Finished}
+		{#if $currentBattle.status === BattleStatus.Finished}
 			<div>
 				<Text variant="yellowGradient" size="3xl" weight="bold"
 					>{$currentBattle.winner.displayName} has won!</Text
 				>
 			</div>
-		{:else} -->
-		<div class="round-counter">
-			<div class="numbers">
-				<Text tag="h2" size="3xl" variant="yellowGradient">Round</Text>
-				<div>
-					<Text size="3xl" weight="semibold">{currentRound ?? 0}</Text>
-					<Text size="lg" variant="yellowGradient" weight="semibold"
-						>of</Text
-					>
-					<Text size="3xl" weight="semibold"
-						>{$currentBattle.totalRounds}</Text
-					>
+		{:else}
+			<div class="round-counter">
+				<div class="numbers">
+					<Text tag="h2" size="3xl" variant="yellowGradient">Round</Text>
+					<div>
+						<Text size="3xl" weight="semibold">{currentRound ?? 0}</Text>
+						<Text size="lg" variant="yellowGradient" weight="semibold"
+							>of</Text
+						>
+						<Text size="3xl" weight="semibold"
+							>{$currentBattle.totalRounds}</Text
+						>
+					</div>
+				</div>
+				<div class="rounds">
+					{#each $currentBattle.rounds as round, index}
+						{@const roundNum = index + 1}
+						<div
+							class="round-dot"
+							class:done={currentRound > roundNum}
+							class:active={currentRound === roundNum}
+						/>
+					{/each}
 				</div>
 			</div>
-			<div class="rounds">
-				{#each $currentBattle.rounds as round, index}
-					{@const roundNum = index + 1}
-					<div
-						class="round-dot"
-						class:done={currentRound > roundNum}
-						class:active={currentRound === roundNum}
-					/>
-				{/each}
+			<div class="battle-info">
+				<Text variant="subtle">Total Cost</Text>
+				<Text weight="semibold"
+					>$ {convertPenniesToDollars($currentBattle.price, 2)}</Text
+				>
 			</div>
-		</div>
-		<div class="battle-info">
-			<Text variant="subtle">Total Cost</Text>
-			<Text weight="semibold"
-				>$ {convertPenniesToDollars($currentBattle.price)}</Text
-			>
-		</div>
-		<!-- {/if} -->
+		{/if}
 	</div>
 	<div class="players-wrapper">
 		<div class="case">
@@ -91,7 +92,11 @@
 			{:else}
 				<div class="post-battle-buttons">
 					<Button label="Create same battle" />
-					<Button label="Back to battle list" variant="overlay" />
+					<Button
+						label="Back to battle list"
+						variant="overlay"
+						on:click={handleBack}
+					/>
 				</div>
 			{/if}
 		</div>

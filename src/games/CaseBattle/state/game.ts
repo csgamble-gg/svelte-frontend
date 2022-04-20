@@ -1,7 +1,9 @@
-import type { Battle } from '$generated/graphql';
-import { derived, writable } from 'svelte/store';
+import type { Battle, Skin } from '$generated/graphql';
+import { derived, get, writable } from 'svelte/store';
 import { matchesState } from 'xstate';
 import { machineState } from './general';
+
+type PlayerWins = Record<string, Array<Skin>>;
 
 export const currentBattle = (() => {
 	const store = writable<Battle>();
@@ -14,3 +16,32 @@ export const currentBattle = (() => {
 export const isRolling = derived(machineState, (state) =>
 	matchesState('ROLLING', state)
 );
+
+export const currentRound = derived(currentBattle, (current) => {
+	if (!current) return null;
+
+	if (!current.currentRound) return current.rounds[0];
+
+	return current.rounds.find(
+		(r) => r.roundNumber === current.currentRound
+	);
+});
+
+export const playerWins = (() => {
+	const store = writable<PlayerWins>({});
+
+	return {
+		...store,
+		addSkinToPlayer: (playerId: string, skin: Skin) => {
+			const playerWins = get(store);
+			console.log(playerWins, playerId);
+			if (!playerWins[playerId]) {
+				playerWins[playerId] = [skin];
+			} else {
+				playerWins[playerId].push(skin);
+			}
+
+			store.set(playerWins);
+		}
+	};
+})();

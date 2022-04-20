@@ -469,9 +469,8 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     "to-fast-properties" "^2.0.0"
 
-"@csgamble-gg/nebula-ui@^1.0.5":
-  "integrity" "sha512-Ds0ym2f8l7AdLSt6CH2uiP7RmG3vXwx63lEFuUQ2NYxCUTdjOCTpBbbh0E4f0pJirIK+YnAZU+u5j11KLPOP9g=="
-  "resolved" "https://npm.pkg.github.com/download/@csgamble-gg/nebula-ui/1.0.5/8942324263b6ad1ef65dbebb05a1e8012e99a8e7f6ceeab3f86797005df22c4b"
+"@csgamble-gg/nebula-ui@file:../nebula-ui/package":
+  "resolved" "file:../nebula-ui/package"
   "version" "1.0.5"
   dependencies:
     "@popperjs/core" "^2.11.4"
@@ -1370,7 +1369,7 @@
     "eventemitter3" "^3.1.0"
     "url" "^0.11.0"
 
-"@popperjs/core@^2.11.2", "@popperjs/core@^2.11.4":
+"@popperjs/core@^2.11.2":
   "integrity" "sha512-q/ytXxO5NKvyT37pmisQAItCFqA7FD/vNb8dgaJy3/630Fsc+Mz9/9f2SziBoIZ30TJooXyTwZmhi1zjXmObYg=="
   "resolved" "https://registry.npmjs.org/@popperjs/core/-/core-2.11.4.tgz"
   "version" "2.11.4"

@@ -3,7 +3,7 @@
 	import { getGeneralContext } from '$games/state/setup';
 	import { BattleStatus, User } from '$generated/graphql';
 	import { Avatar, Button, Card, Text } from '@csgamble-gg/nebula-ui';
-	import { currentBattle } from '../state/game';
+	import { currentBattle, currentRound, playerWins } from '../state/game';
 	import Reel from './Reel.svelte';
 
 	export let position: 'left' | 'right';
@@ -23,27 +23,37 @@
 
 	let winningItem = null;
 	let totalWinningValue = null;
-	let playerRoundData = null;
+	let allPlayersRounds = null;
+	let currentPlayerRound = null;
+
+	$: winningSkins = [];
 
 	$: battleRunning = $currentBattle.status === BattleStatus.Started;
 
 	$: if (player) {
-		playerRoundData = $currentBattle.rounds.flatMap((round) =>
+		allPlayersRounds = $currentBattle.rounds.flatMap((round) =>
 			round.drops.filter((drop) => drop.playerId === player._id)
 		);
 
-		let currentRunningRound = playerRoundData.find(
-			(round) => round.roundNumber !== $currentBattle.currentRound
-		);
+		currentPlayerRound = $currentRound
+			? $currentRound.drops.find((drop) => drop.playerId === player._id)
+			: null;
+
+		// totalWinningValue =
+		// 	playerWins?.reduce((acc, cur) => {
+		// 		return cur?.winningSkin ? acc + cur.winningSkin.price : 0;
+		// 	}, 0) || 0;
 
 		totalWinningValue =
-			playerRoundData?.reduce((acc, cur) => {
-				return cur?.winningSkin ? acc + cur.winningSkin.price : 0;
+			$playerWins[player._id]?.reduce((acc, cur) => {
+				return cur?.price ? acc + cur.price : 0;
 			}, 0) || 0;
 
-		if (currentRunningRound.winningSkin) {
-			winningItem = currentRunningRound.winningSkin;
-		}
+		winningSkins = $playerWins[player._id] || [];
+
+		// if (currentRunningRound) {
+		// 	winningItem = currentRunningRound.winningSkin;
+		// }
 	}
 
 	// $: totalWinningAmount = playerRoundData.reduce((acc, cur) => {
@@ -53,16 +63,14 @@
 	// $: totalWinningAmount = $currentBattle.rounds.reduce((acc, cur) => {
 	// 	return acc + cur.winningSkin.price;
 	// }, 0);
+
+	$: totalWinningValue = 0;
 </script>
 
 <div class="player">
 	<div class="reel-wrapper">
-		{#if winningItem}
-			<Reel
-				caseSkins={$currentBattle.rounds[$currentBattle.currentRound - 1]
-					.case.items}
-				{winningItem}
-			/>
+		{#if player}
+			<Reel playerId={player._id} />
 		{/if}
 	</div>
 	<Card fullWidth variant="gradient">
@@ -92,12 +100,12 @@
 					</Card>
 				</div>
 			{/if}
-			{#if playerRoundData}
-				{#each playerRoundData as round, index}
+			{#if allPlayersRounds}
+				{#each allPlayersRounds as round, index}
 					<Card fullWidth>
 						<div class="round-winnings placeholder">
-							{#if playerRoundData[index].winningSkin}
-								<SkinCard skin={playerRoundData[index].winningSkin} />
+							{#if winningSkins[index]}
+								<SkinCard skin={winningSkins[index]} />
 							{:else}
 								<Text variant="yellowGradient" weight="bold" size="3xl"
 									>{index + 1}</Text

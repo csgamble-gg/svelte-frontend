@@ -35,7 +35,7 @@
 						<Text weight="semibold" align="center">Add Case</Text>
 					{:else}
 						<Text variant="lime">Price</Text>
-						<Text weight="semibold">{box.price}</Text>
+						<Text weight="semibold">${box.price.toFixed(2)}</Text>
 					{/if}
 				</div>
 			</ButtonBase>

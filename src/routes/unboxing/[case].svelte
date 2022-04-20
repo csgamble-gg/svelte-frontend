@@ -29,14 +29,11 @@
 
 		const caseData = caseQuery.data?.getCase;
 
-		const slots = caseData.slots;
-
 		currentCase.set(caseData);
 
 		return {
 			props: {
-				caseData,
-				slots
+				caseData
 			}
 		};
 	}
@@ -44,11 +41,7 @@
 
 <script lang="ts">
 	export let caseData: Case;
-	// export let slots: any[];
-
 	currentCaseId.set(caseData._id);
-	// currentCase.set(caseData);
-	// reelSlots.setRaw(slots);
 </script>
 
 <UnboxingGame />

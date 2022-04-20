@@ -1,13 +1,13 @@
 <script lang="ts">
-	export let caseSkins: CaseSkins[];
-	export let winningItem: Skin;
-	import type { CaseSkins, Skin } from '$generated/graphql';
+	export let playerId: string;
 	import resize, { ResizeObserverEvent } from '$utils/resizeObserver';
+	import { Text } from '@csgamble-gg/nebula-ui';
 	import { random as randomNumber } from 'lodash-es';
 	import { onMount } from 'svelte';
 	import { quartOut } from 'svelte/easing';
 	import { tweened } from 'svelte/motion';
-	import { isRolling } from '../state/game';
+	import { fly } from 'svelte/transition';
+	import { currentRound, isRolling } from '../state/game';
 	// import {
 	// 	isDoneRolling,
 	// 	isRolling,
@@ -21,12 +21,14 @@
 	const ITEM_WIDTH = 115;
 
 	function getCaseSkin() {
-		return caseSkins[randomNumber(0, caseSkins.length - 1)];
+		return $currentRound.case.items[
+			randomNumber(0, $currentRound.case.items.length - 1)
+		];
 	}
 
-	$: slots = new Array(REEL_LENGTH)
-		.fill(0)
-		.map((_, i) => (i === ANIMATE_TO_INDEX ? winningItem : getCaseSkin()));
+	$: slots = new Array(REEL_LENGTH).fill(0).map((_, i) => {
+		return getCaseSkin();
+	});
 
 	let activeIndex: null | number = null;
 	let container: HTMLDivElement;
@@ -71,12 +73,25 @@
 		}
 	});
 
-	isRolling.subscribe((isRolling) => {
-		if (isRolling) {
+	currentRound.subscribe((round) => {
+		if (!round) return;
+
+		const playersRound = round.drops.find(
+			(drop) => drop.playerId === playerId
+		);
+		if (!playersRound) return;
+		if (playersRound.winningSkin && $isRolling) {
 			anim(ANIMATE_TO_INDEX);
 			activeIndex = null;
 		}
 	});
+
+	// isRolling.subscribe((isRolling) => {
+	// 	if (isRolling) {
+	// 		anim(ANIMATE_TO_INDEX);
+	// 		activeIndex = null;
+	// 	}
+	// });
 
 	onMount(() => {
 		const containerWidth = container.getBoundingClientRect().width;
@@ -103,10 +118,8 @@
 		style={`transform: translateX(-${$transX}px)`}
 	>
 		{#each slots as reelItem, i (i)}
-			<!-- {@const isWinningItem = !$isDoneRolling
-				? false
-				: i === $winningIndex}
--->
+			<!-- {@const isWinningItem = $isRolling ? false : i === ANIMATE_TO_INDEX} -->
+			{@const isWinningItem = false}
 			{@const isActive = i === activeIndex}
 			<div class="graceful-animation reel-item">
 				<img
@@ -117,7 +130,7 @@
 					class="graceful-animation"
 					style:transform={`scale(${isActive ? 1.2 : 1})`}
 				/>
-				<!-- {#if isWinningItem}
+				{#if isWinningItem}
 					<div
 						class="winning-item-content"
 						in:fly|local={{
@@ -133,7 +146,7 @@
 							>${reelItem?.price || reelItem.skins[0].price}</Text
 						>
 					</div>
-				{/if} -->
+				{/if}
 			</div>
 		{/each}
 	</div>

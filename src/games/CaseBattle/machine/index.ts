@@ -1,5 +1,8 @@
 import type { User } from '$generated/graphql';
+import { get } from 'svelte/store';
 import { createMachine, interpret } from 'xstate';
+import { send } from 'xstate/lib/actions';
+import { currentRound, playerWins } from '../state/game';
 import * as general from '../state/general';
 import * as services from './services';
 
@@ -47,8 +50,8 @@ const machine = createMachine<
 					JOIN_BATTLE: {
 						target: 'JOINING'
 					},
-					PLAYER_JOINED: {
-						target: 'RUNNING'
+					ROLL: {
+						target: 'ROLLING'
 					}
 				}
 			},
@@ -56,25 +59,36 @@ const machine = createMachine<
 				invoke: {
 					id: 'mutationJoinBattle',
 					src: 'mutationJoinBattle'
-				}
-			},
-			RUNNING: {
+				},
 				on: {
-					ROLL: {
-						target: 'ROLLING'
+					PLAYER_JOINED: {
+						target: 'IDLE'
 					}
 				}
 			},
 			ROLLING: {
 				after: {
-					5000: 'RUNNING'
-				}
+					5000: 'IDLE'
+				},
+				exit: 'addToWins'
 			}
 		}
 	},
 	{
 		services: {
 			...services
+		},
+		actions: {
+			addToWins: (context, event) => {
+				get(currentRound).drops.map((playerDrop) => {
+					playerWins.addSkinToPlayer(
+						playerDrop.playerId,
+						playerDrop.winningSkin
+					);
+				});
+
+				send('IDLE');
+			}
 		}
 	}
 );
@@ -84,5 +98,6 @@ export const service = interpret(machine, {
 })
 	.start()
 	.onTransition((state) => {
+		console.log(state.value);
 		general.machineState.set(state.value);
 	});

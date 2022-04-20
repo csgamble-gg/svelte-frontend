@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
 	import CaseBattle from '$games/CaseBattle/index.svelte';
+	import { currentBattle, playerWins } from '$games/CaseBattle/state/game';
 	import {
-		Battle,
 		GetBattleDocument,
 		GetBattleQuery,
 		GetBattleQueryVariables
@@ -28,16 +28,30 @@
 
 		const battleData = battleQuery.data.getBattle;
 
-		return {
-			props: {
-				battle: battleData
-			}
-		};
+		currentBattle.set(battleData);
+
+		const defaultPlayerWins = {};
+		battleData.rounds.forEach((round) => {
+			round.drops.forEach((drop) => {
+				if (!drop.winningSkin) {
+					defaultPlayerWins[drop.playerId] = [
+						...(defaultPlayerWins[drop.playerId] || [])
+					];
+					return;
+				}
+				defaultPlayerWins[drop.playerId] = [
+					...(defaultPlayerWins[drop.playerId] || []),
+					drop.winningSkin
+				];
+			});
+		});
+		playerWins.set(defaultPlayerWins);
+
+		return {};
 	}
 </script>
 
 <script lang="ts">
-	export let battle: Battle;
 </script>
 
-<CaseBattle {battle} />
+<CaseBattle />
