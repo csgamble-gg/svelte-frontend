@@ -1,7 +1,6 @@
 <script lang="ts">
 	import GameContainer from '$components/GameContainer/GameContainer.svelte';
 	import { setConfigContext, setup } from '$games/state/setup';
-	import { chatStore } from '$stores/app';
 	import { mobileView } from '$stores/window';
 	import { onMount } from 'svelte';
 	import BettingArea from './BetArea/BettingArea.svelte';
@@ -26,10 +25,6 @@
 			send: service.send
 		}
 	});
-
-	function handleChatClick() {
-		chatStore.toggle();
-	}
 </script>
 
 <GameContainer title="Roulette" padding={false}>
@@ -39,17 +34,3 @@
 	<Wheel />
 	<BettingArea />
 </GameContainer>
-
-<style>
-	.chat-button {
-		z-index: 9999;
-	}
-
-	.content {
-		display: flex;
-		flex-direction: column;
-		max-width: 1700px;
-		align-self: center;
-		width: 100%;
-	}
-</style>

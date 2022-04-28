@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Text } from '@csgamble-gg/nebula-ui';
-	export let background;
-	export let disabled: boolean = false;
+	export let background: keyof typeof backgroundImage;
+	export let disabled = false;
 	export let title: string;
 	export let onClick: () => void;
 

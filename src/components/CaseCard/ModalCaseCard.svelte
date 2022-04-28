@@ -4,7 +4,7 @@
 	import { writable } from 'svelte/store';
 
 	export let box: Pick<Case, 'image' | 'name' | 'price'>;
-	export let selected: boolean = false;
+	export let selected = false;
 
 	const hovered = writable<boolean>(false);
 </script>

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { formatPennies } from '$utils/currency';
+
 	export let playerId: string;
 	import resize, { ResizeObserverEvent } from '$utils/resizeObserver';
 	import { Text } from '@csgamble-gg/nebula-ui';
@@ -6,35 +8,36 @@
 	import { onMount } from 'svelte';
 	import { quartOut } from 'svelte/easing';
 	import { tweened } from 'svelte/motion';
+	import { get } from 'svelte/store';
 	import { fly } from 'svelte/transition';
 	import { currentRound, isRolling } from '../state/game';
-	// import {
-	// 	isDoneRolling,
-	// 	isRolling,
-	// 	reelSlots,
-	// 	winningIndex
-	// } from '../state/game';
-	// import { ROLL_TIME } from '../types';
 
 	const REEL_LENGTH = 32;
 	const ANIMATE_TO_INDEX = 25;
 	const ITEM_WIDTH = 115;
 
 	function getCaseSkin() {
-		return $currentRound.case.items[
-			randomNumber(0, $currentRound.case.items.length - 1)
-		];
+		const randomParentSkin =
+			$currentRound.case.items[
+				randomNumber(0, $currentRound.case.items.length - 1)
+			];
+		const randomChildSkin =
+			randomParentSkin.wears[
+				randomNumber(0, randomParentSkin.wears.length - 1)
+			];
+		return randomChildSkin;
 	}
 
-	$: slots = new Array(REEL_LENGTH).fill(0).map((_, i) => {
-		return getCaseSkin();
-	});
+	$: slots = $currentRound
+		? new Array(REEL_LENGTH).fill(0).map(() => {
+				return getCaseSkin();
+		  })
+		: [];
 
 	let activeIndex: null | number = null;
 	let container: HTMLDivElement;
 	$: offset = null;
 
-	// export let amountVisible: number | null = null;
 	let amountVisible: number | null = null;
 
 	const tween = (init: number, options = {}) => {
@@ -73,6 +76,8 @@
 		}
 	});
 
+	$: winningSkin = null;
+
 	currentRound.subscribe((round) => {
 		if (!round) return;
 
@@ -81,6 +86,7 @@
 		);
 		if (!playersRound) return;
 		if (playersRound.winningSkin && $isRolling) {
+			winningSkin = playersRound.winningSkin;
 			anim(ANIMATE_TO_INDEX);
 			activeIndex = null;
 		}
@@ -124,7 +130,7 @@
 			<div class="graceful-animation reel-item">
 				<img
 					src={reelItem.iconUrl}
-					alt={reelItem.name}
+					alt="skin"
 					width="115px"
 					height="auto"
 					class="graceful-animation"
@@ -132,18 +138,18 @@
 				/>
 				{#if isWinningItem}
 					<div
-						class="winning-item-content"
+						class="winning-item"
 						in:fly|local={{
 							y: 200,
 							duration: 100
 						}}
 					>
 						<div class="header">
-							<Text size="sm" variant="subtle">{reelItem.name}</Text>
-							<Text size="sm">{reelItem.quality}</Text>
+							<Text size="sm" variant="subtle">{winningSkin.name}</Text>
+							<Text size="sm">{winningSkin.wear}</Text>
 						</div>
 						<Text size="sm" weight="medium"
-							>${reelItem?.price || reelItem.skins[0].price}</Text
+							>${formatPennies(winningSkin.price)}</Text
 						>
 					</div>
 				{/if}
@@ -190,10 +196,6 @@
 	}
 
 	.winning-item {
-		animation: float 6.66s ease-in-out infinite;
-	}
-
-	.winning-item-content {
 		display: flex;
 		align-items: center;
 		flex-direction: column;

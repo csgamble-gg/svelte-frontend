@@ -6,6 +6,7 @@ import type {
 import { OpenCaseDocument } from '$generated/graphql';
 import { get } from 'svelte/store';
 import { requestClient } from '../config';
+import type { OpenCaseEvent } from '../machine';
 import { currentCaseId } from './game';
 import * as general from './general';
 
@@ -30,7 +31,9 @@ export const openCase = (
 	});
 
 // OpenCaseEvent
-export const mutationOpenCase = (event: any) =>
+export const mutationOpenCase = (
+	event: OpenCaseEvent
+): Promise<OpenCaseMutation> =>
 	new Promise(async (resolve, reject) => {
 		const inPlayCurrency = get(general.currency);
 
@@ -38,7 +41,8 @@ export const mutationOpenCase = (event: any) =>
 			const variables: MutationOpenCaseArgs = {
 				input: {
 					caseId: get(currentCaseId),
-					currency: inPlayCurrency
+					currency: inPlayCurrency,
+					amount: event.amount
 				}
 			};
 

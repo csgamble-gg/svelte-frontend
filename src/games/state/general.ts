@@ -1,13 +1,24 @@
 import { currency as currencyStore } from '$stores/currency/currency';
 import { rawWallets } from '$stores/wallets';
-import { formatCurrency } from '$utils/currency';
+import { formatPennies } from '$utils/currency';
 import { doubleBet } from '$utils/formatting';
 import Big from 'big.js';
-import { derived, get, writable } from 'svelte/store';
+import { derived, get, Readable, Writable, writable } from 'svelte/store';
 import type { StateValue } from 'xstate';
 import { matchesState } from 'xstate';
 
-export function create<GameState extends {}>() {
+export function create(): {
+	machineState: Writable<StateValue>;
+	fetching: Readable<boolean>;
+	amount: {
+		change: ({ amount }: { amount: number }) => void;
+		add: (amount: number) => void;
+		double: () => void;
+		max: () => void;
+		reset: () => void;
+	};
+	currency: typeof currencyStore;
+} {
 	const machineState = writable<StateValue>('');
 
 	const fetching = derived(machineState, (state) =>
@@ -15,12 +26,12 @@ export function create<GameState extends {}>() {
 	);
 
 	const amount = (() => {
-		const store = writable(formatCurrency(0));
+		const store = writable(formatPennies(0));
 
 		return {
 			...store,
 			change: ({ amount: $amount }: { amount: number }) => {
-				store.set(formatCurrency($amount));
+				store.set(formatPennies($amount));
 			},
 			add: (amount: number) => {
 				const newNum = new Big(get(store)).plus(amount).toFixed(2);
@@ -33,7 +44,7 @@ export function create<GameState extends {}>() {
 				const selectedCurrency = get(currencyStore);
 				const currentWallet = get(rawWallets)[selectedCurrency];
 
-				store.set(formatCurrency(currentWallet.balance));
+				store.set(formatPennies(currentWallet.balance));
 			},
 			reset: () => {
 				store.set(null);

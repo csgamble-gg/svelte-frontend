@@ -1,60 +1,59 @@
 <script lang="ts">
+	import Chat from '$components/Chat/Chat.svelte';
+	import ChatBubble from '$icons/svgs/Chat/ChatBubble.svelte';
+
 	import { chatStore } from '$stores/app';
 	import { mobileView } from '$stores/window';
-	import { Text } from '@csgamble-gg/nebula-ui';
+	import { ButtonBase, Text } from '@csgamble-gg/nebula-ui';
 
 	export let title: string | undefined = undefined;
 	export let subTitle: string | undefined = undefined;
-	export let padding: boolean = true;
-
-	function handleChatClick() {
-		chatStore.toggle();
-	}
+	export let padding = true;
 </script>
 
-<div class="game-wrapper">
-	<div class="content" class:padded={padding}>
-		<div>
-			{#if title}
+<div class="wrapper">
+	<div class="game-wrapper">
+		<div class="content" class:padded={padding}>
+			<div>
 				<div
 					class="header"
 					class:mobile={$mobileView}
 					class:padded={!padding}
 				>
-					<Text as="h1" size="3xl" tag="h1">{title}</Text>
+					{#if title}
+						<Text as="h1" size="3xl" tag="h1">{title}</Text>
+					{/if}
 					<slot name="header-content" />
 				</div>
-			{/if}
-			{#if subTitle}
-				<span>{subTitle}</span>
-			{/if}
-		</div>
-		<!-- <button class="chat-button" on:click={handleChatClick}>
-			<div
-				class="bg-foreground bg-opacity-50 w-10 h-10 rounded-md flex items-center justify-center"
-			>
-				<div class="h-6 w-6">
-					<ChatBubble />
-				</div>
+				{#if subTitle}
+					<span>{subTitle}</span>
+				{/if}
 			</div>
-		</button> -->
-		<slot />
+			<slot />
+		</div>
 	</div>
+
+	<Chat />
 </div>
 
 <style lang="scss">
+	.wrapper {
+		display: flex;
+		flex: 1;
+		flex-direction: row;
+		margin: 21px 0px 0px 0px;
+	}
 	.game-wrapper {
+		flex: 1;
 		display: flex;
 		flex-direction: row;
 		width: 100%;
 		border-radius: 24px;
-		height: fit-content;
 		border: 1px solid #1a1f31;
 		position: relative;
 		background: no-repeat center center;
 		z-index: 1;
-		margin: 21px 0px;
-		overflow: hidden;
+		overflow-y: scroll;
 		justify-content: center;
 	}
 
@@ -78,11 +77,9 @@
 		width: 100%;
 		padding-bottom: 75px;
 		position: relative;
-		/* height: 100vh; */
-		// margin: auto;
 
 		&.padded {
-			padding: 24px 1vw;
+			padding: 43px 1vw 0px 1vw;
 		}
 	}
 

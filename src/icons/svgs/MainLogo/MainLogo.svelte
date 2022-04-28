@@ -1,6 +1,6 @@
 <script lang="ts">
-	export let width: string = '176.32';
-	export let height: string = '42.433';
+	export let width = '176.32';
+	export let height = '42.433';
 </script>
 
 <svg

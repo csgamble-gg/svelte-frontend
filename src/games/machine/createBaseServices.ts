@@ -9,16 +9,16 @@ type ServiceNames =
 	| 'mutationOpenCase'
 	| 'mutationJoinBattle';
 
-export type HandlerArgs<GameState extends Object> = {
+export type HandlerArgs = {
 	general: GeneralModule;
 };
 
 type Services = Record<
 	ServiceNames,
-	(event: EventObject) => PromiseLike<any>
+	(event: EventObject) => PromiseLike<unknown>
 >;
 
-type BaseProps<GameState extends Object> = {
+type BaseProps = {
 	services: Partial<Services>;
 	general: GeneralModule;
 	// handler: (args: HandlerArgs<GameState>) => void;
@@ -26,9 +26,9 @@ type BaseProps<GameState extends Object> = {
 };
 
 export function createBaseServices<
-	Context extends object,
-	GameState extends object
->(props: { moduleName: string } & BaseProps<GameState>) {
+	Context extends Record<string, unknown>
+	// GameState extends Record<string, unknown>
+>(props: { moduleName: string } & BaseProps): Record<string, unknown> {
 	const { services } = props;
 
 	const mutationBet: InvokeCreator<Context, EventObject> = (_, event) => {

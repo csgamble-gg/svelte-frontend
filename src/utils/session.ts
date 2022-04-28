@@ -1,3 +1,3 @@
 import { getCookie } from './cookie';
 
-export const getSession = () => getCookie('session');
+export const getSession = (): string => getCookie('session');

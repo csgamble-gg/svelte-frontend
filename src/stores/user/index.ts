@@ -1,6 +1,6 @@
 import type { User } from '$generated/graphql';
 import { getContext, setContext } from 'svelte';
-import { writable } from 'svelte/store';
+import { Writable, writable } from 'svelte/store';
 
 export type UserState = {
 	displayName: string;
@@ -10,7 +10,9 @@ export type UserState = {
 	balance: number;
 };
 
-export const createUserStore = () => {
+export const createUserStore = (): {
+	setUser: (user: User) => void;
+} & Writable<UserState> => {
 	const defaultUserStore: UserState = {
 		displayName: '',
 		_id: '',
@@ -39,7 +41,10 @@ export const createUserStore = () => {
 	};
 };
 
-export const createStores = () => {
+export const createStores = (): Record<
+	string,
+	ReturnType<typeof createUserStore>
+> => {
 	const userStore = createUserStore();
 
 	const stores = {
@@ -53,7 +58,7 @@ export const createStores = () => {
 
 type Stores = ReturnType<typeof createStores>;
 
-export const getStores = () => {
+export const getStores = (): Stores => {
 	const stores = getContext('userStore') as Stores;
 	return stores;
 };

@@ -23,7 +23,7 @@ fragment Battle on Battle {
 				iconUrl
 				name
 				price
-				quality
+				wear
 				rarity
 				gunType
 				knifeType

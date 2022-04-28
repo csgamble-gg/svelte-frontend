@@ -19,7 +19,7 @@
 	import { subscriptionClient } from '$libs/urql/urqlClient';
 	import { getStores } from '$stores/user';
 	import type { LoadInput } from '$types/index';
-	import { Button } from '@csgamble-gg/nebula-ui';
+	import { Button, Text } from '@csgamble-gg/nebula-ui';
 	import { print } from 'graphql';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
@@ -93,11 +93,13 @@
 	<title>CSGamble | Case Battle</title>
 </svelte:head>
 
-<GameContainer title="Case Battle">
-	<div slot="header-content">
+<GameContainer>
+	<div class="header" slot="header-content">
+		<Text as="h1" size="3xl" tag="h1">Battle</Text>
 		<Button
 			variant="secondary"
 			label="Create Battle"
+			size="medium"
 			on:click={() => modals.createBattle.open({})}
 		/>
 	</div>
@@ -109,6 +111,11 @@
 </GameContainer>
 
 <style>
+	.header {
+		display: flex;
+		align-items: center;
+		gap: 24px;
+	}
 	.create-battle {
 		background: linear-gradient(
 			321.77deg,

@@ -1,5 +1,10 @@
 import { merge } from 'lodash-es';
-import type { EventObject, StateNodeConfig, StateSchema } from 'xstate';
+import type {
+	BaseActionObject,
+	EventObject,
+	StateNodeConfig,
+	StateSchema
+} from 'xstate';
 import { send } from 'xstate';
 
 type BaseBet = {
@@ -12,8 +17,8 @@ type BaseContext = {
 
 export interface Schema extends StateSchema {
 	states: {
-		idle: {};
-		fetching: {};
+		idle: Record<string, unknown>;
+		fetching: Record<string, unknown>;
 	};
 }
 
@@ -30,7 +35,14 @@ function extendBet<
 	Context extends BaseContext,
 	FullSchema extends Schema,
 	AllEvents extends EventObject
->(betting: any) {
+>(
+	betting: StateNodeConfig<
+		Context & Record<string, unknown>,
+		FullSchema,
+		BaseBetEvents,
+		BaseActionObject
+	>
+): StateNodeConfig<Context, FullSchema, AllEvents, BaseActionObject> {
 	type Events = EventObject & BettingEvents<T>;
 	type StateNode = StateNodeConfig<Context, Schema, Events>;
 	const baseBetting: StateNode = {
@@ -66,7 +78,7 @@ function extendBet<
 		}
 	};
 
-	return merge(baseBetting, betting) as StateNodeConfig<
+	return merge(baseBetting, betting) as unknown as StateNodeConfig<
 		Context,
 		FullSchema,
 		AllEvents

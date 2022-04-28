@@ -1,6 +1,6 @@
 import { browser } from '$app/env';
 
-export function getCookie(name: string, initialCookies?: string) {
+export function getCookie(name: string, initialCookies?: string): string {
 	let cookies = initialCookies;
 
 	if (!cookies) {

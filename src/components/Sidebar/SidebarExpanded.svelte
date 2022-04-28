@@ -7,7 +7,7 @@
 	import { slideLeft } from '../../transitions/slideX';
 	import Divider from '../generics/Divider.svelte';
 
-	type Route = { route: string; name: string };
+	type Route = { route: string; name: string; icon: any };
 	export let routes: Array<Array<Route>>;
 
 	// const handleClick = () => {
@@ -37,7 +37,7 @@
 			<div class="link-group">
 				{#each routes[0] as route}
 					<div class="link">
-						<BoxIcon width="20px" height="20px" />
+						<svelte:component this={route.icon} />
 						<Link href={route.route}>{route.name}</Link>
 					</div>
 				{/each}
@@ -46,7 +46,7 @@
 			<div class="link-group">
 				{#each routes[1] as route}
 					<div class="link">
-						<BoxIcon width="20px" height="20px" />
+						<svelte:component this={route.icon} />
 						<Link href={route.route}>{route.name}</Link>
 					</div>
 				{/each}

@@ -13,7 +13,7 @@ query CurrentUser {
 query UserInventory($input: UserInventoryInput!) {
 	userInventory(input: $input) {
 		_id
-		quality
+		wear
 		name
 		price
 		iconUrl

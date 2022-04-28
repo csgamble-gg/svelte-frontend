@@ -40,11 +40,11 @@
 							<th class="rarity-{rarity}">Price</th>
 							<th class="rarity-{rarity}">Odds</th>
 						</tr>
-						{#each skin.qualities as subSkin}
+						{#each skin.wears as wear}
 							<tr>
-								<td class="wear">{QualityEnum[subSkin.quality]}</td>
-								<td class="price">${subSkin.price}</td>
-								<td class="odds">{subSkin.odds}%</td>
+								<td class="wear">{QualityEnum[wear.wear]}</td>
+								<td class="price">${wear.price}</td>
+								<td class="odds">{wear.odds}%</td>
 							</tr>
 						{/each}
 					</table>
@@ -128,7 +128,7 @@
 		height: 80px;
 		position: relative;
 		.info {
-			padding: 15px 14px;
+			padding: 12px 12px;
 		}
 		&:before {
 			position: absolute;

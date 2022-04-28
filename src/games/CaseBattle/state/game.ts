@@ -1,9 +1,9 @@
-import type { Battle, Skin } from '$generated/graphql';
+import type { Battle, InventorySkin } from '$generated/graphql';
 import { derived, get, writable } from 'svelte/store';
 import { matchesState } from 'xstate';
 import { machineState } from './general';
 
-type PlayerWins = Record<string, Array<Skin>>;
+type PlayerWins = Record<string, Array<InventorySkin>>;
 
 export const currentBattle = (() => {
 	const store = writable<Battle>();
@@ -32,7 +32,7 @@ export const playerWins = (() => {
 
 	return {
 		...store,
-		addSkinToPlayer: (playerId: string, skin: Skin) => {
+		addSkinToPlayer: (playerId: string, skin: InventorySkin) => {
 			const playerWins = get(store);
 			console.log(playerWins, playerId);
 			if (!playerWins[playerId]) {

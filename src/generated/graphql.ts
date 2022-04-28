@@ -15,10 +15,14 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** Banking account number is a string of 5 to 17 alphanumeric values for representing an generic account number */
+  AccountNumber: any;
   /** The `BigInt` scalar type represents non-fractional signed whole numeric values. */
   BigInt: any;
   /** The `Byte` scalar type represents byte value as a Buffer */
   Byte: any;
+  /** A country code as defined by ISO 3166-1 alpha-2 */
+  CountryCode: any;
   /** A field whose value is a Currency: https://en.wikipedia.org/wiki/ISO_4217. */
   Currency: any;
   /** A field whose value conforms to the standard DID format as specified in did-core: https://www.w3.org/TR/did-core/. */
@@ -103,6 +107,8 @@ export type Scalars = {
   LocalEndTime: any;
   /** A local time string (i.e., with no associated timezone) in 24-hr `HH:mm[:ss[.SSS]]` format, e.g. `14:25` or `14:25:06` or `14:25:06.123`. */
   LocalTime: any;
+  /** The locale in the format of a BCP 47 (RFC 5646) standard string */
+  Locale: any;
   /** The `BigInt` scalar type represents non-fractional signed whole numeric values. */
   Long: any;
   /** A field whose value is a valid decimal degrees longitude number (53.471): https://en.wikipedia.org/wiki/Longitude */
@@ -139,10 +145,14 @@ export type Scalars = {
   RGB: any;
   /** A field whose value is a CSS RGBA color: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#rgb()_and_rgba(). */
   RGBA: any;
+  /** In the US, an ABA routing transit number (`ABA RTN`) is a nine-digit code to identify the financial institution. */
+  RoutingNumber: any;
   /** The `SafeInt` scalar type represents non-fractional signed whole numeric values that are considered safe as defined by the ECMAScript specification. */
   SafeInt: any;
   /** A time string at UTC, such as 10:15:30Z, compliant with the `full-time` format outlined in section 5.6 of the RFC 3339profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   Time: any;
+  /** A field whose value exists in the standard IANA Time Zone Database: https://www.iana.org/time-zones */
+  TimeZone: any;
   /** The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
   Timestamp: any;
   /** A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt. */
@@ -200,7 +210,7 @@ export type BattleRoundDrops = {
   nonce: Scalars['Int'];
   playerId: Scalars['ID'];
   rollValue?: Maybe<Scalars['Int']>;
-  winningSkin?: Maybe<Skin>;
+  winningSkin?: Maybe<InventorySkin>;
 };
 
 export enum BattleStatus {
@@ -235,10 +245,9 @@ export type Case = {
   __typename?: 'Case';
   _id: Scalars['ID'];
   image: Scalars['String'];
-  items: Array<CaseSkins>;
+  items: Array<Skin>;
   name: Scalars['String'];
   price: Scalars['Float'];
-  slots: Array<Skin>;
   slug: Scalars['String'];
 };
 
@@ -247,20 +256,6 @@ export enum CaseGroup {
   New = 'NEW',
   Popular = 'POPULAR'
 }
-
-export type CaseSkins = {
-  __typename?: 'CaseSkins';
-  _id: Scalars['ID'];
-  gunType?: Maybe<Scalars['String']>;
-  iconUrl: Scalars['String'];
-  knifeType?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  odds: Scalars['Float'];
-  qualities: Array<Skin>;
-  rarity: Scalars['String'];
-  rarityColor: Scalars['String'];
-  skinName: Scalars['String'];
-};
 
 export type CashoutCrashBetMutationResult = {
   __typename?: 'CashoutCrashBetMutationResult';
@@ -406,6 +401,23 @@ export type GetSkinsInput = {
   weaponType?: InputMaybe<Scalars['String']>;
 };
 
+export type InventorySkin = {
+  __typename?: 'InventorySkin';
+  _id: Scalars['ID'];
+  currency: CurrencyEnum;
+  gunType?: Maybe<Scalars['String']>;
+  iconUrl: Scalars['String'];
+  knifeType?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  odds?: Maybe<Scalars['Float']>;
+  price: Scalars['Int'];
+  rarity: Scalars['String'];
+  skinName: Scalars['String'];
+  type: Scalars['String'];
+  weaponType?: Maybe<Scalars['String']>;
+  wear: Scalars['String'];
+};
+
 export type JackpotGame = {
   __typename?: 'JackpotGame';
   expireDate: Scalars['Date'];
@@ -492,6 +504,7 @@ export type MutationOpenCaseArgs = {
 };
 
 export type OpenCaseInput = {
+  amount: Scalars['Int'];
   caseId: Scalars['ID'];
   currency: CurrencyEnum;
 };
@@ -519,10 +532,11 @@ export type Query = {
   getLatestGame: LatestGame;
   getPaginatedUsers: Array<Maybe<User>>;
   getRecentGames: Array<GameUnion>;
+  getRecentSkinWins: Array<Maybe<RecentSkinWin>>;
   getSkinQualities: Array<Scalars['String']>;
   getSkins: Array<Maybe<Skin>>;
   rouletteInitial: RouletteIntitial;
-  userInventory: Array<Maybe<Skin>>;
+  userInventory: Array<Maybe<InventorySkin>>;
   userWallets: Array<UserWallet>;
 };
 
@@ -566,6 +580,18 @@ export type QueryUserInventoryArgs = {
   input: UserInventoryInput;
 };
 
+export type RecentSkinWin = {
+  __typename?: 'RecentSkinWin';
+  avatar: Scalars['String'];
+  displayName: Scalars['String'];
+  gunType?: Maybe<Scalars['String']>;
+  iconUrl: Scalars['String'];
+  knifeType?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  userId: Scalars['ID'];
+  wear: Scalars['String'];
+};
+
 export type RouletteBets = {
   __typename?: 'RouletteBets';
   blue: Array<Maybe<Bet>>;
@@ -601,19 +627,25 @@ export type Skin = {
   _id: Scalars['ID'];
   gunType?: Maybe<Scalars['String']>;
   iconUrl: Scalars['String'];
-  iconUrlLarge: Scalars['String'];
   knifeType?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  odds: Scalars['Float'];
-  price: Scalars['Float'];
-  quality?: Maybe<Scalars['String']>;
+  odds?: Maybe<Scalars['Float']>;
   rarity: Scalars['String'];
-  rarityColor: Scalars['String'];
-  rollMax: Scalars['Int'];
-  rollMin: Scalars['Int'];
-  skinName?: Maybe<Scalars['String']>;
+  skinName: Scalars['String'];
   type?: Maybe<Scalars['String']>;
   weaponType?: Maybe<Scalars['String']>;
+  wears: Array<Maybe<SkinWear>>;
+};
+
+export type SkinWear = {
+  __typename?: 'SkinWear';
+  _id: Scalars['ID'];
+  iconUrl: Scalars['String'];
+  odds?: Maybe<Scalars['Float']>;
+  price: Scalars['Int'];
+  rollMax?: Maybe<Scalars['Int']>;
+  rollMin?: Maybe<Scalars['Int']>;
+  wear: Scalars['String'];
 };
 
 export type Subscription = {
@@ -622,7 +654,7 @@ export type Subscription = {
   battleCreated: Battle;
   battleUpdated?: Maybe<Battle>;
   betCreated: Bet;
-  caseOpened: Skin;
+  caseOpened: Array<InventorySkin>;
   crashGame?: Maybe<CrashSubscriptionResult>;
   rouletteGame: RouletteSubscriptionResult;
   userError: UserErrorSubscription;
@@ -681,19 +713,19 @@ export type UserWallet = {
   type: CurrencyEnum;
 };
 
-export type BattleFragment = { __typename?: 'Battle', _id: string, price: number, currentRound?: number | null | undefined, totalRounds: number, status: BattleStatus, createdBy: string, createdAt: any, rounds: Array<{ __typename?: 'BattleRound', roundNumber: number, nonce: number, case: { __typename?: 'Case', _id: string, image: string, name: string, slug: string, price: number, items: Array<{ __typename?: 'CaseSkins', _id: string, iconUrl: string }> }, drops?: Array<{ __typename?: 'BattleRoundDrops', playerId: string, rollValue?: number | null | undefined, nonce: number, winningSkin?: { __typename?: 'Skin', iconUrl: string, name: string, price: number, quality?: string | null | undefined, rarity: string, gunType?: string | null | undefined, knifeType?: string | null | undefined } | null | undefined } | null | undefined> | null | undefined }>, players: Array<{ __typename?: 'UserDetails', _id: string, avatar: string, displayName: string }>, winner?: { __typename?: 'UserDetails', _id: string, displayName: string } | null | undefined };
+export type BattleFragment = { __typename?: 'Battle', _id: string, price: number, currentRound?: Maybe<number>, totalRounds: number, status: BattleStatus, createdBy: string, createdAt: any, rounds: Array<{ __typename?: 'BattleRound', roundNumber: number, nonce: number, case: { __typename?: 'Case', _id: string, image: string, name: string, slug: string, price: number, items: Array<{ __typename?: 'Skin', _id: string, iconUrl: string }> }, drops?: Maybe<Array<Maybe<{ __typename?: 'BattleRoundDrops', playerId: string, rollValue?: Maybe<number>, nonce: number, winningSkin?: Maybe<{ __typename?: 'InventorySkin', iconUrl: string, name: string, price: number, wear: string, rarity: string, gunType?: Maybe<string>, knifeType?: Maybe<string> }> }>>> }>, players: Array<{ __typename?: 'UserDetails', _id: string, avatar: string, displayName: string }>, winner?: Maybe<{ __typename?: 'UserDetails', _id: string, displayName: string }> };
 
 export type GetBattlesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBattlesQuery = { __typename?: 'Query', getBattles: Array<{ __typename?: 'Battle', price: number, _id: string, currentRound?: number | null | undefined, totalRounds: number, status: BattleStatus, rounds: Array<{ __typename?: 'BattleRound', case: { __typename?: 'Case', image: string } }>, players: Array<{ __typename?: 'UserDetails', avatar: string, displayName: string }> } | null | undefined> };
+export type GetBattlesQuery = { __typename?: 'Query', getBattles: Array<Maybe<{ __typename?: 'Battle', price: number, _id: string, currentRound?: Maybe<number>, totalRounds: number, status: BattleStatus, rounds: Array<{ __typename?: 'BattleRound', case: { __typename?: 'Case', image: string } }>, players: Array<{ __typename?: 'UserDetails', avatar: string, displayName: string }> }>> };
 
 export type GetBattleQueryVariables = Exact<{
   getBattleId: Scalars['ID'];
 }>;
 
 
-export type GetBattleQuery = { __typename?: 'Query', getBattle?: { __typename?: 'Battle', _id: string, price: number, currentRound?: number | null | undefined, totalRounds: number, status: BattleStatus, createdBy: string, createdAt: any, rounds: Array<{ __typename?: 'BattleRound', roundNumber: number, nonce: number, case: { __typename?: 'Case', _id: string, image: string, name: string, slug: string, price: number, items: Array<{ __typename?: 'CaseSkins', _id: string, iconUrl: string }> }, drops?: Array<{ __typename?: 'BattleRoundDrops', playerId: string, rollValue?: number | null | undefined, nonce: number, winningSkin?: { __typename?: 'Skin', iconUrl: string, name: string, price: number, quality?: string | null | undefined, rarity: string, gunType?: string | null | undefined, knifeType?: string | null | undefined } | null | undefined } | null | undefined> | null | undefined }>, players: Array<{ __typename?: 'UserDetails', _id: string, avatar: string, displayName: string }>, winner?: { __typename?: 'UserDetails', _id: string, displayName: string } | null | undefined } | null | undefined };
+export type GetBattleQuery = { __typename?: 'Query', getBattle?: Maybe<{ __typename?: 'Battle', _id: string, price: number, currentRound?: Maybe<number>, totalRounds: number, status: BattleStatus, createdBy: string, createdAt: any, rounds: Array<{ __typename?: 'BattleRound', roundNumber: number, nonce: number, case: { __typename?: 'Case', _id: string, image: string, name: string, slug: string, price: number, items: Array<{ __typename?: 'Skin', _id: string, iconUrl: string }> }, drops?: Maybe<Array<Maybe<{ __typename?: 'BattleRoundDrops', playerId: string, rollValue?: Maybe<number>, nonce: number, winningSkin?: Maybe<{ __typename?: 'InventorySkin', iconUrl: string, name: string, price: number, wear: string, rarity: string, gunType?: Maybe<string>, knifeType?: Maybe<string> }> }>>> }>, players: Array<{ __typename?: 'UserDetails', _id: string, avatar: string, displayName: string }>, winner?: Maybe<{ __typename?: 'UserDetails', _id: string, displayName: string }> }> };
 
 export type CreateBattleMutationVariables = Exact<{
   input: CreateBattleInput;
@@ -712,29 +744,29 @@ export type JoinBattleMutation = { __typename?: 'Mutation', joinBattle: { __type
 export type BattleCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type BattleCreatedSubscription = { __typename?: 'Subscription', battleCreated: { __typename?: 'Battle', _id: string, createdAt: any, currentRound?: number | null | undefined, totalRounds: number, price: number, status: BattleStatus, createdBy: string, rounds: Array<{ __typename?: 'BattleRound', case: { __typename?: 'Case', image: string } }>, players: Array<{ __typename?: 'UserDetails', _id: string, avatar: string, displayName: string }> } };
+export type BattleCreatedSubscription = { __typename?: 'Subscription', battleCreated: { __typename?: 'Battle', _id: string, createdAt: any, currentRound?: Maybe<number>, totalRounds: number, price: number, status: BattleStatus, createdBy: string, rounds: Array<{ __typename?: 'BattleRound', case: { __typename?: 'Case', image: string } }>, players: Array<{ __typename?: 'UserDetails', _id: string, avatar: string, displayName: string }> } };
 
 export type BattleUpdatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type BattleUpdatedSubscription = { __typename?: 'Subscription', battleUpdated?: { __typename?: 'Battle', _id: string, price: number, currentRound?: number | null | undefined, totalRounds: number, status: BattleStatus, createdBy: string, createdAt: any, rounds: Array<{ __typename?: 'BattleRound', roundNumber: number, nonce: number, case: { __typename?: 'Case', _id: string, image: string, name: string, slug: string, price: number, items: Array<{ __typename?: 'CaseSkins', _id: string, iconUrl: string }> }, drops?: Array<{ __typename?: 'BattleRoundDrops', playerId: string, rollValue?: number | null | undefined, nonce: number, winningSkin?: { __typename?: 'Skin', iconUrl: string, name: string, price: number, quality?: string | null | undefined, rarity: string, gunType?: string | null | undefined, knifeType?: string | null | undefined } | null | undefined } | null | undefined> | null | undefined }>, players: Array<{ __typename?: 'UserDetails', _id: string, avatar: string, displayName: string }>, winner?: { __typename?: 'UserDetails', _id: string, displayName: string } | null | undefined } | null | undefined };
+export type BattleUpdatedSubscription = { __typename?: 'Subscription', battleUpdated?: Maybe<{ __typename?: 'Battle', _id: string, price: number, currentRound?: Maybe<number>, totalRounds: number, status: BattleStatus, createdBy: string, createdAt: any, rounds: Array<{ __typename?: 'BattleRound', roundNumber: number, nonce: number, case: { __typename?: 'Case', _id: string, image: string, name: string, slug: string, price: number, items: Array<{ __typename?: 'Skin', _id: string, iconUrl: string }> }, drops?: Maybe<Array<Maybe<{ __typename?: 'BattleRoundDrops', playerId: string, rollValue?: Maybe<number>, nonce: number, winningSkin?: Maybe<{ __typename?: 'InventorySkin', iconUrl: string, name: string, price: number, wear: string, rarity: string, gunType?: Maybe<string>, knifeType?: Maybe<string> }> }>>> }>, players: Array<{ __typename?: 'UserDetails', _id: string, avatar: string, displayName: string }>, winner?: Maybe<{ __typename?: 'UserDetails', _id: string, displayName: string }> }> };
 
 export type CrashSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CrashSubscriptionSubscription = { __typename?: 'Subscription', crashGame?: { __typename?: 'CrashSubscriptionResult', crashGame: { __typename?: 'CrashGame', _id: string, status: string, elapsed: number, multiplier: number, startsAt: any, gameId: string }, cashedIn?: Array<{ __typename?: 'CrashBet', _id: string, totalWin?: number | null | undefined, payoutMultiplier?: number | null | undefined, amount: number, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, avatar?: string | null | undefined, displayName: string } }> | null | undefined, cashedOut?: Array<{ __typename?: 'CrashBet', _id: string, totalWin?: number | null | undefined, payoutMultiplier?: number | null | undefined, amount: number, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, avatar?: string | null | undefined, displayName: string } } | null | undefined> | null | undefined } | null | undefined };
+export type CrashSubscriptionSubscription = { __typename?: 'Subscription', crashGame?: Maybe<{ __typename?: 'CrashSubscriptionResult', crashGame: { __typename?: 'CrashGame', _id: string, status: string, elapsed: number, multiplier: number, startsAt: any, gameId: string }, cashedIn?: Maybe<Array<{ __typename?: 'CrashBet', _id: string, totalWin?: Maybe<number>, payoutMultiplier?: Maybe<number>, amount: number, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, avatar?: Maybe<string>, displayName: string } }>>, cashedOut?: Maybe<Array<Maybe<{ __typename?: 'CrashBet', _id: string, totalWin?: Maybe<number>, payoutMultiplier?: Maybe<number>, amount: number, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, avatar?: Maybe<string>, displayName: string } }>>> }> };
 
 export type CrashInitialQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CrashInitialQuery = { __typename?: 'Query', crashInitial: { __typename?: 'CrashInitial', crashGame: { __typename?: 'CrashGame', _id: string, status: string, startsAt: any, elapsed: number, gameId: string }, cashedIn: Array<{ __typename?: 'CrashBet', _id: string, totalWin?: number | null | undefined, payoutMultiplier?: number | null | undefined, amount: number, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, avatar?: string | null | undefined, displayName: string } } | null | undefined>, cashedOut: Array<{ __typename?: 'CrashBet', _id: string, totalWin?: number | null | undefined, payoutMultiplier?: number | null | undefined, amount: number, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, avatar?: string | null | undefined, displayName: string } } | null | undefined>, pastGames: Array<{ __typename?: 'CrashGame', _id: string, multiplier: number }>, currentBet?: { __typename?: 'CrashBet', _id: string, amount: number, currency: CurrencyEnum, gameId: string } | null | undefined } };
+export type CrashInitialQuery = { __typename?: 'Query', crashInitial: { __typename?: 'CrashInitial', crashGame: { __typename?: 'CrashGame', _id: string, status: string, startsAt: any, elapsed: number, gameId: string }, cashedIn: Array<Maybe<{ __typename?: 'CrashBet', _id: string, totalWin?: Maybe<number>, payoutMultiplier?: Maybe<number>, amount: number, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, avatar?: Maybe<string>, displayName: string } }>>, cashedOut: Array<Maybe<{ __typename?: 'CrashBet', _id: string, totalWin?: Maybe<number>, payoutMultiplier?: Maybe<number>, amount: number, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, avatar?: Maybe<string>, displayName: string } }>>, pastGames: Array<{ __typename?: 'CrashGame', _id: string, multiplier: number }>, currentBet?: Maybe<{ __typename?: 'CrashBet', _id: string, amount: number, currency: CurrencyEnum, gameId: string }> } };
 
 export type CreateCrashBetMutationVariables = Exact<{
   input: CreateCrashBetInput;
 }>;
 
 
-export type CreateCrashBetMutation = { __typename?: 'Mutation', createCrashBet: { __typename?: 'CreateCrashBetMutationResult', success: boolean, user?: { __typename?: 'User', _id: string, balance: number } | null | undefined } };
+export type CreateCrashBetMutation = { __typename?: 'Mutation', createCrashBet: { __typename?: 'CreateCrashBetMutationResult', success: boolean, user?: Maybe<{ __typename?: 'User', _id: string, balance: number }> } };
 
 export type CashoutCrashBetMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -753,7 +785,7 @@ export type SingleCaseQueryVariables = Exact<{
 }>;
 
 
-export type SingleCaseQuery = { __typename?: 'Query', getCase?: { __typename?: 'Case', _id: string, name: string, price: number, slug: string, image: string, items: Array<{ __typename?: 'CaseSkins', _id: string, odds: number, name: string, rarity: string, gunType?: string | null | undefined, knifeType?: string | null | undefined, iconUrl: string, skinName: string, qualities: Array<{ __typename?: 'Skin', _id: string, name: string, iconUrl: string, type?: string | null | undefined, weaponType?: string | null | undefined, rarity: string, quality?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, skinName?: string | null | undefined, odds: number }> }>, slots: Array<{ __typename?: 'Skin', _id: string, iconUrl: string, skinName?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, quality?: string | null | undefined, name: string, odds: number }> } | null | undefined };
+export type SingleCaseQuery = { __typename?: 'Query', getCase?: Maybe<{ __typename?: 'Case', _id: string, name: string, price: number, slug: string, image: string, items: Array<{ __typename?: 'Skin', _id: string, odds?: Maybe<number>, name: string, rarity: string, gunType?: Maybe<string>, knifeType?: Maybe<string>, iconUrl: string, skinName: string, wears: Array<Maybe<{ __typename?: 'SkinWear', _id: string, iconUrl: string, rollMin?: Maybe<number>, rollMax?: Maybe<number>, wear: string, price: number, odds?: Maybe<number> }>> }> }> };
 
 export type OpenCaseMutationVariables = Exact<{
   input: OpenCaseInput;
@@ -765,38 +797,38 @@ export type OpenCaseMutation = { __typename?: 'Mutation', openCase: { __typename
 export type UnboxingSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UnboxingSubscriptionSubscription = { __typename?: 'Subscription', caseOpened: { __typename?: 'Skin', _id: string, name: string, iconUrl: string, type?: string | null | undefined, weaponType?: string | null | undefined, rarity: string, quality?: string | null | undefined, gunType?: string | null | undefined, knifeType?: string | null | undefined, price: number, skinName?: string | null | undefined } };
+export type UnboxingSubscriptionSubscription = { __typename?: 'Subscription', caseOpened: Array<{ __typename?: 'InventorySkin', _id: string, name: string, iconUrl: string, weaponType?: Maybe<string>, rarity: string, wear: string, gunType?: Maybe<string>, knifeType?: Maybe<string>, price: number, skinName: string }> };
 
-export type UserInfoFragment = { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined };
+export type UserInfoFragment = { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: Maybe<string> };
 
 export type RouletteInitialQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RouletteInitialQuery = { __typename?: 'Query', rouletteInitial: { __typename?: 'RouletteIntitial', rouletteGame: { __typename?: 'RouletteGame', _id: string, createdAt: any, gameId: string, rollValue?: number | null | undefined, startsAt: any, status: string }, currentBets: { __typename?: 'RouletteBets', orange: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, purple: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, blue: Array<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined> }, pastGames: Array<{ __typename?: 'RouletteGame', _id: string, createdAt: any, gameId: string, rollValue?: number | null | undefined }> } };
+export type RouletteInitialQuery = { __typename?: 'Query', rouletteInitial: { __typename?: 'RouletteIntitial', rouletteGame: { __typename?: 'RouletteGame', _id: string, createdAt: any, gameId: string, rollValue?: Maybe<number>, startsAt: any, status: string }, currentBets: { __typename?: 'RouletteBets', orange: Array<Maybe<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: Maybe<string> } }>>, purple: Array<Maybe<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: Maybe<string> } }>>, blue: Array<Maybe<{ __typename?: 'Bet', _id: string, amount: number, gameId: string, selections: Array<number>, currency: CurrencyEnum, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: Maybe<string> } }>> }, pastGames: Array<{ __typename?: 'RouletteGame', _id: string, createdAt: any, gameId: string, rollValue?: Maybe<number> }> } };
 
 export type CreateBetMutationVariables = Exact<{
   input: CreateBetInput;
 }>;
 
 
-export type CreateBetMutation = { __typename?: 'Mutation', createBet: { __typename?: 'CreateBetMutationResult', success: boolean, error?: string | null | undefined, user?: { __typename?: 'User', _id: string, balance: number } | null | undefined } };
+export type CreateBetMutation = { __typename?: 'Mutation', createBet: { __typename?: 'CreateBetMutationResult', success: boolean, error?: Maybe<string>, user?: Maybe<{ __typename?: 'User', _id: string, balance: number }> } };
 
 export type RouletteGameSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RouletteGameSubscription = { __typename?: 'Subscription', rouletteGame: { __typename?: 'RouletteSubscriptionResult', rouletteGame: { __typename?: 'RouletteGame', _id: string, gameId: string, rollValue?: number | null | undefined, status: string, createdAt: any, startsAt: any }, currentBets: { __typename?: 'RouletteBets', orange: Array<{ __typename?: 'Bet', _id: string, amount: number, currency: CurrencyEnum, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, purple: Array<{ __typename?: 'Bet', _id: string, amount: number, currency: CurrencyEnum, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined>, blue: Array<{ __typename?: 'Bet', _id: string, amount: number, currency: CurrencyEnum, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: string | null | undefined } } | null | undefined> } } };
+export type RouletteGameSubscription = { __typename?: 'Subscription', rouletteGame: { __typename?: 'RouletteSubscriptionResult', rouletteGame: { __typename?: 'RouletteGame', _id: string, gameId: string, rollValue?: Maybe<number>, status: string, createdAt: any, startsAt: any }, currentBets: { __typename?: 'RouletteBets', orange: Array<Maybe<{ __typename?: 'Bet', _id: string, amount: number, currency: CurrencyEnum, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: Maybe<string> } }>>, purple: Array<Maybe<{ __typename?: 'Bet', _id: string, amount: number, currency: CurrencyEnum, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: Maybe<string> } }>>, blue: Array<Maybe<{ __typename?: 'Bet', _id: string, amount: number, currency: CurrencyEnum, gameId: string, selections: Array<number>, user: { __typename?: 'UserInfo', _id: string, displayName: string, avatar?: Maybe<string> } }>> } } };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentUserQuery = { __typename?: 'Query', getCurrentUser?: { __typename?: 'User', _id: string, displayName: string, avatar?: string | null | undefined, wallets: Array<{ __typename?: 'UserWallet', type: CurrencyEnum, balance: number }> } | null | undefined };
+export type CurrentUserQuery = { __typename?: 'Query', getCurrentUser?: Maybe<{ __typename?: 'User', _id: string, displayName: string, avatar?: Maybe<string>, wallets: Array<{ __typename?: 'UserWallet', type: CurrencyEnum, balance: number }> }> };
 
 export type UserInventoryQueryVariables = Exact<{
   input: UserInventoryInput;
 }>;
 
 
-export type UserInventoryQuery = { __typename?: 'Query', userInventory: Array<{ __typename?: 'Skin', _id: string, quality?: string | null | undefined, name: string, price: number, iconUrl: string } | null | undefined> };
+export type UserInventoryQuery = { __typename?: 'Query', userInventory: Array<Maybe<{ __typename?: 'InventorySkin', _id: string, wear: string, name: string, price: number, iconUrl: string }>> };
 
 export type UserWalletsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -817,10 +849,6 @@ export type UserEventSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
 export type UserEventSubscription = { __typename?: 'Subscription', userEvent: { __typename?: 'UserEventResult', user: { __typename?: 'User', _id: string, balance: number } } };
-
-export type SkinFragment = { __typename?: 'Skin', _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined };
-
-export type CaseSkinFragment = { __typename?: 'Skin', rollMin: number, rollMax: number, _id: string, gunType?: string | null | undefined, iconUrl: string, iconUrlLarge: string, knifeType?: string | null | undefined, name: string, odds: number, price: number, quality?: string | null | undefined, rarity: string, skinName?: string | null | undefined, weaponType?: string | null | undefined, type?: string | null | undefined };
 
 export const BattleFragmentDoc = gql`
     fragment Battle on Battle {
@@ -848,7 +876,7 @@ export const BattleFragmentDoc = gql`
         iconUrl
         name
         price
-        quality
+        wear
         rarity
         gunType
         knifeType
@@ -878,30 +906,6 @@ export const UserInfoFragmentDoc = gql`
   avatar
 }
     `;
-export const SkinFragmentDoc = gql`
-    fragment Skin on Skin {
-  _id
-  gunType
-  iconUrl
-  iconUrlLarge
-  knifeType
-  name
-  odds
-  price
-  quality
-  rarity
-  skinName
-  weaponType
-  type
-}
-    `;
-export const CaseSkinFragmentDoc = gql`
-    fragment CaseSkin on Skin {
-  ...Skin
-  rollMin
-  rollMax
-}
-    ${SkinFragmentDoc}`;
 export const GetBattlesDocument = gql`
     query GetBattles {
   getBattles {
@@ -1148,31 +1152,15 @@ export const SingleCaseDocument = gql`
       knifeType
       iconUrl
       skinName
-      qualities {
+      wears {
         _id
-        name
         iconUrl
-        type
-        weaponType
-        rarity
-        quality
-        gunType
-        knifeType
+        rollMin
+        rollMax
+        wear
         price
-        skinName
         odds
       }
-    }
-    slots {
-      _id
-      iconUrl
-      skinName
-      gunType
-      knifeType
-      price
-      quality
-      name
-      odds
     }
   }
 }
@@ -1198,10 +1186,9 @@ export const UnboxingSubscriptionDocument = gql`
     _id
     name
     iconUrl
-    type
     weaponType
     rarity
-    quality
+    wear
     gunType
     knifeType
     price
@@ -1356,7 +1343,7 @@ export const UserInventoryDocument = gql`
     query UserInventory($input: UserInventoryInput!) {
   userInventory(input: $input) {
     _id
-    quality
+    wear
     name
     price
     iconUrl

@@ -101,26 +101,25 @@
 		content: '';
 		z-index: 2;
 		position: absolute;
-		top: 555px;
-		left: -78px;
-		width: 543px;
-		height: 575px;
-		-webkit-transform: rotate(194deg);
-		-ms-transform: rotate(194deg);
-		transform: rotate(194deg);
-		-webkit-backdrop-filter: blur(7px);
+		top: 821px;
+		left: -115px;
+		width: 594px;
+		height: 153px;
+		transform: rotate(223deg);
 		backdrop-filter: blur(7px);
+		border-radius: 50% 50% 0 0;
 	}
 
 	.wheel-wrapper::after {
 		content: '';
 		position: absolute;
-		top: 547px;
+		top: 823px;
 		right: -103px;
 		width: 584px;
-		height: 575px;
-		transform: rotate(76deg);
+		height: 153px;
+		transform: rotate(138deg);
 		backdrop-filter: blur(7px);
+		border-radius: 50% 50% 0 0;
 	}
 
 	.wheel-items {

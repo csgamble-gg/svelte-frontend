@@ -11,7 +11,7 @@
 		createSSRClient,
 		createSSRQuery
 	} from '$libs/urql/createSSRClient';
-	import { sidebarStore } from '$stores/app';
+	import { chatStore, sidebarStore } from '$stores/app';
 	import { createStores, getStores } from '$stores/user/index';
 	import { mobileView } from '$stores/window';
 	import type { LoadInput, LoadOutput, LoadProps } from '$types/index';
@@ -67,6 +67,8 @@
 </script>
 
 <script lang="ts">
+	import Chat from '$components/Chat/Chat.svelte';
+
 	createStores();
 	createEmitterStores();
 	initEmitters();
@@ -132,7 +134,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" />
 	<link
-		href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+		href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
 		rel="stylesheet"
 	/>
 </svelte:head>

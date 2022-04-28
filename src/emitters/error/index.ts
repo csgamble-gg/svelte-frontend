@@ -1,3 +1,7 @@
 import { createEmitter } from '../create';
 
-export const errorEventEmitter = createEmitter<any>();
+type Events = {
+	type: 'error';
+};
+
+export const errorEventEmitter = createEmitter<Events>();

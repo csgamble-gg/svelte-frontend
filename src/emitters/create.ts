@@ -1,7 +1,15 @@
-export function createEmitter<TEvents>() {
+type Unsubscribe = () => void;
+
+export type Emitter = {
+	getSubscriptions: () => Set<unknown>;
+	subscribe: (handler: unknown) => Unsubscribe;
+	next: (event: unknown) => void;
+};
+
+export function createEmitter<TEvents>(): Emitter {
 	type Handler = (event: TEvents) => void;
 
-	let subscriptions = new Set<Handler>();
+	const subscriptions = new Set<Handler>();
 
 	type Unsubscribe = () => void;
 

@@ -1,15 +1,15 @@
 <script lang="ts">
-	// export let caseData: Case;
-
 	import GameContainer from '$components/GameContainer/GameContainer.svelte';
 	import SkinCard from '$components/SkinCard/SkinCardVariant.svelte';
 	import { getGeneralContext, setup } from '$games/state/setup';
 	import { mobileView } from '$stores/window';
+	import { formatPennies } from '$utils/currency';
 	import { Button, Card, Text } from '@csgamble-gg/nebula-ui';
 	import { onMount } from 'svelte';
 	import { service } from './machine';
 	import Reel from './Reel/Reel.svelte';
-	import { currentCase } from './state/game';
+	import VerticalReel from './Reel/VerticalReel.svelte';
+	import { currentCase, isLoading, isRolling } from './state/game';
 	import * as general from './state/general';
 	import { initialize } from './subscriptionHandler';
 
@@ -24,94 +24,114 @@
 		}
 	});
 
-	const { send, fetching, machineState } = getGeneralContext();
+	const { send } = getGeneralContext();
 
-	const caseAmountOptions = [1, 2, 3, 4, 5];
+	const caseAmountOptions = [1, 2, 3, 4];
 
-	let caseAmounts = 1;
+	let caseAmounts = 4;
+
+	$: openingPrice = formatPennies($currentCase.price * caseAmounts);
 </script>
 
 <GameContainer title={`Open Case`}>
-	<div class="header">
-		<div class="content" class:mobile={$mobileView}>
-			<Card>
+	<div class="unboxing">
+		<div class="header">
+			<div class="content" class:mobile={$mobileView}>
 				<div class="case-card">
 					<img src={$currentCase.image} alt="case" />
-					<div class="info">
-						<Text weight="semibold">{$currentCase.name}</Text>
-						<Text>${$currentCase.price.toFixed(2)}</Text>
-					</div>
 				</div>
-			</Card>
-			<div class="info-wrapper">
-				{#if !$mobileView}
-					<Text variant="yellowGradient" tag="h2" size="3xl"
-						>{$currentCase.name}</Text
-					>
-				{/if}
-				<div class="buy-section">
-					<!-- <Text variant="subtle" size="lg">Cases to buy</Text>
-					<div class="options">
-						{#each caseAmountOptions as option}
-							{@const isActive = option === caseAmounts}
-							<button
-								class="option"
-								class:active={isActive}
-								on:click={() => (caseAmounts = option)}
-							>
-								<Text tag="span" weight="bold">{option}</Text>
-							</button>
-						{/each}
-					</div> -->
-					<div class="buttons" class:mobile={$mobileView}>
-						<Button
-							label="Buy Case"
-							on:click={() => send({ type: 'OPEN_CASE', mode: 'LIVE' })}
-						/>
-						<Button
-							label="Demo Open"
-							variant="secondary"
-							on:click={() => send({ type: 'OPEN_CASE', mode: 'DEMO' })}
-						/>
+				<div class="info-wrapper">
+					{#if !$mobileView}
+						<Text variant="yellowGradient" tag="h2" size="3xl"
+							>{$currentCase.name}</Text
+						>
+					{/if}
+					<div class="buy-section">
+						<Text variant="subtle" size="lg">Cases to buy</Text>
+						<div class="options">
+							{#each caseAmountOptions as option}
+								{@const isActive = option === caseAmounts}
+								<button
+									class="option"
+									class:active={isActive}
+									on:click={() => (caseAmounts = option)}
+									disabled={$isRolling || $isLoading}
+								>
+									<Text tag="span" weight="bold">{option}</Text>
+								</button>
+							{/each}
+						</div>
+						<div class="buttons" class:mobile={$mobileView}>
+							<Button
+								loading={$isLoading}
+								label={`Buy Case ${openingPrice}`}
+								on:click={() =>
+									send({
+										type: 'OPEN_CASE',
+										mode: 'LIVE',
+										amount: caseAmounts
+									})}
+								disabled={$isRolling || $isLoading}
+							/>
+							<Button
+								loading={$isLoading}
+								label="Demo Open"
+								variant="secondary"
+								on:click={() =>
+									send({
+										type: 'OPEN_CASE',
+										mode: 'DEMO',
+										amount: caseAmounts
+									})}
+								disabled={$isRolling || $isLoading}
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="holder">
 		<Card fullWidth>
-			<Reel />
+			<div class="reels">
+				{#if caseAmounts > 1}
+					<div class="vertical-reels">
+						{#each new Array(caseAmounts) as _, reelIndex}
+							<VerticalReel {reelIndex} />
+						{/each}
+					</div>
+				{:else if caseAmounts === 1}
+					<Reel />
+				{/if}
+			</div>
+		</Card>
+		<Card fullWidth>
+			<div class="contents">
+				<Text tag="h4" weight="semibold" size="xl" align="center"
+					>Case Contains</Text
+				>
+				<div class="skins">
+					{#each $currentCase.items as skin}
+						<SkinCard {skin} />
+					{/each}
+				</div>
+			</div>
 		</Card>
 	</div>
-	<Card fullWidth>
-		<div class="contents">
-			<Text tag="h4" weight="semibold" size="xl" align="center"
-				>Case Contains</Text
-			>
-			<div class="skins">
-				{#each $currentCase.items as skin}
-					<SkinCard {skin} />
-				{/each}
-			</div>
-		</div>
-	</Card>
 </GameContainer>
 
 <style lang="scss">
-	.reels {
-		margin: 15px 0;
+	@use '../../styles/_breakpoints' as *;
+
+	.unboxing {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		gap: 15px;
 	}
-	.placeholder {
-		width: 100px;
-		height: 100px;
-		background-color: red;
-		position: absolute;
-		left: 45%;
-	}
+
 	.header {
 		display: flex;
 		flex-direction: row;
-		margin: 100px 0 80px 0;
+		margin: 50px 0 50px 0;
 		align-content: center;
 		justify-content: center;
 
@@ -122,7 +142,7 @@
 		.content {
 			display: flex;
 			justify-self: center;
-			gap: 10vw;
+			gap: 5vw;
 
 			&.mobile {
 				flex-wrap: wrap;
@@ -135,6 +155,10 @@
 			display: flex;
 			flex-direction: column;
 			gap: 20px;
+
+			@include break-at('mobile') {
+				align-items: center;
+			}
 
 			.options {
 				display: flex;
@@ -174,65 +198,21 @@
 		display: flex;
 		flex-direction: column-reverse;
 		align-items: center;
-
-		.info {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			padding: 10px 0;
-			gap: 2.5px;
-		}
-
-		img {
-			position: absolute;
-			left: -50px;
-			top: -120px;
-			width: 150%;
-		}
 	}
 
 	.contents {
 		display: flex;
 		flex-direction: column;
 		padding: 37.5px;
+		gap: 25px;
 
 		.skins {
 			display: grid;
-			grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+			grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
 			flex-wrap: wrap;
 			padding: 40px 0;
-			// display: flex;
-			// flex-direction: row;
-			// flex-wrap: wrap;
 			gap: 23px;
 		}
-	}
-
-	.main {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		background: #181d2d;
-		border-radius: 16px;
-		width: 100%;
-		gap: 15px;
-		margin-top: 15px;
-		padding: 15px 20px;
-	}
-
-	.button {
-		background: linear-gradient(
-			321.77deg,
-			#54cca8 -4.42%,
-			#6cdb7d 50.67%,
-			rgba(73, 202, 179, 0.69) 102.42%
-		);
-		box-shadow: inset 0 1px 0 rgba(64, 255, 140, 0.25);
-		height: 48px;
-		min-width: 94px;
-		border-radius: 8px;
-		margin-top: 12px;
-		margin-right: 12px;
 	}
 
 	@keyframes float {
@@ -247,39 +227,17 @@
 		}
 	}
 
-	.winning-item {
-		animation: float 6.66s ease-in-out infinite;
-	}
-
-	.container {
-		width: 100%;
-		height: 100%;
-	}
-
-	.wrapper {
-		display: flex;
-		flex-direction: column;
-		background: #181d2d;
-		border-radius: 16px;
+	.reels {
 		padding: 15px;
-	}
-
-	.case-contents {
-		padding-top: 15px;
-		row-gap: 5px;
-		column-gap: 5px;
 		display: flex;
-		flex-direction: row;
 		align-items: center;
-		flex-wrap: wrap;
-		width: 100%;
+		height: 250px;
 	}
 
-	.holder {
-		overflow: hidden;
-		background: #181d2d;
-		margin: 0 0 25px 0;
-		// padding: 5px 35px;
-		border-radius: 8px;
+	.vertical-reels {
+		display: flex;
+		height: 100%;
+		width: 100%;
+		gap: 0.75vw;
 	}
 </style>

@@ -117,4 +117,10 @@ $card-multiplier-colors: (
 			}
 		}
 	}
+
+	.bets-wrapper {
+		margin-top: 27px;
+		display: flex;
+		flex-direction: column;
+	}
 }

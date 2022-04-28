@@ -8,8 +8,8 @@ export type BetEvent = {
 };
 
 export type BettingSchema =
-	| { value: 'idle'; context: {} }
-	| { value: 'fetching'; context: {} };
+	| { value: 'idle'; context: null }
+	| { value: 'fetching'; context: null };
 
 export type BettingEvents = BetEvent | { type: 'SUCCESS' };
 

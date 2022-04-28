@@ -1,8 +1,11 @@
 <script lang="ts">
+	import type { SkinWear } from '$generated/graphql';
+
+	import { convertPenniesToDollars } from '$libs/currencyConversion';
 	import resize, { ResizeObserverEvent } from '$utils/resizeObserver';
 	import { Text } from '@csgamble-gg/nebula-ui';
 	import { random as randomNumber } from 'lodash-es';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { quartOut } from 'svelte/easing';
 	import { tweened } from 'svelte/motion';
 	import { fly } from 'svelte/transition';
@@ -15,31 +18,32 @@
 	} from '../state/game';
 	import { ROLL_TIME } from '../types';
 
-	// let translateX = useMotionValue(0);
-	// let winningIndex: null | number = null;
 	let activeIndex: null | number = null;
 	let container: HTMLDivElement;
 	$: offset = null;
 
-	// export let amountVisible: number | null = null;
 	let amountVisible: number | null = null;
 
-	const ITEM_WIDTH = 150;
+	const ITEM_WIDTH = 130;
 	const REEL_LENGTH = 38;
 
 	function getCaseSkin() {
-		return $currentCase.items[
-			randomNumber(0, $currentCase.items.length - 1)
-		].qualities[0];
+		const randomParentSkin =
+			$currentCase.items[randomNumber(0, $currentCase.items.length - 1)];
+		const randomChildSkin =
+			randomParentSkin.wears[
+				randomNumber(0, randomParentSkin.wears.length - 1)
+			];
+		return randomChildSkin;
 	}
 
 	$: slots = new Array(REEL_LENGTH).fill(0).map((_, i) => {
 		if ($winningIndex) {
-			return i === $winningIndex ? $winningItem : getCaseSkin();
+			return i === $winningIndex[0] ? $winningItem : getCaseSkin();
 		} else {
 			return getCaseSkin();
 		}
-	});
+	}) as SkinWear[];
 
 	const tween = (init: number, options = {}) => {
 		const store = tweened(init, { ...options });
@@ -63,7 +67,7 @@
 	const anim = (toIndex: number) => {
 		transX.reset();
 
-		offset = (amountVisible / 2) * ITEM_WIDTH - 100;
+		offset = (amountVisible / 2) * ITEM_WIDTH - 50;
 		const animateTo = toIndex * ITEM_WIDTH - offset;
 
 		transX.update(() => animateTo);
@@ -78,9 +82,10 @@
 		}
 	});
 
-	isRolling.subscribe((isRolling) => {
+	const unsubscribe = isRolling.subscribe((isRolling) => {
 		if (isRolling) {
-			anim($winningIndex);
+			console.log('huh');
+			anim($winningIndex[0]);
 			activeIndex = null;
 		}
 	});
@@ -89,6 +94,10 @@
 		const containerWidth = container.getBoundingClientRect().width;
 		amountVisible = Math.round(containerWidth / ITEM_WIDTH);
 		transX.reset(containerWidth / 2);
+	});
+
+	onDestroy(() => {
+		return unsubscribe();
 	});
 
 	function handleResize(event: ResizeObserverEvent) {
@@ -110,19 +119,19 @@
 		class="internal-roller"
 		style={`transform: translateX(-${$transX}px)`}
 	>
-		{#each slots as reelItem, i (i)}
+		{#each slots as slot, i (i)}
 			{@const isWinningItem = !$isDoneRolling
 				? false
-				: i === $winningIndex}
+				: i === $winningIndex[0]}
 			{@const isActive = i === activeIndex}
 			<div
 				class="graceful-animation reel-item"
 				style:opacity={`${$isDoneRolling ? (isWinningItem ? 1 : 0) : 1}`}
 			>
 				<img
-					src={reelItem.iconUrl}
-					alt={reelItem.name}
-					width="150px"
+					src={slot.iconUrl || slot[0].iconUrl}
+					alt="skin"
+					width="130px"
 					height="auto"
 					style:transform={`scale(${isActive ? 1.2 : 1})`}
 					class="graceful-animation"
@@ -137,11 +146,12 @@
 						}}
 					>
 						<div class="header">
-							<Text size="sm" variant="subtle">{reelItem.name}</Text>
-							<Text size="sm">{reelItem.quality}</Text>
+							<Text size="sm" variant="subtle">{$winningItem[0].name}</Text
+							>
+							<Text size="sm">{$winningItem[0].wear}</Text>
 						</div>
 						<Text size="sm" weight="medium"
-							>${reelItem?.price || reelItem.skins[0].price}</Text
+							>${convertPenniesToDollars($winningItem[0].price, 2)}</Text
 						>
 					</div>
 				{/if}
@@ -221,10 +231,15 @@
 		}
 	}
 	.roller {
+		flex: 1;
 		overflow: hidden;
-		height: 200px;
 		display: flex;
+		height: 100%;
 		align-items: center;
+		position: relative;
+
+		background: #181d2d;
+		border-radius: 8px;
 	}
 
 	.reel-item {

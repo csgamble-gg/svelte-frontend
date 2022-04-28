@@ -12,7 +12,7 @@
 	} from '$libs/urql/createSSRClient';
 	import type { LoadInput } from '$types/index';
 
-	export async function load(loadOptions: LoadInput) {
+	export async function load(loadOptions: LoadInput): Promise<{}> {
 		const { url } = loadOptions;
 		const id = url.pathname.split('/').pop();
 

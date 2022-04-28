@@ -18,37 +18,22 @@ query SingleCase($input: GetCaseInput!) {
 		items {
 			_id
 			odds
+			# type
 			name
 			rarity
 			gunType
 			knifeType
 			iconUrl
 			skinName
-			qualities {
+			wears {
 				_id
-				name
 				iconUrl
-				type
-				weaponType
-				rarity
-				quality
-				gunType
-				knifeType
+				rollMin
+				rollMax
+				wear
 				price
-				skinName
 				odds
 			}
-		}
-		slots {
-			_id
-			iconUrl
-			skinName
-			gunType
-			knifeType
-			price
-			quality
-			name
-			odds
 		}
 	}
 }
@@ -64,10 +49,10 @@ subscription UnboxingSubscription {
 		_id
 		name
 		iconUrl
-		type
+		# type
 		weaponType
 		rarity
-		quality
+		wear
 		gunType
 		knifeType
 		price

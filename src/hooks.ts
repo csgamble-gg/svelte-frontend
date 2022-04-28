@@ -1,14 +1,12 @@
-import type { RequestEvent } from '@sveltejs/kit';
+import type { LoadInput } from '@sveltejs/kit/types/internal';
 import { parse } from 'cookie';
+import type { HandleInput } from './types';
 
-/** @type {import('@sveltejs/kit').Handle} */
+/** @type {Handle} */
 export async function handle({
 	event,
 	resolve
-}: {
-	event: RequestEvent;
-	resolve: any;
-}) {
+}: HandleInput): Promise<unknown> {
 	if (event.request.headers.get('cookie')) {
 		const cookies = parse(event.request.headers.get('cookie'));
 
@@ -26,8 +24,17 @@ export async function handle({
 	}
 }
 
-/** @type {import('@sveltejs/kit').GetSession} */
-export function getSession(event) {
+type LoadEvent = LoadInput & {
+	locals: {
+		sessionId: string;
+		sidebarVisibility: boolean;
+	};
+};
+
+export function getSession(event: LoadEvent): {
+	sessionId?: string;
+	sidebarVisibility?: boolean;
+} {
 	return event.locals.sessionId
 		? {
 				sessionId: event.locals.sessionId,

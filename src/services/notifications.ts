@@ -34,8 +34,8 @@ export const notificationsEmitter = () => {
 							errorEventEmitter.next(value.data.userError);
 						}
 					},
-					error: () => {},
-					complete: () => {}
+					error: null,
+					complete: null
 				}
 			);
 		}

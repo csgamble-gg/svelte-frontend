@@ -2,7 +2,6 @@
 	import UnboxingGame from '$games/Unboxing/index.svelte';
 	import { currentCase, currentCaseId } from '$games/Unboxing/state/game';
 	import {
-		Case,
 		SingleCaseDocument,
 		SingleCaseQuery,
 		SingleCaseQueryVariables
@@ -13,7 +12,7 @@
 	} from '$libs/urql/createSSRClient';
 	import type { LoadInput } from '$types/index';
 
-	export async function load(loadOptions: LoadInput) {
+	export async function load(loadOptions: LoadInput): Promise<{}> {
 		const { url } = loadOptions;
 		const slug = url.pathname.split('/').pop();
 
@@ -30,18 +29,10 @@
 		const caseData = caseQuery.data?.getCase;
 
 		currentCase.set(caseData);
+		currentCaseId.set(caseData._id);
 
-		return {
-			props: {
-				caseData
-			}
-		};
+		return {};
 	}
-</script>
-
-<script lang="ts">
-	export let caseData: Case;
-	currentCaseId.set(caseData._id);
 </script>
 
 <UnboxingGame />

@@ -5,7 +5,7 @@ import { notificationsEmitter } from './notifications';
 import { userEmitter } from './user';
 import { userBalanceEmitter } from './wallets';
 
-export const initEmitters = () => {
+export const initEmitters = (): void => {
 	const { emitter } = getEmitterStores();
 
 	if (browser) {

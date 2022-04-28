@@ -1,6 +1,6 @@
 import type { User } from '$generated/graphql';
 import { getContext, setContext } from 'svelte';
-import { createEmitter } from '../create';
+import { createEmitter, Emitter } from '../create';
 
 type Events = { type: 'init' } | { type: 'initUserResponse'; user: User };
 
@@ -19,9 +19,18 @@ export type EventMap = {
 
 export const globalEventEmitter = createEmitter<Events>();
 
+type Emitters = {
+	emitter: Emitter;
+	subscribeToGlobalEventEmitter: (
+		eventMap: Partial<EventMap>
+	) => GlobalEmitter;
+};
+
+type GlobalEmitter = unknown;
+
 export const subscribeToGlobalEventEmitter = (
 	eventMap: Partial<EventMap>
-) =>
+): GlobalEmitter =>
 	globalEventEmitter.subscribe((event) => {
 		const selectedEvent =
 			event.type in eventMap ? eventMap[event.type] : undefined;
@@ -31,7 +40,7 @@ export const subscribeToGlobalEventEmitter = (
 		}
 	});
 
-export const createEmitterStores = () => {
+export const createEmitterStores = (): Emitters => {
 	const stores = {
 		emitter: globalEventEmitter,
 		subscribeToGlobalEventEmitter
@@ -44,7 +53,7 @@ export const createEmitterStores = () => {
 
 type Stores = ReturnType<typeof createEmitterStores>;
 
-export const getEmitterStores = () => {
+export const getEmitterStores = (): Emitters => {
 	const stores = getContext('globalEventEmitter') as Stores;
 
 	return stores;

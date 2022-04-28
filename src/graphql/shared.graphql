@@ -13,27 +13,26 @@ subscription UserEvent {
 	}
 }
 
-fragment Skin on Skin {
-	_id
-	gunType
-	iconUrl
-	iconUrlLarge
-	knifeType
-	name
-	odds
-	price
-	quality
-	rarity
-	skinName
-	weaponType
-	type
-}
+# fragment Skin on Skin {
+# 	_id
+# 	gunType
+# 	iconUrl
+# 	knifeType
+# 	name
+# 	odds
+# 	price
+# 	wears
+# 	rarity
+# 	skinName
+# 	weaponType
+# 	type
+# }
 
-fragment CaseSkin on Skin {
-	...Skin
-	rollMin
-	rollMax
-}
+# fragment CaseSkin on Skin {
+# 	...Skin
+# 	rollMin
+# 	rollMax
+# }
 
 # fragment Case on Case {
 # 	_id

@@ -1,8 +1,15 @@
 import { browser } from '$app/env';
 import Cookies from 'js-cookie';
-import { writable } from 'svelte/store';
+import { Writable, writable } from 'svelte/store';
 
-export function cookieStore<T>(name: string, value: T) {
+export function cookieStore<T>(
+	name: string,
+	value: T
+): {
+	type: string;
+	store: Writable<T>;
+	hydrate: () => void;
+} {
 	const storedValue: T | null = (() => {
 		if (browser) {
 			return Cookies.get(name);
@@ -33,7 +40,7 @@ export function cookieStore<T>(name: string, value: T) {
 		init = true;
 	}
 
-	const hydrate = (cookie) => {
+	const hydrate = (cookie: string) => {
 		const restoredValue = cookie[name] as T;
 
 		if (restoredValue) {

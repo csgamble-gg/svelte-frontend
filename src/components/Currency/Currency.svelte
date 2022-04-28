@@ -6,9 +6,9 @@
 	import Usd from '$icons/svgs/Crypto/Usd.svelte';
 
 	const currencyOptions = {
-		usd: Usd,
-		btc: Btc,
-		eth: Eth
+		USD: Usd,
+		BTC: Btc,
+		ETH: Eth
 	};
 
 	$: selected = currencyOptions[type];

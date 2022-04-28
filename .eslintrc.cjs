@@ -7,11 +7,9 @@ module.exports = {
 		'prettier'
 	],
 	plugins: ['svelte3', '@typescript-eslint'],
-	ignorePatterns: ['*.cjs'],
+	ignorePatterns: ['*.cjs', 'src/generated/graphql.ts'],
 	overrides: [{ files: ['*.svelte'], processor: 'svelte3/svelte3' }],
-	settings: {
-		'svelte3/typescript': () => require('typescript')
-	},
+	settings: { 'svelte3/typescript': () => require('typescript') },
 	parserOptions: {
 		sourceType: 'module',
 		ecmaVersion: 2020

@@ -6,7 +6,7 @@ import { currentRound, playerWins } from '../state/game';
 import * as general from '../state/general';
 import * as services from './services';
 
-export type BattleContext = {};
+export type BattleContext = null;
 export type BattleMachineEvents =
 	| {
 			type: 'JOIN_BATTLE';
@@ -21,19 +21,19 @@ export type BattleMachineEvents =
 export type BattleSchema =
 	| {
 			value: 'WAITING_FOR_PLAYER';
-			context: {};
+			context: null;
 	  }
 	| {
 			value: 'RUNNING';
-			context: {};
+			context: null;
 	  }
 	| {
 			value: 'JOINING';
-			context: {};
+			context: null;
 	  }
 	| {
 			value: 'ROLLING';
-			context: {};
+			context: null;
 	  };
 
 const machine = createMachine<
@@ -76,10 +76,10 @@ const machine = createMachine<
 	},
 	{
 		services: {
-			...services
+			...(services as Record<string, unknown>)
 		},
 		actions: {
-			addToWins: (context, event) => {
+			addToWins: () => {
 				get(currentRound).drops.map((playerDrop) => {
 					playerWins.addSkinToPlayer(
 						playerDrop.playerId,

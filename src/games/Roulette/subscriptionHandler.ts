@@ -9,22 +9,17 @@ import {
 } from '$generated/graphql';
 import { createRawQuery, subscriptionClient } from '$libs/urql/urqlClient';
 import { print } from 'graphql';
-import { get } from 'svelte/store';
 import { currentBets, gameHistory, state } from './state/game';
 
 let subscriptionStream: ReturnType<typeof subscribeToStream>;
 
-let subscribeToStream = (client: typeof subscriptionClient) => {
+const subscribeToStream = (client: typeof subscriptionClient) => {
 	return client.subscribe(
 		{ query: print(RouletteGameDocument) },
 		{
 			next: (value) => {
 				const { currentBets: gameBets, rouletteGame } = value.data
 					?.rouletteGame as RouletteGameSubscription['rouletteGame'];
-
-				const $state = get(state);
-
-				const sameGame = $state._id === rouletteGame._id;
 
 				state.update(() => rouletteGame);
 				currentBets.set(gameBets);
@@ -36,7 +31,7 @@ let subscribeToStream = (client: typeof subscriptionClient) => {
 			error: (error) => {
 				console.log(error);
 			},
-			complete: () => {}
+			complete: () => null
 		}
 	);
 };

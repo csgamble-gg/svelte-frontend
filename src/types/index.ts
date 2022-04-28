@@ -3,12 +3,33 @@
 
 import type { User } from '$generated/graphql';
 import type { createSSRQuery } from '$libs/urql/createSSRClient';
-import type { Either, InferValue } from '@sveltejs/kit/types/helper';
+import type {
+	RequestEvent,
+	ResolveOptions
+} from '@sveltejs/kit/types/internal';
+// import type { Either, InferValue } from '@sveltejs/kit/types/helper';
 import type { Client } from '@urql/core';
+
+export type MaybePromise<T> = T | Promise<T>;
+
+export type ExtendedRequestEvent = RequestEvent & {
+	locals: {
+		sessionId?: string;
+		sidebarVisibility?: string;
+	};
+};
+
+export type HandleInput = {
+	event: ExtendedRequestEvent;
+	resolve(
+		event: ExtendedRequestEvent,
+		opts?: ResolveOptions
+	): MaybePromise<Response>;
+};
 
 export interface LoadInput<
 	PageParams extends Record<string, string> = Record<string, string>,
-	Stuff extends Record<string, any> = Record<string, any>,
+	Stuff extends Record<string, unknown> = Record<string, unknown>,
 	Session = any
 > {
 	url: URL;
@@ -45,7 +66,6 @@ interface LoadOutputExtends {
 	props?: Record<string, any>;
 }
 
-type MaybePromise<T> = T | Promise<T>;
 interface Fallthrough {
 	fallthrough: true;
 }
@@ -56,15 +76,15 @@ export interface Load<
 	(
 		input: LoadInput<
 			InferValue<Input, 'pageParams', Record<string, string>>,
-			InferValue<Input, 'stuff', Record<string, any>>,
-			InferValue<Input, 'session', any>
+			InferValue<Input, 'stuff', Record<string, unknown>>,
+			InferValue<Input, 'session', unknown>
 		>
 	): MaybePromise<
 		Either<
 			Fallthrough,
 			LoadOutput<
-				InferValue<Output, 'props', Record<string, any>>,
-				InferValue<Output, 'stuff', Record<string, any>>
+				InferValue<Output, 'props', Record<string, unknown>>,
+				InferValue<Output, 'stuff', Record<string, unknown>>
 			>
 		>
 	>;

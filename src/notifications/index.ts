@@ -4,6 +4,11 @@ import error from './error/error';
 import info from './info/info';
 import success from './success/success';
 
+export type ConfigProps = {
+	message: string;
+	title?: string;
+};
+
 type NotificationProps = {
 	message: string;
 	title?: string;

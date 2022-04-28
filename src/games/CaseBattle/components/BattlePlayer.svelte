@@ -21,7 +21,6 @@
 		});
 	}
 
-	let winningItem = null;
 	let totalWinningValue = null;
 	let allPlayersRounds = null;
 	let currentPlayerRound = null;
@@ -141,9 +140,8 @@
 		margin: 93px 0 0;
 		position: relative;
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-		// grid-template-columns: repeat(auto-fill, 191px);
-		gap: 46px;
+		grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+		gap: 20px;
 		justify-content: center;
 
 		.player-info {

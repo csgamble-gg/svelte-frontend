@@ -2,13 +2,11 @@
 	import { getGeneralContext } from '$games/state/setup';
 	import { convertPenniesToDollars } from '$libs/currencyConversion';
 	import { CryptoIcon, Text } from '@csgamble-gg/nebula-ui';
-	import Big from 'big.js';
-	import { quintInOut } from 'svelte/easing';
-	import { slide } from 'svelte/transition';
 	import BackgroundButton from '../../../components/generics/BackgroundButton.svelte';
 	import Divider from '../../../components/generics/Divider.svelte';
 	import People from '../../../icons/svgs/People/People.svelte';
 	import { currentBets, state, sumBets } from '../state/game';
+	import PlayerBet from './PlayerBet.svelte';
 
 	$: bets = $currentBets['blue'];
 	$: sum = sumBets(bets);
@@ -47,36 +45,12 @@
 			</div>
 		</div>
 		<Divider />
-		<div class="h-auto pt-6 flex-col gap-2 hidden sm:flex">
+		<div class="bets-wrapper">
 			{#if bets.length === 0}
 				<div />
 			{:else}
 				{#each bets as bet}
-					<div
-						class="flex items-center"
-						transition:slide={{ easing: quintInOut }}
-					>
-						<img
-							class="rounded mr-3"
-							src={bet.user.avatar}
-							width="40px"
-							height="40px"
-							alt="user avatar"
-							loading="eager"
-						/>
-						<span
-							class="text-white font-semibold text-ellipsis overflow-hidden"
-							>{bet.user.displayName}</span
-						>
-						<div class="flex flex-grow justify-end gap-2">
-							<div class="w-6 h-6">
-								<!-- <Currency type={bet.currency} /> -->
-							</div>
-							<span class="text-white font-semibold"
-								>{new Big(bet.amount).div(100).toFixed(2)}</span
-							>
-						</div>
-					</div>
+					<PlayerBet {bet} />
 				{/each}
 			{/if}
 		</div>

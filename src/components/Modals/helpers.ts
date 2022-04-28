@@ -7,7 +7,6 @@ type LinkTo = ReturnType<typeof queryString.stringify>;
 export type ModalConfig<T = undefined> = {
 	title?: string;
 	component: () => Promise<typeof import('*.svelte')>;
-	//   preload?: (page: Page, session: Session) => Promise<any>;
 };
 
 type ConfigType<T> = T extends ModalConfig<infer U> ? U : T;
@@ -25,12 +24,14 @@ export type DataMap<T> = {
 			  });
 };
 
-export function createModals<T extends object>(modals: T) {
+export function createModals<T extends Record<string, unknown>>(
+	modals: T
+): DataMap<T> {
 	return fromPairs(
 		entries(modals).map(([name, config]) => {
 			const modal = {
-				...config,
-				open: (params: object) => {
+				...(config as Record<string, unknown>),
+				open: (params: Record<string, unknown>) => {
 					const query = queryString.parse(window.location.search);
 
 					const newUrl = queryString.stringify({

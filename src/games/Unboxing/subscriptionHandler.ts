@@ -1,3 +1,4 @@
+import { errorEventEmitter } from '$emitters/error';
 import type { UnboxingSubscriptionSubscription } from '$generated/graphql';
 import { UnboxingSubscriptionDocument } from '$generated/graphql';
 import { subscriptionClient } from '$libs/urql/urqlClient';
@@ -6,7 +7,7 @@ import { service } from './machine';
 
 let subscriptionStream: ReturnType<typeof subscribeToStream>;
 
-let subscribeToStream = (client: typeof subscriptionClient) => {
+const subscribeToStream = (client: typeof subscriptionClient) => {
 	return client.subscribe<UnboxingSubscriptionSubscription>(
 		{ query: print(UnboxingSubscriptionDocument) },
 		{
@@ -17,14 +18,18 @@ let subscribeToStream = (client: typeof subscriptionClient) => {
 					service.send({ type: 'SUBSCRIPTION_NEXT', payload: item });
 				}
 			},
-			error: () => {},
-			complete: () => {}
+			error: null,
+			complete: null
 		}
 	);
 };
 
 export const initialize = (): { unsubscribe: () => void } => {
 	subscriptionStream = subscribeToStream(subscriptionClient);
+
+	errorEventEmitter.subscribe(() => {
+		service.send('ERROR');
+	});
 
 	return {
 		unsubscribe: () => {

@@ -3,7 +3,9 @@
 	import Info from '$icons/svgs/Info.svelte';
 	import Success from '$icons/svgs/Success.svelte';
 
-	export let icon: 'error' | 'success' | 'warning' | 'info';
+	export let icon: ToastIconType;
+
+	type ToastIconType = 'error' | 'info' | 'success';
 
 	const icons = {
 		error: Error,

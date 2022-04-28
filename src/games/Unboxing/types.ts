@@ -1,2 +1,3 @@
-export const ROLL_TIME = 7000;
-export const MAX_SLOT_LENGTH = 34;
+export const ROLL_TIME = 6000;
+export const SNAP_TIME = 300;
+export const MAX_SLOT_LENGTH = 30;

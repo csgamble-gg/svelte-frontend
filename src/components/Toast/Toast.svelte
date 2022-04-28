@@ -7,7 +7,7 @@
 	export let props: {
 		body: string;
 		title: string;
-		icon: any;
+		icon: 'error' | 'info' | 'success';
 		type: 'error' | 'success' | 'info';
 	};
 

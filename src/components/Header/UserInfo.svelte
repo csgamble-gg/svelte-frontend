@@ -3,6 +3,8 @@
 	import CurrencyBalances from '$components/CurrencyBalances/CurrencyBalances.svelte';
 	import InventoryDropdown from '$components/InventoryDropdown/InventoryDropdown.svelte';
 	import { modals } from '$components/Modals/utils';
+	import ChatBubble from '$icons/svgs/Chat/ChatBubble.svelte';
+	import { chatStore } from '$stores/app';
 	import { getStores } from '$stores/user/index';
 	import { Avatar, Button } from '@csgamble-gg/nebula-ui';
 
@@ -15,6 +17,10 @@
 	};
 
 	const { userStore } = getStores();
+
+	function handleChatClick() {
+		chatStore.toggle();
+	}
 </script>
 
 <div class="wrapper">
@@ -28,6 +34,11 @@
 		</div>
 	{:else}
 		<div class="user-info">
+			<button class="chat-button" on:click={handleChatClick}>
+				<div class="chat-icon">
+					<ChatBubble />
+				</div>
+			</button>
 			<InventoryDropdown />
 			<div>
 				<Avatar image={$userStore.avatar} />
@@ -53,5 +64,22 @@
 		align-items: center;
 		justify-content: space-evenly;
 		gap: 8px;
+	}
+
+	.chat-button {
+		width: 40px;
+		height: 40px;
+		background: rgba(36, 42, 66, 0.5);
+		border: none;
+		border-radius: 6px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		right: 0px;
+		cursor: pointer;
+		.chat-icon {
+			width: 24px;
+			height: 24px;
+		}
 	}
 </style>

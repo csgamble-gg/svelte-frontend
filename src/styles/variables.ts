@@ -18,5 +18,5 @@ export const sizes = {
 	maxGameBoardWidth: '730px'
 };
 
-export const isMobile = (width: number) =>
+export const isMobile = (width: number): boolean =>
 	width < breakPoints.sidebarFullWidth;

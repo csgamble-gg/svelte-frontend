@@ -8,7 +8,9 @@ import { requestClient } from '$libs/urql/requestClient';
 import type { LoadInput } from '$types/index';
 import { globalEventEmitter } from '../emitters/global';
 
-export async function load(load: LoadInput) {
+export async function load(
+	load: LoadInput
+): Promise<Partial<User> | null> {
 	if (load.session.sessionId) {
 		const [initUserResponse] = await Promise.all([
 			requestClient<CurrentUserQuery, CurrentUserQueryVariables>({
@@ -27,6 +29,6 @@ export async function load(load: LoadInput) {
 	return null;
 }
 
-export const initialize = (user: User) => {
+export const initialize = (user: User): void => {
 	globalEventEmitter.next({ type: 'initUserResponse', user });
 };

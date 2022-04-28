@@ -1,6 +1,6 @@
 <script lang="ts">
-	export let height: number = 1;
-	export let vertical: boolean = false;
+	export let height = 1;
+	export let vertical = false;
 </script>
 
 <div

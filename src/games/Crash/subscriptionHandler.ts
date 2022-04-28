@@ -13,7 +13,7 @@ import { cashedIn, cashedOut, gameHistory, state } from './state/game';
 
 let subscriptionStream: ReturnType<typeof subscribeToStream>;
 
-let subscribeToStream = (client: typeof subscriptionClient) => {
+const subscribeToStream = (client: typeof subscriptionClient) => {
 	return client.subscribe(
 		{ query: print(CrashSubscriptionDocument) },
 		{
@@ -33,8 +33,8 @@ let subscribeToStream = (client: typeof subscriptionClient) => {
 					gameHistory.addGame(crashGame);
 				}
 			},
-			error: () => {},
-			complete: () => {}
+			error: () => null,
+			complete: () => null
 		}
 	);
 };

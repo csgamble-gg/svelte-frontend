@@ -14,18 +14,18 @@ type SetupProps = {
 };
 
 // TODO: add baseevents type to here
-type Send = (event: any) => void;
+type Send = (event: unknown) => void;
 
 export type GeneralContext = ReturnType<typeof generalCreate> & {
 	send: Send;
 };
 
-export const setGeneralContext = (context: GeneralContext) => {
+export const setGeneralContext = (context: GeneralContext): void => {
 	setContext('GAME', context);
 };
 export const getGeneralContext = (): GeneralContext => getContext('GAME');
 
-export const setup = ({ generalContext }: SetupProps) => {
+export const setup = ({ generalContext }: SetupProps): void => {
 	setGeneralContext(generalContext);
 
 	onMount(() => {
@@ -42,11 +42,14 @@ type Config = {
 
 type ConfigStore = Writable<Config>;
 
-export const getConfigContext = () => getContext('config');
-export const setConfigContext = (config: ConfigStore) =>
+export const getConfigContext = (): ConfigStore =>
+	getContext<ConfigStore>('config');
+export const setConfigContext = (config: ConfigStore): void =>
 	setContext('config', config);
 
-export const createGameConfig = (baseConfig: Config) => {
+export const createGameConfig = (
+	baseConfig: Config
+): { config: Writable<Config>; requestClient: unknown } => {
 	const config = writable<Config>(baseConfig);
 
 	function requestClient<TData, TVariables>(
@@ -58,7 +61,7 @@ export const createGameConfig = (baseConfig: Config) => {
 			const { getSession } = get(config);
 			const session = getSession();
 
-			let fetchType: typeof fetch = load ? load.fetch : fetch;
+			const fetchType: typeof fetch = load ? load.fetch : fetch;
 
 			fetchType(import.meta.env.VITE_GRAPHQL_URL as string, {
 				method: 'POST',
@@ -73,9 +76,9 @@ export const createGameConfig = (baseConfig: Config) => {
 				})
 			})
 				.then(async (res) => {
-					let data = await res.json();
+					const data = await res.json();
 					if (data?.errors) {
-						data?.errors.forEach((error) => {
+						data?.errors.forEach((error: unknown) => {
 							throw error;
 						});
 					}

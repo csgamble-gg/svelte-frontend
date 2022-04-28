@@ -3,7 +3,15 @@ import type { TransitionConfig } from 'svelte/transition';
 
 export function scale(
 	node: Element,
-	{ delay = 0, duration = 250, easing = cubicOut, active = false }
+	{
+		delay = 0,
+		duration = 250,
+		easing = cubicOut
+	}: {
+		delay?: number;
+		duration?: number;
+		easing?: (t: number) => number;
+	}
 ): TransitionConfig {
 	return {
 		delay,

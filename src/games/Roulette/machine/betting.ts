@@ -1,5 +1,5 @@
 import extendBet from '$games/machine/extendBet';
-import type { StateNodeConfig } from 'xstate';
+import type { StateNodeConfig, StateSchema } from 'xstate';
 import type { RouletteContext } from '.';
 
 export type BetEvent = {
@@ -7,9 +7,12 @@ export type BetEvent = {
 	selections: number[];
 };
 
-export type BettingSchema =
-	| { value: 'idle'; context: {} }
-	| { value: 'fetching'; context: {} };
+export interface BettingSchema extends StateSchema {
+	states: {
+		idle: Record<string, unknown>;
+		fetching: Record<string, unknown>;
+	};
+}
 
 export type BettingEvents = BetEvent | { type: 'SUCCESS' };
 

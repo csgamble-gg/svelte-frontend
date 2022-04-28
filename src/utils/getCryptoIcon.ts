@@ -8,6 +8,6 @@ const Cryptos = {
 	LTC
 };
 
-export const getCrytpoIcon = (symbol: string) => {
+export const getCrytpoIcon = (symbol: string): keyof typeof Cryptos => {
 	return Cryptos[symbol];
 };

@@ -6,28 +6,27 @@ import { sessionId } from './urqlClient';
 
 const { w3cwebsocket } = ws;
 
-let activeSocket,
-	pingSentAt = 0,
-	timedOut,
-	latency = 0;
+// let activeSocket: ws.connection, timedOut;
+// pingSentAt = 0,
+// latency = 0;
 
-const pingPong = {
-	ping: (received) => {
-		if (!received) {
-			pingSentAt = Date.now();
-			timedOut = setTimeout(() => {
-				if (activeSocket.readyState === WebSocket.OPEN)
-					activeSocket.close(4408, 'Ping timeout');
-			}, 5_000);
-		}
-	},
-	pong: (received) => {
-		if (received) {
-			latency = Date.now() - pingSentAt;
-			clearTimeout(timedOut);
-		}
-	}
-};
+// const pingPong = {
+// 	ping: (received) => {
+// 		if (!received) {
+// 			// pingSentAt = Date.now();
+// 			timedOut = setTimeout(() => {
+// 				if (activeSocket.readyState === WebSocket.OPEN)
+// 					activeSocket.close(4408, 'Ping timeout');
+// 			}, 5_000);
+// 		}
+// 	},
+// 	pong: (received) => {
+// 		if (received) {
+// 			// latency = Date.now() - pingSentAt;
+// 			clearTimeout(timedOut);
+// 		}
+// 	}
+// };
 
 export const createSubscriptionClient = (
 	options?: ClientOptions
@@ -41,12 +40,12 @@ export const createSubscriptionClient = (
 		}),
 		webSocketImpl: w3cwebsocket,
 		keepAlive: 10_000,
-		on: {
-			opened: (socket) => {
-				activeSocket = socket;
-			}
-		},
-		...pingPong,
+		// on: {
+		// 	opened: (socket: ws.connection) => {
+		// 		activeSocket = socket;
+		// 	}
+		// },
+		// ...pingPong,
 		...options
 	});
 

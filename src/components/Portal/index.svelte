@@ -22,7 +22,8 @@
 			targetEl = document.querySelector(target);
 			// Force exit
 			if (targetEl === null) {
-				return () => {};
+				// TODO: CHECK THIS IF IT BORKE
+				return;
 			}
 		} else if (target instanceof HTMLElement) {
 			targetEl = target;

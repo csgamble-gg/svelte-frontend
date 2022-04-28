@@ -20,7 +20,6 @@
 
 		if (isCached === false) {
 			cachedRoutes.add(to);
-		} else {
 		}
 	}
 

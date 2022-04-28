@@ -1,12 +1,13 @@
 <script lang="ts">
+	import { formatPennies } from '$utils/currency';
 	import { Card, Text } from '@csgamble-gg/nebula-ui';
-	import type { Skin } from '../../generated/graphql';
+	import type { InventorySkin, Skin } from '../../generated/graphql';
 	export let skin: Pick<
-		Skin,
+		InventorySkin,
 		| '_id'
 		| 'price'
 		| 'rarity'
-		| 'quality'
+		| 'wear'
 		| 'iconUrl'
 		| 'skinName'
 		| 'gunType'
@@ -32,7 +33,21 @@
 	<Card fullWidth>
 		<div class="content" on:click={onClick}>
 			<div class="header">
-				<Text size="sm" weight="semibold">${skin.price}</Text>
+				<div class="price">
+					<Text size="sm" weight="medium"
+						>${formatPennies(skin.price)}</Text
+					>
+				</div>
+				<div class="skin-info">
+					{#if false}
+						<Text size="sm" weight="medium" variant="yellowGradient"
+							>ST</Text
+						>
+					{/if}
+					<Text size="sm" weight="medium" variant="subtle"
+						>{QualityEnum[skin.wear]}</Text
+					>
+				</div>
 			</div>
 			<div class="image-wrapper">
 				<img
@@ -77,14 +92,30 @@
 		);
 	}
 
+	.skin-info {
+		display: flex;
+		align-items: center;
+		gap: 13px;
+	}
+
 	.content {
 		height: auto;
 		position: relative;
 	}
 
 	.header {
-		padding: 11px 15px 0 15px;
+		padding: 11px 12px 0 12px;
 		height: 25px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+
+		.price {
+			display: flex;
+			align-items: center;
+			flex: 1;
+		}
 	}
 
 	.image-wrapper {
@@ -108,7 +139,7 @@
 		height: 80px;
 		position: relative;
 		.info {
-			padding: 15px 14px;
+			padding: 12px 12px;
 		}
 		&:before {
 			position: absolute;
@@ -201,7 +232,8 @@
 		}
 
 		.header {
-			padding: 0 10px;
+			padding: 11px 15px 0 15px;
+			height: 25px;
 		}
 	}
 	.price {

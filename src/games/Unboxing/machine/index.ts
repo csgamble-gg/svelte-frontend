@@ -1,46 +1,58 @@
-import type { Skin } from '$generated/graphql';
+import type { InventorySkin } from '$generated/graphql';
 import { random as randomNumber } from 'lodash-es';
 import { get } from 'svelte/store';
 import { createMachine, interpret, send } from 'xstate';
 import { currentCase, winningIndex, winningItem } from '../state/game';
 import * as general from '../state/general';
-import { ROLL_TIME } from '../types';
+import { MAX_SLOT_LENGTH, ROLL_TIME } from '../types';
 import * as services from './services';
 
-export type UnboxingContext = {};
-
-type UnboxingSchema =
-	| {
-			value: 'idle';
-			context: {};
-	  }
-	| {
-			value: 'fetching';
-			context: {};
-	  }
-	| {
-			value: 'rolling';
-			context: {};
-	  };
+export type OpenCaseEvent = {
+	type: 'OPEN_CASE';
+	amount: number;
+	mode: 'DEMO' | 'LIVE';
+};
 
 export type UnboxingMachineEvents =
-	| { type: 'OPEN_CASE'; mode: 'DEMO' | 'LIVE' }
+	| OpenCaseEvent
 	| { type: 'SUCCESS' }
-	| { type: 'SUBSCRIPTION_NEXT'; payload: Skin }
+	| { type: 'SUBSCRIPTION_NEXT'; payload: InventorySkin[] }
 	| { type: 'ERROR' };
 
-const machine = createMachine<
-	UnboxingContext,
-	UnboxingMachineEvents,
-	UnboxingSchema
->(
+export type UnboxingMachineGuards =
+	| {
+			type: 'isDemoMode';
+	  }
+	| {
+			type: 'isLiveMode';
+			event: {
+				mode: 'DEMO' | 'LIVE';
+			};
+	  };
+
+export type UnboxingMachineActions =
+	| {
+			type: 'demoRoll';
+	  }
+	| {
+			type: 'liveRoll';
+	  };
+
+const machine = createMachine(
 	{
 		id: 'unboxing',
 		initial: 'idle',
-		context: { winningIndex: null },
+		context: {},
+		tsTypes: {} as import('./index.typegen').Typegen0,
+		schema: {
+			guards: {} as UnboxingMachineGuards,
+			events: {} as UnboxingMachineEvents,
+			context: {},
+			services: {},
+			actions: {} as UnboxingMachineActions
+		},
 		states: {
 			idle: {
-				// entry: ['quickShuffle'],
 				on: {
 					OPEN_CASE: [
 						{
@@ -75,11 +87,13 @@ const machine = createMachine<
 			},
 			waitOnSubscription: {
 				on: {
-					SUBSCRIPTION_NEXT: { target: 'rolling', actions: 'liveRoll' }
+					SUBSCRIPTION_NEXT: { target: 'rolling', actions: 'liveRoll' },
+					ERROR: {
+						target: 'idle'
+					}
 				}
 			},
 			rolling: {
-				// entry: ['injectItem'],
 				after: {
 					[ROLL_TIME]: 'done'
 				}
@@ -98,45 +112,56 @@ const machine = createMachine<
 						}
 					]
 				}
-				// exit: ['quickShuffle']
 			}
 		}
 	},
 	{
 		guards: {
-			isDemoMode: (context, event) => event.mode === 'DEMO',
-			isLiveMode: (context, event) => event.mode === 'LIVE'
+			isDemoMode: (_, event) => event.mode === 'DEMO',
+			isLiveMode: (_, event) => event.mode === 'LIVE'
 		},
 		services: {
-			...services
+			...(services as any)
 		},
 		actions: {
-			// injectItem: (context, event) => {
-			// 	const index = get(winningIndex);
-			// 	// we inject the winning item into the winning index
-			// 	// this allows for a smooth transition into a new roll
-			// 	if (event.mode === 'LIVE') {
-			// 		reelSlots.injectItem(index, event.payload);
-			// 	}
-			// },
-			demoRoll: () => {
+			demoRoll: (_, event) => {
 				const items = get(currentCase).items;
-				const index = randomNumber(27, 34);
+				const index = randomNumber(25, MAX_SLOT_LENGTH - 2);
 
-				const randomSkin = randomNumber(0, items.length - 1);
-				const randomQuality = randomNumber(
-					0,
-					items[randomSkin].qualities.length - 1
-				);
+				const winningSkins = [];
+
+				// determine how many items to roll
+				for (let index = 0; index < event.amount; index++) {
+					const randomSkin = randomNumber(0, items.length - 1);
+					const randomWear = randomNumber(
+						0,
+						items[randomSkin].wears.length - 1
+					);
+
+					// modify the winningItem to match a live roll
+					const winItem: Omit<
+						InventorySkin,
+						'__typename' | 'currency' | 'type'
+					> = {
+						...items[randomSkin].wears[randomWear],
+						...items[randomSkin]
+					};
+
+					winningSkins.push(winItem);
+				}
 
 				winningIndex.set(index);
-				winningItem.set(items[randomSkin].qualities[randomQuality]);
+				winningItem.set(winningSkins);
 			},
-			liveRoll: (context, event) => {
-				// we need to put the item in an index between 27 and 34
-				const index = randomNumber(27, 30);
+			liveRoll: (
+				_,
+				event: {
+					type: 'SUBSCRIPTION_NEXT';
+					payload: InventorySkin[];
+				}
+			) => {
+				const index = randomNumber(25, MAX_SLOT_LENGTH - 2);
 
-				// winningItem.set(event.payload);
 				winningIndex.set(index);
 				winningItem.set(event.payload);
 			}
@@ -144,6 +169,7 @@ const machine = createMachine<
 	}
 );
 
+// @ts-ignore
 export const service = interpret(machine, {
 	devTools: true
 })
